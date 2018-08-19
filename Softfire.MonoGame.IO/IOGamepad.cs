@@ -48,14 +48,14 @@ namespace Softfire.MonoGame.IO
         public GamePadDeadZone GamePadDeadZone { get; }
 
         /// <summary>
-        /// Analog Stick Sensitivity.
+        /// Analog Stick Sensitivity Level.
         /// </summary>
-        public float AnalogStickSensitivity { get; private set; } = 0.001f;
+        public float AnalogStickSensitivityLevel { get; private set; } = 0.01f;
 
         /// <summary>
-        /// Trigger Sensitivity.
+        /// Trigger Sensitivity Level.
         /// </summary>
-        public float TriggerSensitivity { get; private set; } = 0.001f;
+        public float TriggerSensitivityLevel { get; private set; } = 0.01f;
 
         /// <summary>
         /// IO GamePad Constructor.
@@ -73,22 +73,51 @@ namespace Softfire.MonoGame.IO
         /// <summary>
         /// Set Id.
         /// </summary>
-        /// <param name="id">The gamepad id to set. intaken as an int.</param>
-        /// <returns>Returns a boolean indicating whether the application of the id was successful.</returns>
-        public bool SetId(int id)
+        /// <param name="id">The gamepad id to set. Intaken as an int. Must be no greater than what is set in GamePad.MaximumGamePadCount.</param>
+        public void SetId(int id)
         {
-            var result = false;
+            Id = MathHelper.Clamp(id, 1, GamePad.MaximumGamePadCount);
+        }
 
-            if (id <= GamePad.MaximumGamePadCount)
-            {
-                Id = id;
-                result = true;
-            }
+        /// <summary>
+        /// Set Analog Stick Sensitivity Level.
+        /// </summary>
+        /// <param name="sensitivityLevel">The sensitivity level chosen, between 0 and 1.</param>
+        public void SetAnalogStickSensitivityLevel(float sensitivityLevel)
+        {
+            AnalogStickSensitivityLevel = MathHelper.Clamp(sensitivityLevel, 0, 1);
+        }
 
-            return result;
+        /// <summary>
+        /// Set Trigger Sensitivity Level.
+        /// </summary>
+        /// <param name="sensitivityLevel">The sensitivity level chosen, between 0 and 1.</param>
+        public void SetTriggerSensitivityLevel(float sensitivityLevel)
+        {
+            TriggerSensitivityLevel = MathHelper.Clamp(sensitivityLevel, 0, 1);
         }
 
         #region Buttons
+
+        /// <summary>
+        /// Button Idle.
+        /// </summary>
+        /// <param name="button">The button to check if it is idle.</param>
+        /// <returns>Returns a boolean indicating if the button is idle.</returns>
+        public bool ButtonIdle(Buttons button)
+        {
+            return GamePadState.IsButtonUp(button) && PreviousGamePadState.IsButtonUp(button);
+        }
+
+        /// <summary>
+        /// Button Release.
+        /// </summary>
+        /// <param name="button">The button to check if it has been released.</param>
+        /// <returns>Returns a boolean indicating if the button has been released.</returns>
+        public bool ButtonRelease(Buttons button)
+        {
+            return GamePadState.IsButtonUp(button) && PreviousGamePadState.IsButtonDown(button);
+        }
 
         /// <summary>
         /// Button Press.
@@ -115,10 +144,30 @@ namespace Softfire.MonoGame.IO
         #region Triggers
 
         /// <summary>
+        /// Trigger Idle.
+        /// </summary>
+        /// <param name="trigger">The trigger to check if it is idle.</param>
+        /// <returns>Returns a boolean indicating whether the trigger is idle.</returns>
+        public bool TriggerIdle(Buttons trigger)
+        {
+            return ButtonIdle(trigger);
+        }
+
+        /// <summary>
+        /// Trigger Release.
+        /// </summary>
+        /// <param name="trigger">The trigger to check if it has been released.</param>
+        /// <returns>Returns a boolean indicating whether the trigger has been released.</returns>
+        public bool TriggerRelease(Buttons trigger)
+        {
+            return ButtonRelease(trigger);
+        }
+
+        /// <summary>
         /// Trigger Press.
         /// </summary>
         /// <param name="trigger">The trigger to check if it has been pressed.</param>
-        /// <returns>Returns a boolean indicating if the trigger has been pressed.</returns>
+        /// <returns>Returns a boolean indicating whether the trigger has been pressed.</returns>
         public bool TriggerPress(Buttons trigger)
         {
             return ButtonPress(trigger);
@@ -128,46 +177,126 @@ namespace Softfire.MonoGame.IO
         /// Trigger Held.
         /// </summary>
         /// <param name="trigger">The trigger to check if it is being held down.</param>
-        /// <returns>Returns a boolean indicating if the trigger is being held down.</returns>
+        /// <returns>Returns a boolean indicating whether the trigger is being held down.</returns>
         public bool TriggerHeld(Buttons trigger)
         {
             return ButtonHeld(trigger);
         }
 
         /// <summary>
+        /// Trigger Left Idle.
+        /// </summary>
+        /// <returns>Returns a boolean indicating whether the left trigger is idle.</returns>
+        public bool TriggerLeftIdle()
+        {
+            return GamePadState.Triggers.Left < TriggerSensitivityLevel && Math.Abs(PreviousGamePadState.Triggers.Left) < TriggerSensitivityLevel;
+        }
+
+        /// <summary>
+        /// Trigger Left Release.
+        /// </summary>
+        /// <returns>Returns a boolean indicating whether the left trigger was released.</returns>
+        public bool TriggerLeftRelease()
+        {
+            return PreviousGamePadState.Triggers.Left > TriggerSensitivityLevel && Math.Abs(GamePadState.Triggers.Left) < TriggerSensitivityLevel;
+        }
+
+        /// <summary>
         /// Trigger Left Press.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the trigger was pressed.</returns>
+        /// <returns>Returns a boolean indicating whether the left trigger was pressed.</returns>
         public bool TriggerLeftPress()
         {
-            return GamePadState.Triggers.Left > 0 && Math.Abs(PreviousGamePadState.Triggers.Left) < TriggerSensitivity;
+            return GamePadState.Triggers.Left > TriggerSensitivityLevel && Math.Abs(PreviousGamePadState.Triggers.Left) < TriggerSensitivityLevel;
         }
 
         /// <summary>
         /// Trigger Left Held.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the trigger is being held.</returns>
+        /// <returns>Returns a boolean indicating whether the left trigger is being held.</returns>
         public bool TriggerLeftHeld()
         {
-            return PreviousGamePadState.Triggers.Left > 0 && GamePadState.Triggers.Left > 0;
+            return PreviousGamePadState.Triggers.Left > TriggerSensitivityLevel && GamePadState.Triggers.Left > TriggerSensitivityLevel;
+        }
+
+        /// <summary>
+        /// Trigger Right Idle.
+        /// </summary>
+        /// <returns>Returns a boolean indicating whether the right trigger is idle.</returns>
+        public bool TriggerRightIdle()
+        {
+            return GamePadState.Triggers.Right < TriggerSensitivityLevel && Math.Abs(PreviousGamePadState.Triggers.Right) < TriggerSensitivityLevel;
+        }
+
+        /// <summary>
+        /// Trigger Right Release.
+        /// </summary>
+        /// <returns>Returns a boolean indicating whether the right trigger was released.</returns>
+        public bool TriggerRightRelease()
+        {
+            return PreviousGamePadState.Triggers.Right > TriggerSensitivityLevel && Math.Abs(GamePadState.Triggers.Right) < TriggerSensitivityLevel;
         }
 
         /// <summary>
         /// Trigger Right Press.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the trigger was pressed.</returns>
+        /// <returns>Returns a boolean indicating whether the right trigger was pressed.</returns>
         public bool TriggerRightPress()
         {
-            return GamePadState.Triggers.Right > 0 && Math.Abs(PreviousGamePadState.Triggers.Right) < TriggerSensitivity;
+            return GamePadState.Triggers.Right > TriggerSensitivityLevel && Math.Abs(PreviousGamePadState.Triggers.Right) < TriggerSensitivityLevel;
         }
 
         /// <summary>
         /// Trigger Right Held.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the trigger is being held.</returns>
+        /// <returns>Returns a boolean indicating whether the right trigger is being held.</returns>
         public bool TriggerRightHeld()
         {
-            return PreviousGamePadState.Triggers.Right > 0 && GamePadState.Triggers.Right > 0;
+            return PreviousGamePadState.Triggers.Right > TriggerSensitivityLevel && GamePadState.Triggers.Right > TriggerSensitivityLevel;
+        }
+
+        #endregion
+
+        #region Shoulders
+
+        /// <summary>
+        /// Shoulder Idle.
+        /// </summary>
+        /// <param name="shoulder">The shoulder to check if it is idle.</param>
+        /// <returns>Returns a boolean indicating whether the shoulder is idle.</returns>
+        public bool ShoulderIdle(Buttons shoulder)
+        {
+            return ButtonIdle(shoulder);
+        }
+
+        /// <summary>
+        /// Shoulder Release.
+        /// </summary>
+        /// <param name="shoulder">The shoulder to check if it has been released.</param>
+        /// <returns>Returns a boolean indicating whether the shoulder has been released.</returns>
+        public bool ShoulderRelease(Buttons shoulder)
+        {
+            return ButtonRelease(shoulder);
+        }
+
+        /// <summary>
+        /// Shoulder Press.
+        /// </summary>
+        /// <param name="shoulder">The shoulder to check if it has been pressed.</param>
+        /// <returns>Returns a boolean indicating whether the shoulder has been pressed.</returns>
+        public bool ShoulderPress(Buttons shoulder)
+        {
+            return ButtonPress(shoulder);
+        }
+
+        /// <summary>
+        /// Shoulder Held.
+        /// </summary>
+        /// <param name="shoulder">The shoulder to check if it is being held down.</param>
+        /// <returns>Returns a boolean indicating whether the shoulder is being held down.</returns>
+        public bool ShoulderHeld(Buttons shoulder)
+        {
+            return ButtonHeld(shoulder);
         }
 
         #endregion
@@ -175,10 +304,30 @@ namespace Softfire.MonoGame.IO
         #region Analog Sticks
 
         /// <summary>
+        /// Analog Stick Idle.
+        /// </summary>
+        /// <param name="stick">The stick to check if it is idle.</param>
+        /// <returns>Returns a boolean indicating whether the stick is idle.</returns>
+        public bool AnalogStickIdle(Buttons stick)
+        {
+            return ButtonIdle(stick);
+        }
+
+        /// <summary>
+        /// Analog Stick Release.
+        /// </summary>
+        /// <param name="stick">The stick to check if it has been released.</param>
+        /// <returns>Returns a boolean indicating whether the stick has been released.</returns>
+        public bool AnalogStickRelease(Buttons stick)
+        {
+            return ButtonRelease(stick);
+        }
+
+        /// <summary>
         /// Analog Stick Press.
         /// </summary>
         /// <param name="stick">The stick to check if it has been pressed.</param>
-        /// <returns>Returns a boolean indicating if the stick is being held down.</returns>
+        /// <returns>Returns a boolean indicating if the stick has been pressed.</returns>
         public bool AnalogStickPress(Buttons stick)
         {
             return ButtonPress(stick);
@@ -197,12 +346,24 @@ namespace Softfire.MonoGame.IO
         #region Left Analog Stick
 
         /// <summary>
+        /// Analog Stick Left - Idle.
+        /// </summary>
+        /// <returns>Returns a boolean indicating whether the left analog stick is idle.</returns>
+        public bool AnalogStickLeftIdle()
+        {
+            return !AnalogStickLeftUp() &&
+                   !AnalogStickLeftDown() &&
+                   !AnalogStickLeftLeft() &&
+                   !AnalogStickLeftRight();
+        }
+
+        /// <summary>
         /// Analog Stick Left - Up.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the left analog stick is pushed up.</returns>
         public bool AnalogStickLeftUp()
         {
-            return GamePadState.ThumbSticks.Left.Y > AnalogStickSensitivity;
+            return GamePadState.ThumbSticks.Left.Y > AnalogStickSensitivityLevel;
         }
 
         /// <summary>
@@ -211,7 +372,7 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the left analog stick is pushed down.</returns>
         public bool AnalogStickLeftDown()
         {
-            return GamePadState.ThumbSticks.Left.Y < -AnalogStickSensitivity;
+            return GamePadState.ThumbSticks.Left.Y < -AnalogStickSensitivityLevel;
         }
 
         /// <summary>
@@ -220,7 +381,7 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the left analog stick is pushed to the left.</returns>
         public bool AnalogStickLeftLeft()
         {
-            return GamePadState.ThumbSticks.Left.X < -AnalogStickSensitivity;
+            return GamePadState.ThumbSticks.Left.X < -AnalogStickSensitivityLevel;
         }
 
         /// <summary>
@@ -229,7 +390,7 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the left analog stick is pushed to the right.</returns>
         public bool AnalogStickLeftRight()
         {
-            return GamePadState.ThumbSticks.Left.X > AnalogStickSensitivity;
+            return GamePadState.ThumbSticks.Left.X > AnalogStickSensitivityLevel;
         }
 
         #endregion
@@ -237,12 +398,24 @@ namespace Softfire.MonoGame.IO
         #region Right Analog Stick
 
         /// <summary>
+        /// Analog Stick Right - Idle.
+        /// </summary>
+        /// <returns>Returns a boolean indicating whether the right analog stick is idle.</returns>
+        public bool AnalogStickRightIdle()
+        {
+            return !AnalogStickRightUp() &&
+                   !AnalogStickRightDown() &&
+                   !AnalogStickRightLeft() &&
+                   !AnalogStickRightRight();
+        }
+
+        /// <summary>
         /// Analog Stick Right - Up.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the right analog stick is pushed up.</returns>
         public bool AnalogStickRightUp()
         {
-            return GamePadState.ThumbSticks.Right.Y > AnalogStickSensitivity;
+            return GamePadState.ThumbSticks.Right.Y > AnalogStickSensitivityLevel;
         }
 
         /// <summary>
@@ -251,7 +424,7 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the right analog stick is pushed down.</returns>
         public bool AnalogStickRightDown()
         {
-            return GamePadState.ThumbSticks.Right.Y < -AnalogStickSensitivity;
+            return GamePadState.ThumbSticks.Right.Y < -AnalogStickSensitivityLevel;
         }
 
         /// <summary>
@@ -260,7 +433,7 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the right analog stick is pushed to the left.</returns>
         public bool AnalogStickRightLeft()
         {
-            return GamePadState.ThumbSticks.Right.X < -AnalogStickSensitivity;
+            return GamePadState.ThumbSticks.Right.X < -AnalogStickSensitivityLevel;
         }
 
         /// <summary>
@@ -269,7 +442,7 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the right analog stick is pushed to the right.</returns>
         public bool AnalogStickRightRight()
         {
-            return GamePadState.ThumbSticks.Right.X > AnalogStickSensitivity;
+            return GamePadState.ThumbSticks.Right.X > AnalogStickSensitivityLevel;
         }
 
         #endregion
@@ -277,6 +450,26 @@ namespace Softfire.MonoGame.IO
         #endregion
 
         #region DPad
+
+        /// <summary>
+        /// DPad Idle.
+        /// </summary>
+        /// <param name="dPadDirection">The DPad direction to check if it is idle.</param>
+        /// <returns>Returns a boolean indicating if the DPad direction is idle.</returns>
+        public bool DPadIdle(Buttons dPadDirection)
+        {
+            return ButtonIdle(dPadDirection);
+        }
+
+        /// <summary>
+        /// DPad Release.
+        /// </summary>
+        /// <param name="dPadDirection">The DPad direction to check if it has been released.</param>
+        /// <returns>Returns a boolean indicating if the DPad direction has been released.</returns>
+        public bool DPadRelease(Buttons dPadDirection)
+        {
+            return ButtonRelease(dPadDirection);
+        }
 
         /// <summary>
         /// DPad Press.
@@ -307,7 +500,7 @@ namespace Softfire.MonoGame.IO
         /// <param name="gameTime">Intakes a MonoGame GameTime instance.</param>
         public void Update(GameTime gameTime)
         {
-            DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
+            ElapsedTime += DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
 
             if (IsConnected)
             {

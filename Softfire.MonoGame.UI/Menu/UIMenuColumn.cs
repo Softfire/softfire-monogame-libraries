@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -44,7 +45,7 @@ namespace Softfire.MonoGame.UI.Menu
         {
             var nextButtonId = GetNextValidItemId(Buttons);
 
-            var button = new UIButton(nextButtonId, name, new Vector2(ParentMenu.ParentGroup.ParentManager.GetViewportDimenions().Width / 2f, ParentMenu.ParentGroup.ParentManager.GetViewportDimenions().Height / 2f), Width, Height / 4, nextButtonId);
+            var button = new UIButton(nextButtonId, name, Position, Width, Height / 4, nextButtonId);
             button.LoadContent();
 
             Buttons.Add(button);
@@ -75,7 +76,7 @@ namespace Softfire.MonoGame.UI.Menu
         /// <summary>
         /// Remove Button.
         /// </summary>
-        /// <param name="buttonName">The id of the button to be removed. Intaken as an int.</param>
+        /// <param name="buttonId">The id of the button to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the button was removed.</returns>
         public bool RemoveButton(int buttonId)
         {
@@ -104,6 +105,12 @@ namespace Softfire.MonoGame.UI.Menu
             Transparencies["Background"] = ParentMenu.Transparencies["Background"];
             
             await base.Update(gameTime);
+
+            foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
+            {
+                button.ParentPosition = ParentPosition + Position;
+                await button.Update(gameTime);
+            }
         }
 
         /// <summary>
@@ -116,7 +123,7 @@ namespace Softfire.MonoGame.UI.Menu
             {
                 base.Draw(spriteBatch);
 
-                foreach (var button in Buttons)
+                foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
                 {
                     button.Draw(spriteBatch);
                 }

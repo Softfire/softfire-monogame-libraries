@@ -57,6 +57,7 @@ namespace Softfire.MonoGame.UI.Items
         /// <param name="orderNumber">Intakes an int that will be used to define the update/draw order. Update/Draw order is from lowest to highest.</param>
         public UIButton(int id, string name, Vector2 position, int width, int height, int orderNumber) : base(id, name, position, width, height, orderNumber)
         {
+
         }
 
 
@@ -66,8 +67,6 @@ namespace Softfire.MonoGame.UI.Items
         /// <param name="gameTime">Intakes MonoGame GameTime.</param>
         public override async Task Update(GameTime gameTime)
         {
-            Text?.Update(gameTime);
-
             //IsHovered = IOMouse.Hover(Rectangle, HoverDelay);
 
             //if (IsClickable)
@@ -80,38 +79,38 @@ namespace Softfire.MonoGame.UI.Items
 
             await base.Update(gameTime);
 
-            //if (Text != null)
-            //{
-            //    Text.ParentPosition = ParentPosition + Position;
+            if (Text != null)
+            {
+                Text.ParentPosition = ParentPosition + Position;
 
-            //    switch (Text.VerticalAlignment)
-            //    {
-            //        case UIText.VerticalAlignments.Upper:
-            //            Text.Position = new Vector2(0, -Height / 2f);
-            //            break;
-            //        case UIText.VerticalAlignments.Center:
-            //            Text.Position = Vector2.Zero;
-            //            break;
-            //        case UIText.VerticalAlignments.Lower:
-            //            Text.Position = new Vector2(0, Height / 2f);
-            //            break;
-            //    }
+                switch (Text.VerticalAlignment)
+                {
+                    case UIText.VerticalAlignments.Upper:
+                        Text.Position = new Vector2(0, -Height / 2f);
+                        break;
+                    case UIText.VerticalAlignments.Center:
+                        Text.Position = Vector2.Zero;
+                        break;
+                    case UIText.VerticalAlignments.Lower:
+                        Text.Position = new Vector2(0, Height / 2f);
+                        break;
+                }
 
-            //    switch (Text.HorizontalAlignment)
-            //    {
-            //        case UIText.HorizontalAlignments.Left:
-            //            Text.Position = new Vector2(-Width / 2f, 0);
-            //            break;
-            //        case UIText.HorizontalAlignments.Center:
-            //            Text.Position = Vector2.Zero;
-            //            break;
-            //        case UIText.HorizontalAlignments.Right:
-            //            Text.Position = new Vector2(Width / 2f, 0);
-            //            break;
-            //    }
+                switch (Text.HorizontalAlignment)
+                {
+                    case UIText.HorizontalAlignments.Left:
+                        Text.Position = new Vector2(-Width / 2f, 0);
+                        break;
+                    case UIText.HorizontalAlignments.Center:
+                        Text.Position = Vector2.Zero;
+                        break;
+                    case UIText.HorizontalAlignments.Right:
+                        Text.Position = new Vector2(Width / 2f, 0);
+                        break;
+                }
 
-            //    await Text.Update(gameTime);
-            //}
+                await Text.Update(gameTime);
+            }
         }
 
 

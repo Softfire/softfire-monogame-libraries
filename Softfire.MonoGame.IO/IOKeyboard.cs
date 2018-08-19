@@ -1110,11 +1110,22 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Key Release Method.
+        /// Can be used to detect if a key was released.
+        /// </summary>
+        /// <param name="key">Intakes a Input.Keys key to check if it was released.</param>
+        /// <returns>Returns a boolean indicating whether the key was released.</returns>
+        public static bool KeyRelease(Keys key)
+        {
+            return KeyState.IsKeyUp(key) && PreviousKeyState.IsKeyDown(key);
+        }
+
+        /// <summary>
         /// Key Press Method.
         /// Can be used to detect if a key was pressed.
         /// </summary>
         /// <param name="key">Intakes a Input.Keys key to check if it was pressed.</param>
-        /// <returns></returns>
+        /// <returns>Returns a boolean indicating whether the key was pressed.</returns>
         public static bool KeyPress(Keys key)
         {
             return KeyState.IsKeyDown(key) && PreviousKeyState.IsKeyUp(key);
@@ -1125,10 +1136,21 @@ namespace Softfire.MonoGame.IO
         /// Can be used to detect if a key is being held down.
         /// </summary>
         /// <param name="key">Intakes a Input.Keys key to check if it is being held down.</param>
-        /// <returns></returns>
+        /// <returns>Returns a boolean indicating whether the key is being held down.</returns>
         public static bool KeyHeld(Keys key)
         {
             return PreviousKeyState.IsKeyDown(key) && KeyState.IsKeyDown(key);
+        }
+
+        /// <summary>
+        /// Key Idle Method.
+        /// Can be used to detect if a key is idle.
+        /// </summary>
+        /// <param name="key">Intakes a Input.Keys key to check if it is idle.</param>
+        /// <returns>Returns a boolean indicating whether the key is idle.</returns>
+        public static bool KeyIdle(Keys key)
+        {
+            return PreviousKeyState.IsKeyUp(key) && KeyState.IsKeyUp(key);
         }
 
         /// <summary>

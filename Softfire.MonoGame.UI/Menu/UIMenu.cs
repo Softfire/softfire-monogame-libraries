@@ -61,7 +61,7 @@ namespace Softfire.MonoGame.UI.Menu
         {
             var nextColumnId = GetNextValidItemId(Columns);
 
-            var newColumn = new UIMenuColumn(this, nextColumnId, name, Columns.Count == 0 ? Width : Width / Columns.Count, Rectangle.Height, nextColumnId);
+            var newColumn = new UIMenuColumn(this, nextColumnId, name, Columns.Count == 0 ? Width : Width / Columns.Count, Height, nextColumnId);
             newColumn.LoadContent();
 
             Columns.Add(newColumn);
@@ -130,10 +130,15 @@ namespace Softfire.MonoGame.UI.Menu
         {
             await base.Update(gameTime);
 
-            ScrollableAreaRectangle = new Rectangle(ViewPort.X,
-                                                    ViewPort.Y,
-                                                    ScrollableAreaRectangle.Width < ViewPort.Width ? ViewPort.Width : Columns.Sum(column => column.Rectangle.Width),
-                                                    ScrollableAreaRectangle.Height < ViewPort.Height ? ViewPort.Height : Columns.Max(column => column.Rectangle.Height));
+            //ScrollableAreaRectangle = new Rectangle(ViewPort.X,
+            //                                        ViewPort.Y,
+            //                                        ScrollableAreaRectangle.Width < ViewPort.Width ? ViewPort.Width : Columns.Sum(column => column.Rectangle.Width),
+            //                                        ScrollableAreaRectangle.Height < ViewPort.Height ? ViewPort.Height : Columns.Max(column => column.Rectangle.Height));
+
+            foreach (var column in Columns.OrderBy(column => column.OrderNumber))
+            {
+                await column.Update(gameTime);
+            }
         }
 
         /// <summary>

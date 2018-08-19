@@ -82,6 +82,7 @@
     <Compile Include="Encryption\IOAsymmetricEncryption.cs" />
     <Compile Include="IOCamera2D.cs" />
     <Compile Include="Encryption\IOSymmetricEncryption.cs" />
+    <Compile Include="IOManager.cs" />
     <Compile Include="Parsers\CommandLine\IOCommandLineArgument.cs" />
     <Compile Include="Parsers\CommandLine\IOCommandLineFlag.cs" />
     <Compile Include="Parsers\CommandLine\IOCommandLineOption.cs" />
