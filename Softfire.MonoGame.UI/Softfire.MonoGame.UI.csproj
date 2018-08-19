@@ -61,34 +61,35 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Effects\Highlighting\UIEffectHighlight.cs" />
     <Compile Include="Effects\Transitions\UIEffectBackgroundColorGradiant.cs" />
     <Compile Include="Effects\Transitions\UIEffectFadeOut.cs" />
     <Compile Include="Effects\Transitions\UIEffectMoveDown.cs" />
     <Compile Include="Effects\Transitions\UIEffectMoveLeft.cs" />
     <Compile Include="Effects\Transitions\UIEffectMoveRight.cs" />
     <Compile Include="Effects\Transitions\UIEffectMoveUp.cs" />
-    <Compile Include="Effects\Transitions\UIEffectHighlightColorGradiant.cs" />
+    <Compile Include="Effects\Highlighting\UIEffectHighlightColorGradiant.cs" />
     <Compile Include="Effects\Transitions\UIEffectOutlineColorGradiant.cs" />
-    <Compile Include="Effects\UIBaseEffect.cs" />
+    <Compile Include="Effects\UIEffectBase.cs" />
+    <Compile Include="Effects\UIEffectsManager.cs" />
+    <Compile Include="Items\UIText.Effects.cs" />
+    <Compile Include="IUIIdentifier.cs" />
+    <Compile Include="Menu\UIMenuColumn.cs" />
+    <Compile Include="Menu\UIMenu.cs" />
     <Compile Include="UIBase.cs" />
     <Compile Include="UIBase.Effects.cs" />
-    <Compile Include="UIBorder.cs" />
-    <Compile Include="UIButton.cs" />
+    <Compile Include="Items\UIBorder.cs" />
+    <Compile Include="Items\UIButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UIBase.Generics.cs" />
+    <Compile Include="UIBaseOutline.cs" />
     <Compile Include="UIDefaults.cs" />
     <Compile Include="UIException.cs" />
-    <Compile Include="UIFeatures.cs" />
+    <Compile Include="UIUtility.cs" />
     <Compile Include="UIFonts.cs" />
     <Compile Include="UIGroup.cs" />
-    <Compile Include="UITexture.cs" />
     <Compile Include="UIManager.cs" />
-    <Compile Include="UIMenu.cs" />
-    <Compile Include="UIMenuColumn.cs" />
-    <Compile Include="UIMenuItemAction.cs" />
-    <Compile Include="UIMenuItemFunction.cs" />
-    <Compile Include="UIMenuRow.cs" />
-    <Compile Include="UIMenuItem.cs" />
-    <Compile Include="UIText.cs" />
+    <Compile Include="Items\UIText.cs" />
     <Compile Include="UIExtensions.cs" />
     <Compile Include="UIWindow.cs" />
   </ItemGroup>
@@ -108,6 +109,7 @@
   <ItemGroup>
     <Folder Include="Effects\Scaling\" />
     <Folder Include="Effects\Shifting\" />
+    <Folder Include="Effects\Text\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

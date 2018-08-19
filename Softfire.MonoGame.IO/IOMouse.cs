@@ -23,7 +23,7 @@ namespace Softfire.MonoGame.IO
         /// Cursor Visibility.
         /// Enables/Disables the visibility of the Cursor.
         /// </summary>
-        public static bool IsVisible { get; set; }
+        public static bool IsVisible { get; set; } = true;
 
         /// <summary>
         /// Is In Use?
@@ -72,7 +72,7 @@ namespace Softfire.MonoGame.IO
         /// Cursor States.
         /// Used by Animation.
         /// </summary>
-        public static States State { get; set; }
+        public static States State { get; set; } = States.Idle;
 
         /// <summary>
         /// Cursor States.
@@ -86,19 +86,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Mouse Wheel Scroll Index.
+        /// Mouse Scroll Wheel Index.
         /// </summary>
-        private static int ScrollIndex { get; set; }
+        private static int ScrollWheelIndex { get; set; }
 
         /// <summary>
-        /// Previous Mouse Wheel Scroll Index.
+        /// Previous Mouse Scroll Wheel Index.
         /// </summary>
-        private static int PreviousScrollIndex { get; set; }
+        private static int PreviousScrollWheelIndex { get; set; }
 
         /// <summary>
         /// Scroll Speed.
         /// </summary>
-        public static ScrollSpeeds ScrollSpeed { get; set; }
+        public static ScrollSpeeds ScrollSpeed { get; set; } = ScrollSpeeds.Low;
 
         /// <summary>
         /// Scrolll Speeds.
@@ -115,7 +115,7 @@ namespace Softfire.MonoGame.IO
         /// <summary>
         /// Scroll Direction.
         /// </summary>
-        public static ScrollDirections ScrollDirection { get; set; }
+        public static ScrollDirections ScrollDirection { get; set; } = ScrollDirections.Vertical;
 
         /// <summary>
         /// Scroll Directions.
@@ -136,20 +136,6 @@ namespace Softfire.MonoGame.IO
             Right,
             One,
             Two
-        }
-
-        /// <summary>
-        /// IOMouse Constructor.
-        /// </summary>
-        static IOMouse()
-        {
-            IsVisible = false;
-            UseCustomCursor = false;
-            AreBoundariesEnforced = false;
-
-            State = States.Idle;
-            ScrollSpeed = ScrollSpeeds.Low;
-            ScrollDirection = ScrollDirections.Vertical;
         }
 
         #region Left Click
@@ -557,12 +543,12 @@ namespace Softfire.MonoGame.IO
             {
                 case ScrollDirections.Vertical:
                     // Mouse wheel up to move up.
-                    if (ScrollIndex > PreviousScrollIndex)
+                    if (ScrollWheelIndex > PreviousScrollWheelIndex)
                     {
                         viewRectangle.Y -= (int)ScrollSpeed;
                     }
                     // Mouse wheel down to move down.
-                    else if (ScrollIndex < PreviousScrollIndex)
+                    else if (ScrollWheelIndex < PreviousScrollWheelIndex)
                     {
                         viewRectangle.Y += (int)ScrollSpeed;
                     }
@@ -571,12 +557,12 @@ namespace Softfire.MonoGame.IO
 
                 case ScrollDirections.Horizontal:
                     // Mouse wheel up to move left.
-                    if (ScrollIndex > PreviousScrollIndex)
+                    if (ScrollWheelIndex > PreviousScrollWheelIndex)
                     {
                         viewRectangle.X -= (int)ScrollSpeed;
                     }
                     // Mouse wheel down to move right.
-                    else if (ScrollIndex < PreviousScrollIndex)
+                    else if (ScrollWheelIndex < PreviousScrollWheelIndex)
                     {
                         viewRectangle.X += (int)ScrollSpeed;
                     }
@@ -585,6 +571,18 @@ namespace Softfire.MonoGame.IO
             }
 
             return viewRectangle;
+        }
+
+        /// <summary>
+        /// Movement Delta.
+        /// </summary>
+        /// <returns>Returns a Vector2 containing the movement deltas of the last movement of the mouse.</returns>
+        public static Vector2 MovementDelta()
+        {
+            var deltaX = MouseState.X - PreviousMouseState.X;
+            var deltaY = MouseState.Y - PreviousMouseState.Y;
+
+            return new Vector2(deltaX, deltaY);
         }
 
         /// <summary>
@@ -619,7 +617,7 @@ namespace Softfire.MonoGame.IO
                 currentMenuEntryIndex <= lastEntry)
             {
                 // Mouse wheel up.
-                if (ScrollIndex > PreviousScrollIndex)
+                if (ScrollWheelIndex > PreviousScrollWheelIndex)
                 {
                     currentMenuEntryIndex--;
 
@@ -632,7 +630,7 @@ namespace Softfire.MonoGame.IO
                     }
                 }
                 // Mouse wheel down.
-                else if (ScrollIndex < PreviousScrollIndex)
+                else if (ScrollWheelIndex < PreviousScrollWheelIndex)
                 {
                     currentMenuEntryIndex++;
 
@@ -733,7 +731,7 @@ namespace Softfire.MonoGame.IO
         /// Mouse Update Method.
         /// Update MouseStates.
         /// </summary>
-        /// <param name="gameTime">Intakes a GameTime instance.</param>
+        /// <param name="gameTime">Intakes a MonoGame GameTime instance.</param>
         public static void Update(GameTime gameTime)
         {
             DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
@@ -741,8 +739,8 @@ namespace Softfire.MonoGame.IO
             PreviousMouseState = MouseState;
             MouseState = Mouse.GetState();
 
-            PreviousScrollIndex = ScrollIndex;
-            ScrollIndex = MouseState.ScrollWheelValue;
+            PreviousScrollWheelIndex = ScrollWheelIndex;
+            ScrollWheelIndex = MouseState.ScrollWheelValue;
 
             IsInUse = MouseState != PreviousMouseState;
 

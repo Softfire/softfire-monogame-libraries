@@ -32,7 +32,7 @@ namespace Softfire.MonoGame.ANIM
         /// Animation's Texture.
         /// Texture used for animation.
         /// </summary>
-        public Texture2D Texture { get; private set; }
+        public RenderTarget2D Texture { get; private set; }
 
         /// <summary>
         /// Animtaion's Texture Path.
@@ -421,7 +421,7 @@ namespace Softfire.MonoGame.ANIM
         /// </summary>
         public void LoadContent()
         {
-            Texture = Content.Load<Texture2D>(TexturePath);
+            Texture = Content.Load<RenderTarget2D>(TexturePath);
             
             ColorData = new Color[Texture.Width * Texture.Height];
             Texture.GetData(ColorData);

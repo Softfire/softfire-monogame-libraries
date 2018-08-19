@@ -64,7 +64,7 @@ namespace Softfire.MonoGame.SM
         /// Activate Sleep.
         /// Call to activate Sleep.
         /// </summary>
-        public bool ActivateSleep { get; set; }
+        private bool ActivateSleep { get; set; }
 
         /// <summary>
         /// Is Sleeping?
@@ -75,7 +75,7 @@ namespace Softfire.MonoGame.SM
         /// Activate Wake.
         /// Call to activate Wake.
         /// </summary>
-        public bool ActivateWake { get; set; }
+        private bool ActivateWake { get; set; }
 
         /// <summary>
         /// Is Waking?
@@ -319,6 +319,31 @@ namespace Softfire.MonoGame.SM
         /// <param name="gameTime">Intakes MonoGame GameTime.</param>
         public virtual async Task Update(GameTime gameTime)
         {
+            if (ActivateTransitions)
+            {
+                await RunActiveTransitions();
+            }
+            else if (ActivateWake)
+            {
+                await PreWakeAsyncFunctions();
+                PreWakeSyncActions();
+
+                await Wake();
+            }
+            else if (ActivateSleep)
+            {
+                if (await Sleep())
+                {
+                    await PostSleepAsyncFunctions();
+                    PostSleepSyncActions();
+                }
+            }
+            else
+            {
+                await AsyncFunctions();
+                SyncActions();
+            }
+
             DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
 
             Origin = new Vector2(BackgroundTexture.Width / 2f, BackgroundTexture.Height / 2f);

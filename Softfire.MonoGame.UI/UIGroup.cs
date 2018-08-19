@@ -5,68 +5,52 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Softfire.MonoGame.IO;
+using Softfire.MonoGame.UI.Items;
+using Softfire.MonoGame.UI.Menu;
 
 namespace Softfire.MonoGame.UI
 {
-    public class UIGroup
+    public class UIGroup : IUIIdentifier
     {
         /// <summary>
-        /// UIGroup Name.
+        /// Parent UI Manager.
+        /// </summary>
+        internal UIManager ParentManager { get; }
+
+        /// <summary>
+        /// UI Group Id.
+        /// </summary>
+        public int Id { get; }
+
+        /// <summary>
+        /// UI Group Name.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
         /// Is Active?
         /// </summary>
-        public bool IsActive { get; set; }
+        public bool IsActive { get; private set; } = true;
 
         /// <summary>
-        /// UIGroup Camera.
+        /// UI Group Buttons.
         /// </summary>
-        internal IOCamera2D UICamera { get; }
+        private List<UIButton> Buttons { get; } = new List<UIButton>();
 
         /// <summary>
-        /// UIGroup Default Viewport.
-        /// The default viewport used to display the UIGroup's Windows.
+        /// UI Group Texts.
         /// </summary>
-        private Viewport DefaultViewport { get; }
+        private List<UIText> Texts { get; } = new List<UIText>();
 
         /// <summary>
-        /// UIGroup Windows.
+        /// UI Group Menus.
         /// </summary>
-        public Dictionary<string, UIWindow> Windows { get; }
+        private List<UIMenu> Menus { get; } = new List<UIMenu>();
 
         /// <summary>
-        /// UIGroup Menus.
+        /// UI Group Windows.
         /// </summary>
-        public Dictionary<string, UIMenu> Menus { get; }
-
-        /// <summary>
-        /// UIGroup Texts.
-        /// </summary>
-        public Dictionary<string, UIText> Texts { get; }
-
-        /// <summary>
-        /// UIGroup Textures.
-        /// </summary>
-        public Dictionary<string, UITexture> Textures { get; }
-
-        /// <summary>
-        /// UIGroup Active input Devices.
-        /// </summary>
-        public List<Rectangle> ActiveInputDevices { internal get; set; }
-
-        /// <summary>
-        /// UIGroup UIFrameBatch.
-        /// Used to draw the UIBase's frame using the UIManager's UICamera.
-        /// </summary>
-        private SpriteBatch UIFrameBatch { get; }
-
-        /// <summary>
-        /// UIGroup UIContentBatch.
-        /// Used to draw the UIBase's contents using it's internal IOCamera2D.
-        /// </summary>
-        private SpriteBatch UIContentsBatch { get; }
+        private List<UIWindow> Windows { get; } = new List<UIWindow>();
 
         /// <summary>
         /// Internal Order Number.
@@ -84,14 +68,9 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Current Internal Window Identifier.
+        /// Current Internal Button Identifier.
         /// </summary>
-        private string CurrentWindowIdentifier { get; set; }
-
-        /// <summary>
-        /// Current Internal Menu Identifier.
-        /// </summary>
-        private string CurrentMenuIdentifier { get; set; }
+        private string CurrentButtonIdentifier { get; set; }
 
         /// <summary>
         /// Current Internal Text Identifier.
@@ -99,94 +78,231 @@ namespace Softfire.MonoGame.UI
         private string CurrentTextIdentifier { get; set; }
 
         /// <summary>
-        /// Current Internal Texture Identifier.
+        /// Current Internal Menu Identifier.
         /// </summary>
-        private string CurrentTextureIdentifier { get; set; }
+        private string CurrentMenuIdentifier { get; set; }
 
         /// <summary>
-        /// UIGroup Constructor.
+        /// Current Internal Window Identifier.
         /// </summary>
-        /// <param name="name">The UIGroup Name. Intaken as a string.</param>
-        /// <param name="orderNumber">Intakes the Group's Update/Draw Order Number as an int.</param>
-        /// <param name="graphicsDevice">Intakes the UIGroup's parent GraphicsDevice.</param>
-        public UIGroup(string name, int orderNumber, GraphicsDevice graphicsDevice)
+        private string CurrentWindowIdentifier { get; set; }
+
+        /// <summary>
+        /// UI Group Constructor.
+        /// </summary>
+        /// <param name="parentManager">The parent UI manager. Intaken as a UIManager.</param>
+        /// <param name="id">The group's id. Intaken as an int.</param>
+        /// <param name="name">The group's name. Intaken as a string.</param>
+        /// <param name="orderNumber">Intakes the group's Update/Draw Order Number as an int.</param>
+        public UIGroup(UIManager parentManager, int id, string name, int orderNumber)
         {
+            ParentManager = parentManager;
+            Id = id;
             Name = name;
             OrderNumber = orderNumber;
-
-            DefaultViewport = graphicsDevice.Viewport;
-            UICamera = new IOCamera2D(DefaultViewport.Bounds);
-            UIFrameBatch = new SpriteBatch(graphicsDevice);
-            UIContentsBatch = new SpriteBatch(graphicsDevice);
-
-            Windows = new Dictionary<string, UIWindow>();
-            Menus = new Dictionary<string, UIMenu>();
-            Texts = new Dictionary<string, UIText>();
-            Textures = new Dictionary<string, UITexture>();
-            ActiveInputDevices = new List<Rectangle>();
-
-            CurrentWindowIdentifier = string.Empty;
-
-            IsActive = false;
         }
+
+        #region Buttons
+
+        /// <summary>
+        /// Add Button.
+        /// </summary>
+        /// <param name="name">The button's name. Intaken as a string.</param>
+        /// <returns>Returns the button id of the newly added button as an int.</returns>
+        public int AddButton(string name)
+        {
+            var nextButtonId = UIBase.GetNextValidItemId(Buttons);
+
+            var button = new UIButton(nextButtonId, name, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f), 100, 50, nextButtonId);
+            button.LoadContent();
+
+            Buttons.Add(button);
+
+            return nextButtonId;
+        }
+
+        /// <summary>
+        /// Get Button.
+        /// </summary>
+        /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a UIButton with the requested id.</returns>
+        public UIButton GetButton(int buttonId)
+        {
+            return UIBase.GetItemById(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Get Button.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a UIButton with the requested name.</returns>
+        public UIButton GetButton(string buttonName)
+        {
+            return UIBase.GetItemByName(Buttons, buttonName);
+        }
+
+        /// <summary>
+        /// Remove Button.
+        /// </summary>
+        /// <param name="buttonName">The id of the button to be removed. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the button was removed.</returns>
+        public bool RemoveButton(int buttonId)
+        {
+            return UIBase.RemoveItemById(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Remove Button.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to be removed. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the button was removed.</returns>
+        public bool RemoveButton(string buttonName)
+        {
+            return UIBase.RemoveItemByName(Buttons, buttonName);
+        }
+
+        /// <summary>
+        /// Increase Button Order Number.
+        /// </summary>
+        /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the button's order number was increased.</returns>
+        public bool IncreaseButtonOrderNumber(int buttonId)
+        {
+            return UIBase.IncreaseItemOrderNumber(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Increase Button Order Number.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the button's order number was increased.</returns>
+        public bool IncreaseButtonOrderNumber(string buttonName)
+        {
+            return UIBase.IncreaseItemOrderNumber(Buttons, buttonName);
+        }
+
+        /// <summary>
+        /// Decrease Button Order Number.
+        /// </summary>
+        /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the button's order number was decreased.</returns>
+        public bool DecreaseButtonOrderNumber(int buttonId)
+        {
+            return UIBase.DecreaseItemOrderNumber(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Decrease Button Order Number.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the button's order number was decreased.</returns>
+        public bool DecreaseButtonOrderNumber(string buttonName)
+        {
+            return UIBase.DecreaseItemOrderNumber(Buttons, buttonName);
+        }
+
+        #endregion
 
         #region Texts
 
         /// <summary>
         /// Add Text.
-        /// Adds a new Text, if it does not already exist.
+        /// Adds a new text on to the group.
         /// </summary>
-        /// <param name="identifier">Intakes an identifying name as a string.</param>
-        /// <param name="text">Intakes a new UIText.</param>
-        /// <returns>Returns a boolean indicating if the Text was added.</returns>
-        public bool AddText(string identifier, UIText text)
+        /// <param name="name">The text's name. Intaken as a string.</param>
+        /// <param name="font">The text's font. Intaken as a SpriteFont.</param>
+        /// <param name="text">The text's text. Intaken as a string.</param>
+        /// <returns>Returns the text id of the newly added text as an int.</returns>
+        public int AddText(string name, SpriteFont font, string text)
         {
-            var result = false;
+            var nextTextId = UIBase.GetNextValidItemId(Texts);
 
-            if (Texts.ContainsKey(identifier) == false)
-            {
-                text.LoadContent();
-                Texts.Add(identifier, text);
-                result = true;
-            }
+            var newText = new UIText(nextTextId, name, font, text, nextTextId, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f));
+            newText.LoadContent();
 
-            return result;
+            Texts.Add(newText);
+
+            return nextTextId;
         }
 
         /// <summary>
         /// Get Text.
-        /// Get a specific UIText by it's identifier, if it exists.
         /// </summary>
-        /// <param name="identifier">Intakes an identifying name as a string.</param>
-        /// <returns>Returns the Text with the specified identifier, if present, otherwise null.</returns>
-        public UIText GetText(string identifier)
+        /// <param name="textId">The id of the text to retrieve.</param>
+        /// <returns>Returns a UIText with the requested id, if present, otherwise null.</returns>
+        public UIText GetText(int textId)
         {
-            UIText result = null;
+            return UIBase.GetItemById(Texts, textId);
+        }
 
-            if (Texts.ContainsKey(identifier))
-            {
-                result = Texts[identifier];
-            }
-
-            return result;
+        /// <summary>
+        /// Get Text.
+        /// </summary>
+        /// <param name="textName">The name of the text to retrieve.</param>
+        /// <returns>Returns a UIText with the requested name, if present, otherwise null.</returns>
+        public UIText GetText(string textName)
+        {
+            return UIBase.GetItemByName(Texts, textName);
         }
 
         /// <summary>
         /// Remove Text.
-        /// Removes the named Text, if it is present.
         /// </summary>
-        /// <param name="identifier">Intakes a unique Identifier as a string.</param>
-        /// <returns>Returns a boolean indicating whether the Text was removed.</returns>
-        public bool RemoveText(string identifier)
+        /// <param name="textId">The id of the text to be removed. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the text was removed.</returns>
+        public bool RemoveText(int textId)
         {
-            var result = false;
+            return UIBase.RemoveItemById(Texts, textId);
+        }
 
-            if (Texts.ContainsKey(identifier))
-            {
-                result = Texts.Remove(identifier);
-            }
+        /// <summary>
+        /// Remove Text.
+        /// </summary>
+        /// <param name="textName">The name of the text to be removed. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the text was removed.</returns>
+        public bool RemoveText(string textName)
+        {
+            return UIBase.RemoveItemByName(Texts, textName);
+        }
 
-            return result;
+        /// <summary>
+        /// Increase Text Order Number.
+        /// </summary>
+        /// <param name="textId">The id of the text to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the text's order number was increased.</returns>
+        public bool IncreaseTextOrderNumber(int textId)
+        {
+            return UIBase.IncreaseItemOrderNumber(Texts, textId);
+        }
+
+        /// <summary>
+        /// Increase Text Order Number.
+        /// </summary>
+        /// <param name="textName">The name of the text to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the text's order number was increased.</returns>
+        public bool IncreaseTextOrderNumber(string textName)
+        {
+            return UIBase.IncreaseItemOrderNumber(Texts, textName);
+        }
+
+        /// <summary>
+        /// Decrease Text Order Number.
+        /// </summary>
+        /// <param name="textId">The id of the text to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the text's order number was decreased.</returns>
+        public bool DecreaseTextOrderNumber(int textId)
+        {
+            return UIBase.DecreaseItemOrderNumber(Texts, textId);
+        }
+
+        /// <summary>
+        /// Decrease Text Order Number.
+        /// </summary>
+        /// <param name="textName">The name of the text to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the text's order number was decreased.</returns>
+        public bool DecreaseTextOrderNumber(string textName)
+        {
+            return UIBase.DecreaseItemOrderNumber(Texts, textName);
         }
 
         #endregion
@@ -195,60 +311,101 @@ namespace Softfire.MonoGame.UI
 
         /// <summary>
         /// Add Menu.
-        /// Adds a new Menu, if it does not already exist.
         /// </summary>
-        /// <param name="identifier">Intakes an identifying name as a string.</param>
-        /// <param name="menu">Intakes a new UIMenu.</param>
-        /// <returns>Returns a boolean indicating if the Menu was added.</returns>
-        public bool AddMenu(string identifier, UIMenu menu)
+        /// <param name="name">The menu's name. Intaken as a string.</param>
+        /// <param name="width">The menu's width. Intaken as an int. Default is 100.</param>
+        /// <param name="height">The menu's height. Intaken as an int. Default is 400.</param>
+        /// <returns>Returns the menu id of the newly added menu as an int.</returns>
+        public int AddMenu(string name, int width = 100, int height = 400)
         {
-            var result = false;
+            var nextMenuId = UIBase.GetNextValidItemId(Menus);
 
-            if (Menus.ContainsKey(identifier) == false)
-            {
-                menu.ParentGroup = this;
-                menu.LoadContent();
-                Menus.Add(identifier, menu);
-                result = true;
-            }
+            var newMenu = new UIMenu(this, nextMenuId, name, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f), width, height, nextMenuId);
+            newMenu.LoadContent();
 
-            return result;
+            Menus.Add(newMenu);
+
+            return nextMenuId;
         }
 
         /// <summary>
         /// Get Menu.
-        /// Get a specific UIMenu by it's identifier, if it exists.
         /// </summary>
-        /// <param name="identifier">Intakes an identifying name as a string.</param>
-        /// <returns>Returns the Menu with the specified identifier, if present, otherwise null.</returns>
-        public UIMenu GetMenu(string identifier)
+        /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a UIMenu with the requested id, if present, otherwise null.</returns>
+        public UIMenu GetMenu(int menuId)
         {
-            UIMenu result = null;
+            return UIBase.GetItemById(Menus, menuId);
+        }
 
-            if (Menus.ContainsKey(identifier))
-            {
-                result = Menus[identifier];
-            }
-
-            return result;
+        /// <summary>
+        /// Get Menu.
+        /// </summary>
+        /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a UIMenu with the requested name, if present, otherwise null.</returns>
+        public UIMenu GetMenu(string menuName)
+        {
+            return UIBase.GetItemByName(Menus, menuName);
         }
 
         /// <summary>
         /// Remove Menu.
-        /// Removes the named Menu, if it is present.
         /// </summary>
-        /// <param name="identifier">Intakes a unique Identifier as a string.</param>
-        /// <returns>Returns a boolean indicating whether the Menu was removed.</returns>
-        public bool RemoveMenu(string identifier)
+        /// <param name="menuId">The id of the menu to be removed. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the menu was removed.</returns>
+        public bool RemoveMenu(int menuId)
         {
-            var result = false;
+            return UIBase.RemoveItemById(Menus, menuId);
+        }
 
-            if (Menus.ContainsKey(identifier))
-            {
-                result = Menus.Remove(identifier);
-            }
+        /// <summary>
+        /// Remove Menu.
+        /// </summary>
+        /// <param name="menuName">The name of the menu to be removed. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the menu was removed.</returns>
+        public bool RemoveMenu(string menuName)
+        {
+            return UIBase.RemoveItemByName(Menus, menuName);
+        }
 
-            return result;
+        /// <summary>
+        /// Increase Menu Order Number.
+        /// </summary>
+        /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the menu's order number was increased.</returns>
+        public bool IncreaseMenuOrderNumber(int menuId)
+        {
+            return UIBase.IncreaseItemOrderNumber(Menus, menuId);
+        }
+
+        /// <summary>
+        /// Increase Menu Order Number.
+        /// </summary>
+        /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the menu's order number was increased.</returns>
+        public bool IncreaseMenuOrderNumber(string menuName)
+        {
+            return UIBase.IncreaseItemOrderNumber(Menus, menuName);
+        }
+
+        /// <summary>
+        /// Decrease Menu Order Number.
+        /// </summary>
+        /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the menu's order number was decreased.</returns>
+        public bool DecreaseMenuOrderNumber(int menuId)
+        {
+            return UIBase.DecreaseItemOrderNumber(Menus, menuId);
+        }
+
+        /// <summary>
+        /// Decrease Menu Order Number.
+        /// </summary>
+        /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the menu's order number was decreased.</returns>
+        public bool DecreaseMenuOrderNumber(string menuName)
+        {
+            return UIBase.DecreaseItemOrderNumber(Menus, menuName);
         }
 
         #endregion
@@ -256,99 +413,102 @@ namespace Softfire.MonoGame.UI
         #region Windows
 
         /// <summary>
-        /// Add Window.
-        /// Adds a new Window, if it does not already exist.
+        /// Add Windows.
         /// </summary>
-        /// <param name="identifier">Intakes an identifying name as a string.</param>
-        /// <param name="window">Intakes a new UIWindow.</param>
-        /// <returns>Returns a boolean indicating if the Window was added.</returns>
-        public bool AddWindow(string identifier, UIWindow window)
+        /// <param name="name">The window's name. Intaken as a string.</param>
+        /// <param name="width">The window's width. Intaken as an int. Default is 400.</param>
+        /// <param name="height">The window's height. Intaken as an int. Default is 500.</param>
+        /// <returns>Returns the window id of the newly added window as an int.</returns>
+        public int AddWindow(string name, int width = 400, int height = 400)
         {
-            var result = false;
+            var nextWindowId = UIBase.GetNextValidItemId(Windows);
 
-            if (Windows.ContainsKey(identifier) == false)
-            {
-                window.ParentGroup = this;
-                window.LoadContent();
-                Windows.Add(identifier, window);
-                result = true;
-            }
+            var newWindow = new UIWindow(this, nextWindowId, name, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f), width, height, nextWindowId);
+            newWindow.LoadContent();
 
-            return result;
+            Windows.Add(newWindow);
+
+            return nextWindowId;
         }
 
         /// <summary>
         /// Get Window.
-        /// Get a specific UIWindow by it's identifier, if it exists.
         /// </summary>
-        /// <param name="identifier">Intakes an identifying name as a string.</param>
-        /// <returns>Returns the Window with the specified identifier, if present, otherwise null.</returns>
-        public UIWindow GetWindow(string identifier)
+        /// <param name="windowId">The id of the window to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a UIWindow with the requested id, if present, otherwise null.</returns>
+        public UIWindow GetWindow(int windowId)
         {
-            UIWindow result = null;
+            return UIBase.GetItemById(Windows, windowId);
+        }
 
-            if (Windows.ContainsKey(identifier))
-            {
-                result = Windows[identifier];
-            }
-
-            return result;
+        /// <summary>
+        /// Get Window.
+        /// </summary>
+        /// <param name="windowName">The name of the window to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a UIWindow with the requested name, if present, otherwise null.</returns>
+        public UIWindow GetWindow(string windowName)
+        {
+            return UIBase.GetItemByName(Windows, windowName);
         }
 
         /// <summary>
         /// Remove Window.
-        /// Removes the named Window, if it is present.
         /// </summary>
-        /// <param name="identifier">Intakes a unique Identifier as a string.</param>
-        /// <returns>Returns a boolean indicating whether the Window was removed.</returns>
-        public bool RemoveWindow(string identifier)
+        /// <param name="windowId">The id of the window to be removed. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the window was removed.</returns>
+        public bool RemoveWindow(int windowId)
         {
-            var result = false;
-
-            if (Windows.ContainsKey(identifier))
-            {
-                result = Windows.Remove(identifier);
-            }
-
-            return result;
+            return UIBase.RemoveItemById(Windows, windowId);
         }
 
         /// <summary>
-        /// Reorder Window Up.
+        /// Remove Window.
         /// </summary>
-        /// <param name="identifier">Intakes a unique Identifier as a string.</param>
-        /// <returns>Returns a boolean indicating whether the Window's Order Number was increased.</returns>
-        public bool ReorderWindowUp(string identifier)
+        /// <param name="windowName">The name of the window to be removed. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the window was removed.</returns>
+        public bool RemoveWindow(string windowName)
         {
-            var result = false;
-            UIWindow window;
-
-            if ((window = GetWindow(identifier)) != null)
-            {
-                window.OrderNumber++;
-                result = true;
-            }
-
-            return result;
+            return UIBase.RemoveItemByName(Windows, windowName);
         }
 
         /// <summary>
-        /// Reorder Window Down.
+        /// Increase Windows Order Number.
         /// </summary>
-        /// <param name="identifier">Intakes a unique Identifier as a string.</param>
-        /// <returns>Returns a boolean indicating whether the Window's Order Number was decreased.</returns>
-        public bool ReorderWindowDown(string identifier)
+        /// <param name="windowId">The id of the window to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the window's order number was increased.</returns>
+        public bool IncreaseWindowOrderNumber(int windowId)
         {
-            var result = false;
-            UIWindow window;
+            return UIBase.IncreaseItemOrderNumber(Windows, windowId);
+        }
 
-            if ((window = GetWindow(identifier)) != null)
-            {
-                window.OrderNumber--;
-                result = true;
-            }
+        /// <summary>
+        /// Increase Windows Order Number.
+        /// </summary>
+        /// <param name="windowName">The name of the window to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the window's order number was increased.</returns>
+        public bool IncreaseWindowOrderNumber(string windowName)
+        {
+            return UIBase.IncreaseItemOrderNumber(Windows, windowName);
+        }
 
-            return result;
+        /// <summary>
+        /// Decrease Windows Order Number.
+        /// </summary>
+        /// <param name="windowId">The id of the window to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the window's order number was decreased.</returns>
+        public bool DecreaseWindowOrderNumber(int windowId)
+        {
+            return UIBase.DecreaseItemOrderNumber(Windows, windowId);
+        }
+
+        /// <summary>
+        /// Decrease Windows Order Number.
+        /// </summary>
+        /// <param name="windowName">The name of the window to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the window's order number was decreased.</returns>
+        public bool DecreaseWindowOrderNumber(string windowName)
+        {
+            return UIBase.DecreaseItemOrderNumber(Windows, windowName);
         }
 
         /// <summary>
@@ -357,68 +517,7 @@ namespace Softfire.MonoGame.UI
         /// <returns>Returns a boolean indicating if Windows are currently in motion.</returns>
         private bool AreWindowsMoving()
         {
-            return Windows.Count(win => win.Value.IsMoving) > 0;
-        }
-
-        #endregion
-
-        #region Textures
-
-        /// <summary>
-        /// Add Texture.
-        /// Adds a new Texture, if it does not already exist.
-        /// </summary>
-        /// <param name="identifier">Intakes an identifying name as a string.</param>
-        /// <param name="texture">Intakes a new UITexture.</param>
-        /// <returns>Returns a boolean indicating if the Texture was added.</returns>
-        public bool AddTexture(string identifier, UITexture texture)
-        {
-            var result = false;
-
-            if (Texts.ContainsKey(identifier) == false)
-            {
-                texture.LoadContent();
-                Textures.Add(identifier, texture);
-                result = true;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Get Texture.
-        /// Get a specific UITexture by it's identifier, if it exists.
-        /// </summary>
-        /// <param name="identifier">Intakes an identifying name as a string.</param>
-        /// <returns>Returns the Texture with the specified identifier, if present, otherwise null.</returns>
-        public UITexture GetTexture(string identifier)
-        {
-            UITexture result = null;
-
-            if (Texts.ContainsKey(identifier))
-            {
-                result = Textures[identifier];
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Remove Texture.
-        /// Removes the named Texture, if it is present.
-        /// </summary>
-        /// <param name="identifier">Intakes a unique Identifier as a string.</param>
-        /// <returns>Returns a boolean indicating whether the Texture was removed.</returns>
-        public bool RemoveTexture(string identifier)
-        {
-            var result = false;
-
-            if (Textures.ContainsKey(identifier))
-            {
-                result = Textures.Remove(identifier);
-            }
-
-            return result;
+            return Windows.Count(win => win.IsMoving) > 0;
         }
 
         #endregion
@@ -431,35 +530,69 @@ namespace Softfire.MonoGame.UI
         /// <param name="gameTime">Intakes MonoGame GameTime.</param>
         public async Task Update(GameTime gameTime)
         {
-            #region Texts
+            #region Buttons
 
             // Update Order is Ascending.
             // From lowest to highest.
-            foreach (var text in Texts.OrderBy(text => text.Value.OrderNumber))
+            foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
             {
-                if (text.Value.IsVisible)
+                if (button.IsVisible)
                 {
                     // Check if any input devices are over top of any of the texts.
-                    for (var index = 0; index < ActiveInputDevices.Count; index++)
-                    {
-                        var inputDevice = ActiveInputDevices[index];
-                        text.Value.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                                                                (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                                                                inputDevice.Width,
-                                                                inputDevice.Height));
-                    }
+                    //for (var index = 0; index < ActiveInputDevices.Count; index++)
+                    //{
+                    //    var inputDevice = ActiveInputDevices[index];
+                    //    button.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
+                    //                                        (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
+                    //                                        inputDevice.Width,
+                    //                                        inputDevice.Height));
+                    //}
                 }
 
-                await text.Value.Update(gameTime);
+                await button.Update(gameTime);
             }
 
             // Get Identifier from Text that has Focus.
             // Will check in order from lowest to highest.
-            foreach (var text in Texts.OrderBy(text => text.Value.OrderNumber))
+            foreach (var button in Texts.OrderBy(button => button.OrderNumber))
             {
-                if (text.Value.IsInFocus)
+                if (button.IsInFocus)
                 {
-                    CurrentTextIdentifier = text.Key;
+                    CurrentButtonIdentifier = button.Name;
+                }
+            }
+
+            #endregion
+
+            #region Texts
+
+            // Update Order is Ascending.
+            // From lowest to highest.
+            foreach (var text in Texts.OrderBy(text => text.OrderNumber))
+            {
+                if (text.IsVisible)
+                {
+                    // Check if any input devices are over top of any of the texts.
+                    //for (var index = 0; index < ActiveInputDevices.Count; index++)
+                    //{
+                    //    var inputDevice = ActiveInputDevices[index];
+                    //    text.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
+                    //                                      (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
+                    //                                      inputDevice.Width,
+                    //                                      inputDevice.Height));
+                    //}
+                }
+
+                await text.Update(gameTime);
+            }
+
+            // Get Identifier from Text that has Focus.
+            // Will check in order from lowest to highest.
+            foreach (var text in Texts.OrderBy(text => text.OrderNumber))
+            {
+                if (text.IsInFocus)
+                {
+                    CurrentTextIdentifier = text.Name;
                 }
             }
 
@@ -469,31 +602,31 @@ namespace Softfire.MonoGame.UI
 
             // Update Order is Ascending.
             // From lowest to highest.
-            foreach (var menu in Menus.OrderBy(menu => menu.Value.OrderNumber))
+            foreach (var menu in Menus.OrderBy(menu => menu.OrderNumber))
             {
-                if (menu.Value.IsVisible)
+                if (menu.IsVisible)
                 {
                     // Check if any input devices are over top of any of the menus.
-                    for (var index = 0; index < ActiveInputDevices.Count; index++)
-                    {
-                        var inputDevice = ActiveInputDevices[index];
-                        menu.Value.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                                                                (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                                                                inputDevice.Width,
-                                                                inputDevice.Height));
-                    }
+                    //for (var index = 0; index < ActiveInputDevices.Count; index++)
+                    //{
+                    //    var inputDevice = ActiveInputDevices[index];
+                    //    menu.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
+                    //                                      (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
+                    //                                      inputDevice.Width,
+                    //                                      inputDevice.Height));
+                    //}
                 }
 
-                await menu.Value.Update(gameTime);
+                await menu.Update(gameTime);
             }
 
             // Get Identifier from Menu that has Focus.
             // Will check in order from lowest to highest.
-            foreach (var menu in Menus.OrderBy(menu => menu.Value.OrderNumber))
+            foreach (var menu in Menus.OrderBy(menu => menu.OrderNumber))
             {
-                if (menu.Value.IsInFocus)
+                if (menu.IsInFocus)
                 {
-                    CurrentMenuIdentifier = menu.Key;
+                    CurrentMenuIdentifier = menu.Name;
                 }
             }
 
@@ -503,113 +636,76 @@ namespace Softfire.MonoGame.UI
 
             // Update Order is Ascending.
             // From lowest to highest.
-            foreach (var window in Windows.OrderBy(win => win.Value.OrderNumber))
+            foreach (var window in Windows.OrderBy(win => win.OrderNumber))
             {
-                window.Value.ActiveInputDevices = ActiveInputDevices;
+                //window.ActiveInputDevices = ActiveInputDevices;
 
                 if (AreWindowsMoving() == false)
                 {
-                    if (window.Value.IsVisible)
+                    if (window.IsVisible)
                     {
                         // Check if any input devices are over top of any of the window contents.
-                        for (var index = 0; index < ActiveInputDevices.Count; index++)
-                        {
-                            var inputDevice = ActiveInputDevices[index];
-                            window.Value.ContentsCamera.CheckIsInFocus(new Rectangle((int) UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                                                                                     (int) UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                                                                                     inputDevice.Width,
-                                                                                     inputDevice.Height));
-                        }
+                        //for (var index = 0; index < ActiveInputDevices.Count; index++)
+                        //{
+                        //    var inputDevice = ActiveInputDevices[index];
+
+                        //    // Check Window focus.
+                        //    window.CheckIsInFocus(inputDevice);
+
+                        //    // Check Window contents focus.
+                        //    window.ContentsCamera.CheckIsInFocus(new Rectangle((int) UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
+                        //                                                       (int) UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
+                        //                                                       inputDevice.Width,
+                        //                                                       inputDevice.Height));
+                        //}
                     }
                 }
 
-                if (CurrentWindowIdentifier == window.Key)
+                if (CurrentWindowIdentifier == window.Name)
                 {
-                    if (window.Value.IsMoving == false &&
-                        window.Value.TitleBar.IsVisible)
-                    {
-                        window.Value.IsMoving = IOMouse.LeftClickDownInside(window.Value.TitleBar.Rectangle);
-                    }
-                    else if (window.Value.IsMoving == false &&
-                             window.Value.TopBorder.IsVisible)
-                    {
-                        window.Value.IsMoving = IOMouse.LeftClickDownInside(window.Value.TopBorder.Rectangle);
-                    }
-                    else if (window.Value.IsMoving &&
-                             IOMouse.LeftClickHeld())
-                    {
-                        window.Value.Move(IOMouse.Rectangle);
-                    }
-                    else
-                    {
-                        window.Value.IsMoving = false;
-                    }
+                    //if (window.IsMoving == false &&
+                    //    window.GetBorder("Top").IsVisible)
+                    //{
+                    //    window.IsMoving = IOMouse.LeftClickDownInside(window.GetBorder("Top").Rectangle);
+                    //}
+                    //else if (window.IsMoving &&
+                    //         IOMouse.LeftClickHeld())
+                    //{
+                    //    window.Move(IOMouse.MovementDelta());
+                    //}
+                    //else
+                    //{
+                    //    window.IsMoving = false;
+                    //}
                 }
 
-                if (CurrentWindowIdentifier == window.Key)
+                if (CurrentWindowIdentifier == window.Name)
                 {
                     if (IOKeyboard.KeyPress(Keys.D1))
                     {
-                        ReorderWindowUp(window.Key);
+                        IncreaseWindowOrderNumber(window.Name);
                     }
 
                     if (IOKeyboard.KeyPress(Keys.D2))
                     {
-                        ReorderWindowDown(window.Key);
+                        DecreaseWindowOrderNumber(window.Name);
                     }
                 }
 
-                await window.Value.Update(gameTime);
+                await window.Update(gameTime);
             }
 
             // Get Identifier from Window that has Focus.
             // Will check in order from lowest to highest.
-            foreach (var window in Windows.OrderBy(win => win.Value.OrderNumber))
+            foreach (var window in Windows.OrderBy(win => win.OrderNumber))
             {
-                if (window.Value.IsInFocus)
+                if (window.IsInFocus)
                 {
-                    CurrentWindowIdentifier = window.Key;
+                    CurrentWindowIdentifier = window.Name;
                 }
             }
 
             #endregion
-
-            #region Textures
-
-            // Update Order is Ascending.
-            // From lowest to highest.
-            foreach (var texture in Textures.OrderBy(texture => texture.Value.OrderNumber))
-            {
-                if (texture.Value.IsVisible)
-                {
-                    // Check if any input devices are over top of any of the textures.
-                    for (var index = 0; index < ActiveInputDevices.Count; index++)
-                    {
-                        var inputDevice = ActiveInputDevices[index];
-                        texture.Value.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                                                                   (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                                                                   inputDevice.Width,
-                                                                   inputDevice.Height));
-                    }
-                }
-
-                await texture.Value.Update(gameTime);
-            }
-
-            // Get Identifier from Texture that has Focus.
-            // Will check in order from lowest to highest.
-            foreach (var texture in Textures.OrderBy(texture => texture.Value.OrderNumber))
-            {
-                if (texture.Value.IsInFocus)
-                {
-                    CurrentTextureIdentifier = texture.Key;
-                }
-            }
-
-            #endregion
-
-            UICamera.Update(gameTime);
-            ActiveInputDevices.Clear();
         }
 
         /// <summary>
@@ -617,21 +713,30 @@ namespace Softfire.MonoGame.UI
         /// Draws all windows and their contents.
         /// Draws are done is Ascending Order by OrderNumber.
         /// </summary>
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
             if (IsActive)
             {
-                // UI Frame Batch Begin with UICamera Matrix applied.
-                UIFrameBatch.Begin(transformMatrix: UICamera.Matrix);
+                #region Buttons
+
+                // Draw Order is Ascending.
+                // Drawing from lowest to highest.
+                foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
+                {
+                    // Draw Text UIBase.
+                    button.Draw(spriteBatch);
+                }
+
+                #endregion
 
                 #region Texts
 
                 // Draw Order is Ascending.
                 // Drawing from lowest to highest.
-                foreach (var text in Texts.OrderBy(text => text.Value.OrderNumber))
+                foreach (var text in Texts.OrderBy(text => text.OrderNumber))
                 {
                     // Draw Text UIBase.
-                    text.Value.Draw(UIFrameBatch);
+                    text.Draw(spriteBatch);
                 }
 
                 #endregion
@@ -640,10 +745,10 @@ namespace Softfire.MonoGame.UI
 
                 // Draw Order is Ascending.
                 // Drawing from lowest to highest.
-                foreach (var menu in Menus.OrderBy(menu => menu.Value.OrderNumber))
+                foreach (var menu in Menus.OrderBy(menu => menu.OrderNumber))
                 {
                     // Draw Menu UIBase.
-                    menu.Value.Draw(UIFrameBatch);
+                    menu.Draw(spriteBatch);
                 }
 
                 #endregion
@@ -652,40 +757,13 @@ namespace Softfire.MonoGame.UI
 
                 // Draw Order is Ascending.
                 // Drawing from lowest to highest.
-                foreach (var window in Windows.OrderBy(win => win.Value.OrderNumber))
+                foreach (var window in Windows.OrderBy(win => win.OrderNumber))
                 {
                     // Draw Window UIBase.
-                    window.Value.Draw(UIFrameBatch);
+                    window.Draw(spriteBatch);
 
                     // Draw Window Contents.
-                    window.Value.DrawContents(UIContentsBatch, DefaultViewport);
-                }
-
-                #endregion
-
-                #region Textures
-
-                // Draw Order is Ascending.
-                // Drawing from lowest to highest.
-                foreach (var texture in Textures.OrderBy(texture => texture.Value.OrderNumber))
-                {
-                    // Draw Text UIBase.
-                    texture.Value.Draw(UIFrameBatch);
-                }
-
-                #endregion
-
-                // End Frame Drawing.
-                UIFrameBatch.End();
-
-                #region Windows Contents
-
-                // Draw Order is Ascending.
-                // Drawing from lowest to highest.
-                foreach (var window in Windows.OrderBy(win => win.Value.OrderNumber))
-                {
-                    // Draw Window Contents.
-                    window.Value.DrawContents(UIContentsBatch, DefaultViewport);
+                    //window.DrawContents(spriteBatch);
                 }
 
                 #endregion

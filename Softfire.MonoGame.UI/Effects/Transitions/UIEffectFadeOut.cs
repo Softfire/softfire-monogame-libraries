@@ -2,7 +2,7 @@
 
 namespace Softfire.MonoGame.UI.Effects.Transitions
 {
-    public class UIEffectFadeOut : UIBaseEffect
+    public class UIEffectFadeOut : UIEffectBase
     {
         /// <summary>
         /// Starting Transparency Level.
@@ -39,16 +39,16 @@ namespace Softfire.MonoGame.UI.Effects.Transitions
         {
             if (ElapsedTime >= StartDelayInSeconds)
             {
-                ParentUIBase.Transparency = MathHelper.Clamp(ParentUIBase.Transparency - (float)RateOfChange * (float)DeltaTime, 0f, 1f);
+                ParentUIBase.Transparencies["Background"] = MathHelper.Clamp(ParentUIBase.Transparencies["Background"] - (float)RateOfChange * (float)DeltaTime, 0f, 1f);
             }
 
             // Correction for float calculations.
-            if (ParentUIBase.Transparency <= TargetTransparencyLevel)
+            if (ParentUIBase.Transparencies["Background"] <= TargetTransparencyLevel)
             {
-                ParentUIBase.Transparency = TargetTransparencyLevel;
+                ParentUIBase.Transparencies["Background"] = TargetTransparencyLevel;
             }
 
-            return ParentUIBase.Transparency <= TargetTransparencyLevel;
+            return ParentUIBase.Transparencies["Background"] <= TargetTransparencyLevel;
         }
     }
 }

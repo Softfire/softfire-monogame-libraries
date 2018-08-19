@@ -1,13 +1,12 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Softfire.MonoGame.UI.Items;
 
 namespace Softfire.MonoGame.UI
 {
     public static class UIExtensions
     {
-        private static Texture2D Texture { get; set; }
-
         /// <summary>
         /// Apply Basic Text Scaling.
         /// </summary>
@@ -227,16 +226,11 @@ namespace Softfire.MonoGame.UI
                                                color ?? Color.Aqua);
         }
 
-        private static void CreateTexture(SpriteBatch spriteBatch)
-        {
-            Texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            Texture.SetData(new[] { Color.White });
-        }
-
         /// <summary>
         /// Draw Rectangle.
         /// </summary>
         /// <param name="spriteBatch">Intakes a SpriteBatch.</param>
+        /// <param name="texture">Intakes a Texture2D. Used to draw.</param>
         /// <param name="position">Intakes a Vector2. Indicating where to draw the Rectangle.</param>
         /// <param name="dimensions">Intakes a Vector2 indicating the Rectangle's dimensions.</param>
         /// <param name="rotationAngle">intakes a rotation angle in radians. Rectangle will be rotated by this angle. Default is 0f.</param>
@@ -248,23 +242,18 @@ namespace Softfire.MonoGame.UI
         /// <param name="borderColor">Intakes a Color. Rectangle's borders will be drawn this Color.</param>
         /// <param name="borderthickness">Intakes a float defining the border thickness.</param>
         /// <param name="drawDepth">Intakes a float. Indicates draw depth. Default is 0f.</param>
-        public static void DrawRectangle(this SpriteBatch spriteBatch, Vector2 position, Vector2 dimensions,
-                                         float rotationAngle = 0f,
-                                         bool useCenterOrigin = false,
-                                         Vector2 origin = new Vector2(),
-                                         bool useBackground = true,
-                                         Color? backgroundColor = null,
-                                         bool useBorders = true,
-                                         Color? borderColor = null,
-                                         float borderthickness = 1f,
-                                         float drawDepth = 0f)
+        public static void DrawRectangle(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Vector2 dimensions,
+                                                                                                            float rotationAngle = 0f,
+                                                                                                            bool useCenterOrigin = false,
+                                                                                                            Vector2 origin = new Vector2(),
+                                                                                                            bool useBackground = true,
+                                                                                                            Color? backgroundColor = null,
+                                                                                                            bool useBorders = true,
+                                                                                                            Color? borderColor = null,
+                                                                                                            float borderthickness = 1f,
+                                                                                                            float drawDepth = 0f)
         {
             var rectangle = new Rectangle((int)position.X, (int)position.Y, (int)dimensions.X, (int)dimensions.Y);
-
-            if (Texture == null)
-            {
-                CreateTexture(spriteBatch);
-            }
 
             if (useCenterOrigin)
             {
@@ -276,7 +265,7 @@ namespace Softfire.MonoGame.UI
                 var bgcolor = backgroundColor ?? Color.LightGray;
 
                 // Frame
-                spriteBatch.Draw(Texture, rectangle, null, bgcolor, rotationAngle, origin, SpriteEffects.None, drawDepth);
+                spriteBatch.Draw(texture, rectangle, null, bgcolor, rotationAngle, origin, SpriteEffects.None, drawDepth);
             }
 
             if (useBorders)
@@ -284,16 +273,16 @@ namespace Softfire.MonoGame.UI
                 var bColor = borderColor ?? Color.Black;
 
                 // Top
-                DrawLine(spriteBatch, new Vector2(rectangle.X, rectangle.Y), new Vector2(rectangle.Right, rectangle.Y), bColor, borderthickness);
+                DrawLine(spriteBatch, texture, new Vector2(rectangle.X, rectangle.Y), new Vector2(rectangle.Right, rectangle.Y), bColor, borderthickness);
 
                 // Left
-                DrawLine(spriteBatch, new Vector2(rectangle.X + 1f, rectangle.Y), new Vector2(rectangle.X + 1f, rectangle.Bottom + borderthickness), bColor, borderthickness);
+                DrawLine(spriteBatch, texture, new Vector2(rectangle.X + 1f, rectangle.Y), new Vector2(rectangle.X + 1f, rectangle.Bottom + borderthickness), bColor, borderthickness);
 
                 // Bottom
-                DrawLine(spriteBatch, new Vector2(rectangle.X, rectangle.Bottom), new Vector2(rectangle.Right, rectangle.Bottom), bColor, borderthickness);
+                DrawLine(spriteBatch, texture, new Vector2(rectangle.X, rectangle.Bottom), new Vector2(rectangle.Right, rectangle.Bottom), bColor, borderthickness);
 
                 // Right
-                DrawLine(spriteBatch, new Vector2(rectangle.Right + 1f, rectangle.Y), new Vector2(rectangle.Right + 1f, rectangle.Bottom + borderthickness), bColor, borderthickness);
+                DrawLine(spriteBatch, texture, new Vector2(rectangle.Right + 1f, rectangle.Y), new Vector2(rectangle.Right + 1f, rectangle.Bottom + borderthickness), bColor, borderthickness);
             }
         }
 
@@ -301,32 +290,29 @@ namespace Softfire.MonoGame.UI
         /// Draws Line Betwen Points.
         /// </summary>
         /// <param name="spriteBatch">Intakes a SpriteBatch.</param>
+        /// <param name="texture">Intakes a Texture2D. Used to draw.</param>
         /// <param name="startPoint">Intakes the line's start point as a Vector2.</param>
         /// <param name="endPoint">Intakes the line's end point as a Vector2.</param>
         /// <param name="color">Intakes a Color. Line will be drawn this Color.</param>
         /// <param name="thickness">Intakes line thickness as a float. Default is 1f.</param>
-        public static void DrawLine(this SpriteBatch spriteBatch, Vector2 startPoint, Vector2 endPoint, Color color, float thickness = 1f)
+        public static void DrawLine(this SpriteBatch spriteBatch, Texture2D texture, Vector2 startPoint, Vector2 endPoint, Color color, float thickness = 1f)
         {
             var distance = Vector2.Distance(startPoint, endPoint);
             var angle = (float)Math.Atan2(endPoint.Y - startPoint.Y, endPoint.X - startPoint.X);
 
-            spriteBatch.Draw(Texture, startPoint, null, color, angle, Vector2.Zero, new Vector2(distance, thickness), SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, startPoint, null, color, angle, Vector2.Zero, new Vector2(distance, thickness), SpriteEffects.None, 0);
         }
 
         /// <summary>
         /// Draw Pixel.
         /// </summary>
         /// <param name="spriteBatch">Intakes a SpriteBatch.</param>
+        /// <param name="texture">Intakes a Texture2D. Used to draw.</param>
         /// <param name="position">Intakes position as a Vector2.</param>
         /// <param name="color">Intakes a Color. Line will be drawn this Color.</param>
-        public static void DrawPixel(this SpriteBatch spriteBatch, Vector2 position, Color color)
+        public static void DrawPixel(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Color color)
         {
-            if (Texture == null)
-            {
-                CreateTexture(spriteBatch);
-            }
-
-            spriteBatch.Draw(Texture, position, color);
+            spriteBatch.Draw(texture, position, color);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Softfire.MonoGame.UI.Effects.Transitions
 {
-    public class UIEffectMoveDown : UIBaseEffect
+    public class UIEffectMoveDown : UIEffectBase
     {
         /// <summary>
         /// Start Position.

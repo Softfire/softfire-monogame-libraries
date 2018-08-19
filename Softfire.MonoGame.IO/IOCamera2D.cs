@@ -9,7 +9,7 @@ namespace Softfire.MonoGame.IO
         /// <summary>
         /// Camera Viewport.
         /// </summary>
-        public Viewport Viewport { get; set; }
+        public Viewport Viewport { get; private set; }
 
         /// <summary>
         /// Game Delta Time.
@@ -20,7 +20,7 @@ namespace Softfire.MonoGame.IO
         /// Is In Focus?
         /// Set to true if this IOCamera2D has focus.
         /// </summary>
-        public bool IsInFocus { get; set; }
+        public bool IsInFocus { get; private set; }
 
         /// <summary>
         /// Are Camera Controls Enabled.
@@ -85,7 +85,7 @@ namespace Softfire.MonoGame.IO
         /// Camera Matrix.
         /// Transforms view to WorldView.
         /// CreateTranslation(new Vector3(-Position, 0)) inverses the position to follow it.
-        /// CreateRotationZ(Rotation) applies any rotation.
+        /// CreateRotationX(RotationAngle) applies any rotation.
         /// CreateScale(Zoom, Zoom, 1) scales the view.
         /// </summary>
         public Matrix Matrix => Matrix.Identity *
@@ -112,12 +112,12 @@ namespace Softfire.MonoGame.IO
         /// <summary>
         /// Camera Zoom Minimum.
         /// </summary>
-        private float ZoomMinimum { get; set; }
+        private float ZoomMinimum { get; set; } = 0.10f;
 
         /// <summary>
         /// Camera Zoom Maximum.
         /// </summary>
-        private float ZoomMaximum { get; set; }
+        private float ZoomMaximum { get; set; } = 2.00f;
 
         /// <summary>
         /// Camera Zoom.
@@ -149,7 +149,7 @@ namespace Softfire.MonoGame.IO
         /// <summary>
         /// Camera Zoom Increment.
         /// </summary>
-        public float ZoomIncrement { get; set; }
+        public float ZoomIncrement { get; set; } = ZoomIncrements.Tenth;
 
         /// <summary>
         /// Camera Zoom Increments.
@@ -171,20 +171,14 @@ namespace Softfire.MonoGame.IO
         /// <param name="allowZoom">Inatkes a boolean indicating whether to enable/disable zoom functionality.</param>
         /// <param name="zoomMinimum">Intakes the minimum zoom level as a float. 0.25f is the default.</param>
         /// <param name="zoomMaximum">Intakes the maximum zoom level as a float. 3.0f is the default.</param>
-        public IOCamera2D(Rectangle viewRectangle, Rectangle worldRectangle = new Rectangle(), float rotation = 0.0f, bool allowZoom = false, float zoomMinimum = 0.10f, float zoomMaximum = 2.0f)
+        public IOCamera2D(Rectangle viewRectangle, Rectangle worldRectangle = new Rectangle())
         {
             Viewport = new Viewport(viewRectangle);
 
             WorldViewWidth = worldRectangle.Width <= Viewport.Width ? Viewport.Width : worldRectangle.Width;
             WorldViewHeight = worldRectangle.Height <= Viewport.Height ? Viewport.Height : worldRectangle.Height;
-
-            RotationAngle = rotation;
             
-            AllowZoom = allowZoom;
-            ZoomMinimum = zoomMinimum;
-            ZoomMaximum = zoomMaximum;
             Zoom = 1.0f;
-            ZoomIncrement = ZoomIncrements.Tenth;
         }
 
         /// <summary>
@@ -315,9 +309,10 @@ namespace Softfire.MonoGame.IO
         /// Check if input rectangle is within the Viewport's bounds.
         /// </summary>
         /// <param name="rectangle">The input rectangle to check against the Viewport's bounds.</param>
-        public void CheckIsInFocus(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether the camera has focus.</returns>
+        public bool CheckIsInFocus(Rectangle rectangle)
         {
-            IsInFocus = Viewport.Bounds.Contains(rectangle);
+            return IsInFocus = Viewport.Bounds.Contains(rectangle);
         }
 
         /// <summary>

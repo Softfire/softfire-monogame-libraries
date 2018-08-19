@@ -2,7 +2,7 @@
 
 namespace Softfire.MonoGame.UI.Effects.Transitions
 {
-    public class UIEffectBackgroundColorGradiant : UIBaseEffect
+    public class UIEffectBackgroundColorGradiant : UIEffectBase
     {
         /// <summary>
         /// Initial Color.
@@ -40,10 +40,10 @@ namespace Softfire.MonoGame.UI.Effects.Transitions
 
             if (ElapsedTime >= StartDelayInSeconds)
             {
-                ParentUIBase.BackgroundColor = Color.Lerp(InitialColor, TargetColor, (float)RateOfChange);
+                ParentUIBase.Colors["Background"] = Color.Lerp(InitialColor, TargetColor, (float)RateOfChange);
             }
 
-            return ParentUIBase.BackgroundColor == TargetColor;
+            return ParentUIBase.Colors["Background"] == TargetColor;
         }
     }
 }

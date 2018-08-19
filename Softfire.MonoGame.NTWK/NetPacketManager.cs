@@ -29,7 +29,7 @@ namespace Softfire.MonoGame.NTWK
 
         /// <summary>
         /// Register.
-        /// Registers the packet type and creates a pool
+        /// Registers the packet type and creates a pool.
         /// </summary>
         /// <typeparam name="T">The packet type to register.</typeparam>
         /// <exception cref="ArgumentNullException"></exception>
@@ -44,7 +44,7 @@ namespace Softfire.MonoGame.NTWK
 
         /// <summary>
         /// Register.
-        /// Registers the packet type and creates a pool
+        /// Registers the packet type and creates a pool.
         /// </summary>
         /// <typeparam name="T">The packet type to register.</typeparam>
         /// <param name="id">The id of the packet type to register.</param>
@@ -62,7 +62,7 @@ namespace Softfire.MonoGame.NTWK
 
         /// <summary>
         /// Register.
-        /// Registers the packet type and creates a pool
+        /// Registers the packet type and creates a pool.
         /// </summary>
         /// <typeparam name="T">The packet type to register.</typeparam>
         /// <param name="id">The id of the packet type to register.</param>

@@ -120,21 +120,9 @@ namespace Softfire.MonoGame.SM
         bool IsTransitioning { get; }
 
         /// <summary>
-        /// Activate Sleep.
-        /// Call to activate Sleep.
-        /// </summary>
-        bool ActivateSleep { get; set; }
-
-        /// <summary>
         /// Is Sleeping?
         /// </summary>
         bool IsSleeping { get; }
-
-        /// <summary>
-        /// Activate Wake.
-        /// Call to activate Wake.
-        /// </summary>
-        bool ActivateWake { get; set; }
 
         /// <summary>
         /// Is Waking?

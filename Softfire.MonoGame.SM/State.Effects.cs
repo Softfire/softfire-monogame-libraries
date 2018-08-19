@@ -129,7 +129,6 @@ namespace Softfire.MonoGame.SM
                     if (await activeTransition.Run())
                     {
                         ActiveTransitions.Remove(activeTransition);
-                        IsTransitioning = false;
                     }
                     else
                     {
@@ -140,6 +139,7 @@ namespace Softfire.MonoGame.SM
 
             if (ActiveTransitions.Count == 0)
             {
+                IsTransitioning = false;
                 ActivateTransitions = false;
                 result = true;
             }

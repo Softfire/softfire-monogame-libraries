@@ -18,7 +18,7 @@ namespace Softfire.MonoGame.IO
 
         /// <summary>
         /// Keyboard KeyState.
-        /// KeyState conatins all data read from the currently attached Keyboard.
+        /// KeyState contains all data read from the currently attached Keyboard.
         /// </summary>
         private static KeyboardState KeyState { get; set; }
 
@@ -33,14 +33,6 @@ namespace Softfire.MonoGame.IO
         /// Is In Use?
         /// </summary>
         public static bool IsInUse { get; private set; }
-
-        /// <summary>
-        /// IOKeyboard Constructor.
-        /// </summary>
-        static IOKeyboard()
-        {
-            
-        }
 
         /// <summary>
         /// Input String.

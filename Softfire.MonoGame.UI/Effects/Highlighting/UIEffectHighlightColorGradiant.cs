@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Softfire.MonoGame.UI.Effects.Transitions
+namespace Softfire.MonoGame.UI.Effects.Highlighting
 {
-    class UIEffectHighlightColorGradiant : UIBaseEffect
+    class UIEffectHighlightColorGradiant : UIEffectBase
     {
         /// <summary>
         /// Initial Color.
@@ -40,10 +41,10 @@ namespace Softfire.MonoGame.UI.Effects.Transitions
 
             if (ElapsedTime >= StartDelayInSeconds)
             {
-                ParentUIBase.HighlightColor = Color.Lerp(InitialColor, TargetColor, (float)RateOfChange);
+                ParentUIBase.Colors["Highlight"] = Color.Lerp(InitialColor, TargetColor, (float)RateOfChange);
             }
 
-            return ParentUIBase.HighlightColor == TargetColor;
+            return ParentUIBase.Colors["Highlight"] == TargetColor;
         }
     }
 }

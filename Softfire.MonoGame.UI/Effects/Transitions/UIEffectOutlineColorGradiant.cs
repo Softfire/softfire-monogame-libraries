@@ -2,7 +2,7 @@
 
 namespace Softfire.MonoGame.UI.Effects.Transitions
 {
-    class UIEffectOutlineColorGradiant : UIBaseEffect
+    public class UIEffectOutlineColorGradiant : UIEffectBase
     {
         /// <summary>
         /// Initial Color.
@@ -36,14 +36,19 @@ namespace Softfire.MonoGame.UI.Effects.Transitions
         /// <returns>Returns a bool indicating the result of the Action.</returns>
         protected override bool Action()
         {
+            var result = false;
             RateOfChange = ElapsedTime / DurationInSeconds;
 
             if (ElapsedTime >= StartDelayInSeconds)
             {
-                ParentUIBase.OutlineColor = Color.Lerp(InitialColor, TargetColor, (float)RateOfChange);
+                foreach (var outline in ParentUIBase.Outlines)
+                {
+                    outline.Color = Color.Lerp(InitialColor, TargetColor, (float)RateOfChange);
+                    result = outline.Color == TargetColor;
+                }
             }
 
-            return ParentUIBase.OutlineColor == TargetColor;
+            return result;
         }
     }
 }

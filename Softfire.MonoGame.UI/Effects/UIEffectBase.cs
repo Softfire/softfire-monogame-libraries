@@ -2,7 +2,7 @@
 
 namespace Softfire.MonoGame.UI.Effects
 {
-    public abstract class UIBaseEffect
+    public abstract class UIEffectBase
     {
         /// <summary>
         /// DeltaTime.
@@ -56,13 +56,14 @@ namespace Softfire.MonoGame.UI.Effects
         }
 
         /// <summary>
-        /// UI Effect.
+        /// UI Base Effect.
         /// </summary>
         /// <param name="uiBase">The Parent UIBase.</param>
-        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a float. Default is 1.0f.</param>
-        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a float. Default is 0.0f.</param>
-        /// <param name="orderNumber">Intakes the Transition's run Order Number as an int. Default is 0.</param>
-        public UIBaseEffect(UIBase uiBase, float durationInSeconds = 1.0f, float startDelayInSeconds = 0.0f, int orderNumber = 0)
+        /// <param name="effectType">The type of Effect.</param>
+        /// <param name="durationInSeconds">Effect duration in seconds. Intaken as a float. Default is 1.0f.</param>
+        /// <param name="startDelayInSeconds">Effect start delay in seconds. Intaken as a float. Default is 0.0f.</param>
+        /// <param name="orderNumber">Intakes the Effect's run Order Number as an int. Default is 0.</param>
+        public UIEffectBase(UIBase uiBase, float durationInSeconds = 1.0f, float startDelayInSeconds = 0.0f, int orderNumber = 0)
         {
             ParentUIBase = uiBase;
             DurationInSeconds = durationInSeconds;
@@ -91,13 +92,13 @@ namespace Softfire.MonoGame.UI.Effects
         /// </summary>
         public void Reset()
         {
+            ElapsedTime = 0;
             IsCompleted = false;
-            ElapsedTime = 0.0;
         }
 
         /// <summary>
         /// Action.
-        /// Defines Effect.
+        /// Defines Non-Drawing Effect.
         /// </summary>
         /// <returns>Returns a bool indicating the result of the Action.</returns>
         protected abstract bool Action();
