@@ -1117,7 +1117,7 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the key was released.</returns>
         public static bool KeyRelease(Keys key)
         {
-            return KeyState.IsKeyUp(key) && PreviousKeyState.IsKeyDown(key);
+            return PreviousKeyState.IsKeyDown(key) && KeyState.IsKeyUp(key);
         }
 
         /// <summary>
@@ -1150,7 +1150,7 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the key is idle.</returns>
         public static bool KeyIdle(Keys key)
         {
-            return PreviousKeyState.IsKeyUp(key) && KeyState.IsKeyUp(key);
+            return KeyState.IsKeyUp(key) && PreviousKeyState.IsKeyUp(key);
         }
 
         /// <summary>

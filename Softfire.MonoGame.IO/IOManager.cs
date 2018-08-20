@@ -33,13 +33,19 @@ namespace Softfire.MonoGame.IO
         /// Managed Keys.
         /// Contains the mappings designated for each supported input type.
         /// </summary>
-        private static Dictionary<InputType, Keys> ManagedKeys { get; } = new Dictionary<InputType, Keys>();
+        private static Dictionary<InputType, Keys> ManagedKeyboardKeys { get; } = new Dictionary<InputType, Keys>();
 
         /// <summary>
         /// Managed Buttons.
         /// Contains the mappings designated for each supported input type. 
         /// </summary>
-        private static Dictionary<InputType, Buttons> ManagedButtons { get; } = new Dictionary<InputType, Buttons>();
+        private static Dictionary<InputType, Buttons> ManagedGamepadButtons { get; } = new Dictionary<InputType, Buttons>();
+
+        /// <summary>
+        /// Managed Mouse Buttons.
+        /// Contains the mappings designated for each supported input type. 
+        /// </summary>
+        private static Dictionary<InputType, IOMouse.Buttons> ManagedMouseButtons { get; } = new Dictionary<InputType, IOMouse.Buttons>();
 
         /// <summary>
         /// Gamepads.
@@ -65,6 +71,7 @@ namespace Softfire.MonoGame.IO
         static IOManager()
         {
             LoadKeyboardInput();
+            LoadMouseInput();
             LoadGamepadInput();
         }
 
@@ -153,68 +160,101 @@ namespace Softfire.MonoGame.IO
 
         public static bool SetKeyboardInput(InputType inputType, Keys key)
         {
-            ManagedKeys[inputType] = key;
+            ManagedKeyboardKeys[inputType] = key;
 
-            return ManagedKeys[inputType] == key;
+            return ManagedKeyboardKeys[inputType] == key;
         }
 
         private static bool LoadKeyboardInput()
         {
-            ManagedKeys.Add(InputType.Confirm, Keys.Enter);
-            ManagedKeys.Add(InputType.Cancel, Keys.Escape);
-            ManagedKeys.Add(InputType.MoveUp, Keys.W);
-            ManagedKeys.Add(InputType.MoveLeft, Keys.A);
-            ManagedKeys.Add(InputType.MoveDown, Keys.S);
-            ManagedKeys.Add(InputType.MoveRight, Keys.D);
-            ManagedKeys.Add(InputType.ScrollUp, Keys.Up);
-            ManagedKeys.Add(InputType.ScrollLeft, Keys.Left);
-            ManagedKeys.Add(InputType.ScrollDown, Keys.Down);
-            ManagedKeys.Add(InputType.ScrollRight, Keys.Right);
-            ManagedKeys.Add(InputType.ToggleCamera, Keys.T);
-            ManagedKeys.Add(InputType.SnapCamera, Keys.R);
-            ManagedKeys.Add(InputType.ZoomInCamera, Keys.PageUp);
-            ManagedKeys.Add(InputType.ZoomOutCamera, Keys.PageDown);
+            ManagedKeyboardKeys.Add(InputType.Confirm, Keys.Enter);
+            ManagedKeyboardKeys.Add(InputType.Cancel, Keys.Escape);
+            ManagedKeyboardKeys.Add(InputType.MoveUp, Keys.W);
+            ManagedKeyboardKeys.Add(InputType.MoveLeft, Keys.A);
+            ManagedKeyboardKeys.Add(InputType.MoveDown, Keys.S);
+            ManagedKeyboardKeys.Add(InputType.MoveRight, Keys.D);
+            ManagedKeyboardKeys.Add(InputType.ScrollUp, Keys.Up);
+            ManagedKeyboardKeys.Add(InputType.ScrollLeft, Keys.Left);
+            ManagedKeyboardKeys.Add(InputType.ScrollDown, Keys.Down);
+            ManagedKeyboardKeys.Add(InputType.ScrollRight, Keys.Right);
+            ManagedKeyboardKeys.Add(InputType.ToggleCamera, Keys.T);
+            ManagedKeyboardKeys.Add(InputType.SnapCamera, Keys.R);
+            ManagedKeyboardKeys.Add(InputType.ZoomInCamera, Keys.PageUp);
+            ManagedKeyboardKeys.Add(InputType.ZoomOutCamera, Keys.PageDown);
 
             return true;
         }
 
         public static bool ResetKeyboardInput()
         {
-            ManagedKeys.Clear();
+            ManagedKeyboardKeys.Clear();
             return LoadKeyboardInput();
         }
 
         public static bool SetGamepadInput(InputType inputType, Buttons button)
         {
-            ManagedButtons[inputType] = button;
+            ManagedGamepadButtons[inputType] = button;
 
-            return ManagedButtons[inputType] == button;
+            return ManagedGamepadButtons[inputType] == button;
         }
 
         private static bool LoadGamepadInput()
         {
-            ManagedButtons.Add(InputType.Confirm, Buttons.A);
-            ManagedButtons.Add(InputType.Cancel, Buttons.B);
-            ManagedButtons.Add(InputType.MoveUp, Buttons.LeftThumbstickUp);
-            ManagedButtons.Add(InputType.MoveLeft, Buttons.LeftThumbstickLeft);
-            ManagedButtons.Add(InputType.MoveDown, Buttons.LeftThumbstickDown);
-            ManagedButtons.Add(InputType.MoveRight, Buttons.LeftThumbstickRight);
-            ManagedButtons.Add(InputType.ScrollUp, Buttons.RightThumbstickUp);
-            ManagedButtons.Add(InputType.ScrollLeft, Buttons.RightThumbstickLeft);
-            ManagedButtons.Add(InputType.ScrollDown, Buttons.RightThumbstickDown);
-            ManagedButtons.Add(InputType.ScrollRight, Buttons.RightThumbstickRight);
-            ManagedButtons.Add(InputType.ToggleCamera, Buttons.RightStick);
-            ManagedButtons.Add(InputType.SnapCamera, Buttons.LeftStick);
-            ManagedButtons.Add(InputType.ZoomInCamera, Buttons.LeftShoulder);
-            ManagedButtons.Add(InputType.ZoomOutCamera, Buttons.RightShoulder);
+            ManagedGamepadButtons.Add(InputType.Confirm, Buttons.A);
+            ManagedGamepadButtons.Add(InputType.Cancel, Buttons.B);
+            ManagedGamepadButtons.Add(InputType.MoveUp, Buttons.LeftThumbstickUp);
+            ManagedGamepadButtons.Add(InputType.MoveLeft, Buttons.LeftThumbstickLeft);
+            ManagedGamepadButtons.Add(InputType.MoveDown, Buttons.LeftThumbstickDown);
+            ManagedGamepadButtons.Add(InputType.MoveRight, Buttons.LeftThumbstickRight);
+            ManagedGamepadButtons.Add(InputType.ScrollUp, Buttons.RightThumbstickUp);
+            ManagedGamepadButtons.Add(InputType.ScrollLeft, Buttons.RightThumbstickLeft);
+            ManagedGamepadButtons.Add(InputType.ScrollDown, Buttons.RightThumbstickDown);
+            ManagedGamepadButtons.Add(InputType.ScrollRight, Buttons.RightThumbstickRight);
+            ManagedGamepadButtons.Add(InputType.ToggleCamera, Buttons.RightStick);
+            ManagedGamepadButtons.Add(InputType.SnapCamera, Buttons.LeftStick);
+            ManagedGamepadButtons.Add(InputType.ZoomInCamera, Buttons.LeftShoulder);
+            ManagedGamepadButtons.Add(InputType.ZoomOutCamera, Buttons.RightShoulder);
 
             return true;
         }
 
         public static bool ResetGamepadInput()
         {
-            ManagedButtons.Clear();
+            ManagedGamepadButtons.Clear();
             return LoadGamepadInput();
+        }
+
+        public static bool SetMouseInput(InputType inputType, IOMouse.Buttons button)
+        {
+            ManagedMouseButtons[inputType] = button;
+
+            return ManagedMouseButtons[inputType] == button;
+        }
+
+        private static bool LoadMouseInput()
+        {
+            ManagedMouseButtons.Add(InputType.Confirm, IOMouse.Buttons.Left);
+            ManagedMouseButtons.Add(InputType.Cancel, IOMouse.Buttons.Right);
+            ManagedMouseButtons.Add(InputType.MoveUp, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.MoveLeft, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.MoveDown, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.MoveRight, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.ScrollUp, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.ScrollLeft, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.ScrollDown, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.ScrollRight, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.ToggleCamera, IOMouse.Buttons.Middle);
+            ManagedMouseButtons.Add(InputType.SnapCamera, IOMouse.Buttons.One);
+            ManagedMouseButtons.Add(InputType.ZoomInCamera, IOMouse.Buttons.Undefined);
+            ManagedMouseButtons.Add(InputType.ZoomOutCamera, IOMouse.Buttons.Undefined);
+
+            return true;
+        }
+
+        public static bool ResetMouseInput()
+        {
+            ManagedMouseButtons.Clear();
+            return LoadMouseInput();
         }
 
         #endregion
@@ -229,7 +269,9 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the input is idle.</returns>
         public static bool InputIdle(InputType inputType, int playerIndex)
         {
-            return IOKeyboard.KeyIdle(ManagedKeys[inputType]) || Gamepads[playerIndex].ButtonIdle(ManagedButtons[inputType]);
+            return IOKeyboard.KeyIdle(ManagedKeyboardKeys[inputType]) ||
+                   IOMouse.ButtonIdle(ManagedMouseButtons[inputType]) ||
+                   playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonIdle(ManagedGamepadButtons[inputType]);
         }
 
         /// <summary>
@@ -240,7 +282,9 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the input was released.</returns>
         public static bool InputReleased(InputType inputType, int playerIndex)
         {
-            return IOKeyboard.KeyRelease(ManagedKeys[inputType]) || Gamepads[playerIndex].ButtonRelease(ManagedButtons[inputType]);
+            return IOKeyboard.KeyRelease(ManagedKeyboardKeys[inputType]) ||
+                   IOMouse.ButtonRelease(ManagedMouseButtons[inputType]) ||
+                   playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonRelease(ManagedGamepadButtons[inputType]);
         }
 
         /// <summary>
@@ -251,7 +295,9 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the input was pressed.</returns>
         public static bool InputPressed(InputType inputType, int playerIndex)
         {
-            return IOKeyboard.KeyPress(ManagedKeys[inputType]) || Gamepads[playerIndex].ButtonPress(ManagedButtons[inputType]);
+            return IOKeyboard.KeyPress(ManagedKeyboardKeys[inputType]) ||
+                   IOMouse.ButtonPress(ManagedMouseButtons[inputType]) ||
+                   playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonPress(ManagedGamepadButtons[inputType]);
         }
 
         /// <summary>
@@ -262,7 +308,9 @@ namespace Softfire.MonoGame.IO
         /// <returns>Returns a boolean indicating whether the input is being held.</returns>
         public static bool InputHeld(InputType inputType, int playerIndex)
         {
-            return IOKeyboard.KeyHeld(ManagedKeys[inputType]) || Gamepads[playerIndex].ButtonHeld(ManagedButtons[inputType]);
+            return IOKeyboard.KeyHeld(ManagedKeyboardKeys[inputType]) ||
+                   IOMouse.ButtonHeld(ManagedMouseButtons[inputType]) ||
+                   playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonHeld(ManagedGamepadButtons[inputType]);
         }
 
         #endregion

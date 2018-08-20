@@ -9,15 +9,16 @@ namespace Softfire.MonoGame.UI.Items
     public class UIButton : UIBase
     {
         /// <summary>
-        /// Is Button Clickable?
+        /// Is Clickable?
+        /// Enable/Disable the activation on the AssignedAction. Defualt is true.
         /// </summary>
-        public bool IsClickable { get; set; }
+        public bool IsClickable { get; set; } = true;
         
         /// <summary>
         /// UIButton Hover Delay.
         /// Default delay is 1.0 seconds.
         /// </summary>
-        public double HoverDelay { get; set; } = 1.0;
+        public double HoverDelay { get; set; } = 1.0D;
 
         /// <summary>
         /// Is Hovered?
@@ -68,16 +69,16 @@ namespace Softfire.MonoGame.UI.Items
         public override async Task Update(GameTime gameTime)
         {
             //IsHovered = IOMouse.Hover(Rectangle, HoverDelay);
-
-            //if (IsClickable)
-            //{
-            //    if (IOMouse.LeftClickDownInside(Rectangle))
-            //    {
-            //        AssignedAction();
-            //    }
-            //}
-
+            
             await base.Update(gameTime);
+
+            if (IsClickable)
+            {
+                if (IOMouse.LeftClickPressInside(Rectangle))
+                {
+                    AssignedAction();
+                }
+            }
 
             if (Text != null)
             {

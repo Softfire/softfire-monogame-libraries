@@ -131,82 +131,202 @@ namespace Softfire.MonoGame.IO
         /// </summary>
         public enum Buttons : byte
         {
+            /// <summary>
+            /// Use for undefined buttons.
+            /// </summary>
+            Undefined,
+            /// <summary>
+            /// Left Mouse Button.
+            /// </summary>
             Left,
+            /// <summary>
+            /// Middle Mouse Button.
+            /// </summary>
             Middle,
+            /// <summary>
+            /// Right Mouse Button.
+            /// </summary>
             Right,
+            /// <summary>
+            /// Mouse Button One.
+            /// </summary>
             One,
+            /// <summary>
+            /// Mouse Button Two.
+            /// </summary>
             Two
         }
+
+        #region Buttons
+
+        /// <summary>
+        /// Is Button Down?
+        /// Gets whether given button is currently being pressed.
+        /// </summary>
+        /// <param name="mouseState">The MouseState to inspect for the button's current state.</param>
+        /// <param name="button">The button to check if it is pressed.</param>
+        /// <returns>Returns a boolean indicating whether the button is pressed.</returns>
+        /// <exception cref="ArgumentException"></exception>
+        private static bool IsButtonDown(this MouseState mouseState, Buttons button)
+        {
+            switch (button)
+            {
+                case Buttons.Undefined:
+                    return false;
+                case Buttons.Left:
+                    return mouseState.LeftButton == ButtonState.Pressed;
+                case Buttons.Middle:
+                    return mouseState.MiddleButton == ButtonState.Pressed;
+                case Buttons.Right:
+                    return mouseState.RightButton == ButtonState.Pressed;
+                case Buttons.One:
+                    return mouseState.XButton1 == ButtonState.Pressed;
+                case Buttons.Two:
+                    return mouseState.XButton2 == ButtonState.Pressed;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        /// <summary>
+        /// Is Button Up?
+        /// Gets whether given button is currently not being pressed.
+        /// </summary>
+        /// <param name="mouseState">The MouseState to inspect for the button's current state.</param>
+        /// <param name="button">The button to check if it is released.</param>
+        /// <returns>Returns a boolean indicating whether the button is released.</returns>
+        /// <exception cref="ArgumentException"></exception>
+        private static bool IsButtonUp(this MouseState mouseState, Buttons button)
+        {
+            switch (button)
+            {
+                case Buttons.Undefined:
+                    return false;
+                case Buttons.Left:
+                    return mouseState.LeftButton == ButtonState.Released;
+                case Buttons.Middle:
+                    return mouseState.MiddleButton == ButtonState.Released;
+                case Buttons.Right:
+                    return mouseState.RightButton == ButtonState.Released;
+                case Buttons.One:
+                    return mouseState.XButton1 == ButtonState.Released;
+                case Buttons.Two:
+                    return mouseState.XButton2 == ButtonState.Released;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        /// <summary>
+        /// Button Idle.
+        /// Gets whether given button is currently idle.
+        /// </summary>
+        /// <param name="button">The button to check if it is idle.</param>
+        /// <returns>Returns a boolean indicating whether the button is idle.</returns>
+        public static bool ButtonIdle(Buttons button)
+        {
+            return MouseState.IsButtonUp(button) && PreviousMouseState.IsButtonUp(button);
+        }
+
+        /// <summary>
+        /// Button Press.
+        /// Gets whether given button is currently being pressed.
+        /// </summary>
+        /// <param name="button">The button to check if it was pressed.</param>
+        /// <returns>Returns a boolean indicating whether the button was pressed.</returns>
+        public static bool ButtonPress(Buttons button)
+        {
+            return MouseState.IsButtonDown(button) && PreviousMouseState.IsButtonUp(button);
+        }
+
+        /// <summary>
+        /// Button Release.
+        /// Gets whether given button is currently not being pressed.
+        /// </summary>
+        /// <param name="button">The button to check if it was released.</param>
+        /// <returns>Returns a boolean indicating whether the button was released.</returns>
+        public static bool ButtonRelease(Buttons button)
+        {
+            return PreviousMouseState.IsButtonDown(button) && MouseState.IsButtonUp(button);
+        }
+
+        /// <summary>
+        /// Button Held.
+        /// Gets whether given button is currently being pressed and held.
+        /// </summary>
+        /// <param name="button">The button to check if it is being held down.</param>
+        /// <returns>Returns a boolean indicating whether the button is being held down.</returns>
+        public static bool ButtonHeld(Buttons button)
+        {
+            return MouseState.IsButtonDown(button) && PreviousMouseState.IsButtonDown(button);
+        }
+
+        #endregion
 
         #region Left Click
 
         /// <summary>
-        /// Left Click Down Method.
-        /// Detects if a left click was performed.
+        /// Left Click Idle.
+        /// Gets whether the left mouse button is currently idle.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool LeftClickDown()
+        /// <returns>Returns a boolean indicating whether the left mouse button is idle.</returns>
+        public static bool LeftClickIdle()
         {
-            State = States.Click;
-
-            return PreviousMouseState.LeftButton == ButtonState.Released &&
-                   MouseState.LeftButton == ButtonState.Pressed;
+            return ButtonIdle(Buttons.Left);
         }
 
         /// <summary>
-        /// Left Click Up Method.
-        /// Detects if a left click was released.
+        /// Left Click Press.
+        /// Gets whether the left mouse button is currently being pressed.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool LeftClickUp()
+        /// <returns>Returns a boolean indicating whether the left mouse button was pressed.</returns>
+        public static bool LeftClickPress()
         {
-            State = States.Click;
-
-            return PreviousMouseState.LeftButton == ButtonState.Pressed &&
-                   MouseState.LeftButton == ButtonState.Released;
+            return ButtonPress(Buttons.Left);
         }
 
         /// <summary>
-        /// Left Click Down Inside.
-        /// Detects if a left click was performed inside the specified Rectangle.
+        /// Left Click Release.
+        /// Gets whether the left mouse button is currently not being pressed.
         /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the left click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool LeftClickDownInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether the left mouse button was released.</returns>
+        public static bool LeftClickRelease()
         {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.LeftButton == ButtonState.Released &&
-                   MouseState.LeftButton == ButtonState.Pressed;
-        }
-
-        /// <summary>
-        /// Left Click Up Inside.
-        /// Detects if a left click was released inside the specified Rectangle.
-        /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the left click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool LeftClickUpInside(Rectangle rectangle)
-        {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.LeftButton == ButtonState.Pressed &&
-                   MouseState.LeftButton == ButtonState.Released;
+            return ButtonRelease(Buttons.Left);
         }
 
         /// <summary>
         /// Left Click Held.
-        /// Detects if a left click is being held.
+        /// Gets whether the left mouse button is currently being pressed and held.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
+        /// <returns>Returns a boolean indicating whether the left mouse button is being held down.</returns>
         public static bool LeftClickHeld()
         {
-            State = States.Held;
+            return ButtonHeld(Buttons.Left);
+        }
 
-            return PreviousMouseState.LeftButton == ButtonState.Pressed &&
-                   MouseState.LeftButton == ButtonState.Pressed;
+        /// <summary>
+        /// Left Click Press Inside.
+        /// Gets whether the left mouse button was pressed inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the left mouse button was pressed inside the supplied rectangle.</returns>
+        public static bool LeftClickPressInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   LeftClickPress();
+        }
+
+        /// <summary>
+        /// Left Click Release Inside.
+        /// Gets whether the left mouse button was released inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the left mouse button was released inside the supplied rectangle.</returns>
+        public static bool LeftClickReleaseInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   LeftClickRelease();
         }
 
         #endregion
@@ -214,72 +334,67 @@ namespace Softfire.MonoGame.IO
         #region Middle Click
 
         /// <summary>
-        /// Middle Click Down Method.
-        /// Detects if a middle click was performed.
+        /// Middle Click Idle.
+        /// Gets whether the middle mouse button is currently idle.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool MiddleClickDown()
+        /// <returns>Returns a boolean indicating whether the middle mouse button is idle.</returns>
+        public static bool MiddleClickIdle()
         {
-            State = States.Click;
-
-            return PreviousMouseState.MiddleButton == ButtonState.Released &&
-                   MouseState.MiddleButton == ButtonState.Pressed;
+            return ButtonIdle(Buttons.Middle);
         }
 
         /// <summary>
-        /// Middle Click Up Method.
-        /// Detects if a middle click was released.
+        /// Middle Click Press.
+        /// Gets whether the middle mouse button is currently being pressed.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool MiddleClickUp()
+        /// <returns>Returns a boolean indicating whether the middle mouse button was pressed.</returns>
+        public static bool MiddleClickPress()
         {
-            State = States.Click;
-
-            return PreviousMouseState.MiddleButton == ButtonState.Pressed &&
-                   MouseState.MiddleButton == ButtonState.Released;
+            return ButtonPress(Buttons.Middle);
         }
 
         /// <summary>
-        /// Middle Click Down Inside.
-        /// Detects if a middle click was performed inside the specified Rectangle.
+        /// Middle Click Release.
+        /// Gets whether the middle mouse button is currently not being pressed.
         /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the left click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool MiddleClickDownInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether the middle mouse button was released.</returns>
+        public static bool MiddleClickRelease()
         {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.MiddleButton == ButtonState.Released &&
-                   MouseState.MiddleButton == ButtonState.Pressed;
-        }
-
-        /// <summary>
-        /// Middle Click Up Inside.
-        /// Detects if a middle click was released inside the specified Rectangle.
-        /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the left click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool MiddleClickUpInside(Rectangle rectangle)
-        {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.MiddleButton == ButtonState.Pressed &&
-                   MouseState.MiddleButton == ButtonState.Released;
+            return ButtonRelease(Buttons.Middle);
         }
 
         /// <summary>
         /// Middle Click Held.
-        /// Detects if a middle click is being held.
+        /// Gets whether the middle mouse button is currently being pressed and held.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
+        /// <returns>Returns a boolean indicating whether the middle mouse button is being held down.</returns>
         public static bool MiddleClickHeld()
         {
-            State = States.Held;
+            return ButtonHeld(Buttons.Middle);
+        }
 
-            return PreviousMouseState.MiddleButton == ButtonState.Pressed &&
-                   MouseState.MiddleButton == ButtonState.Pressed;
+        /// <summary>
+        /// Middle Click Press Inside.
+        /// Gets whether the middle mouse button was pressed inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the middle mouse button was pressed inside the supplied rectangle.</returns>
+        public static bool MiddleClickPressInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   MiddleClickPress();
+        }
+
+        /// <summary>
+        /// Middle Click Release Inside.
+        /// Gets whether the middle mouse button was released inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the middle mouse button was released inside the supplied rectangle.</returns>
+        public static bool MiddleClickReleaseInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   MiddleClickRelease();
         }
 
         #endregion
@@ -287,72 +402,67 @@ namespace Softfire.MonoGame.IO
         #region Right Click
 
         /// <summary>
-        /// Right Click Down Method.
-        /// Detects if a right click was performed.
+        /// Right Click Idle.
+        /// Gets whether the right mouse button is currently idle.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool RightClickDown()
+        /// <returns>Returns a boolean indicating whether the right mouse button is idle.</returns>
+        public static bool RightClickIdle()
         {
-            State = States.Click;
-
-            return PreviousMouseState.RightButton == ButtonState.Released &&
-                   MouseState.RightButton == ButtonState.Pressed;
+            return ButtonIdle(Buttons.Right);
         }
 
         /// <summary>
-        /// Right Click Method.
-        /// Detects if a right click was released.
+        /// Right Click Press.
+        /// Gets whether the right mouse button is currently being pressed.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool RightClickUp()
+        /// <returns>Returns a boolean indicating whether the right mouse button was pressed.</returns>
+        public static bool RightClickPress()
         {
-            State = States.Click;
-
-            return PreviousMouseState.RightButton == ButtonState.Pressed &&
-                   MouseState.RightButton == ButtonState.Released;
+            return ButtonPress(Buttons.Right);
         }
 
         /// <summary>
-        /// Right Click Down Inside.
-        /// Detects if a right click was made inside the specified Rectangle.
+        /// Right Click Release.
+        /// Gets whether the right mouse button is currently not being pressed.
         /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the right click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool RightClickDownInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether the right mouse button was released.</returns>
+        public static bool RightClickRelease()
         {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.RightButton == ButtonState.Released &&
-                   MouseState.RightButton == ButtonState.Pressed;
+            return ButtonRelease(Buttons.Right);
         }
 
         /// <summary>
-        /// Right Click Up Inside.
-        /// Detects if a right click was released inside the specified Rectangle.
+        /// Right Click Held.
+        /// Gets whether the right mouse button is currently being pressed and held.
         /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the right click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool RightClickUpInside(Rectangle rectangle)
-        {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.RightButton == ButtonState.Pressed &&
-                   MouseState.RightButton == ButtonState.Released;
-        }
-
-        /// <summary>
-        /// Right Click and Held.
-        /// Detects if a right click being held.
-        /// </summary>
-        /// <returns>Returns a boolean.</returns>
+        /// <returns>Returns a boolean indicating whether the right mouse button is being held down.</returns>
         public static bool RightClickHeld()
         {
-            State = States.Held;
+            return ButtonHeld(Buttons.Right);
+        }
 
-            return PreviousMouseState.RightButton == ButtonState.Pressed &&
-                   MouseState.RightButton == ButtonState.Pressed;
+        /// <summary>
+        /// Right Click Press Inside.
+        /// Gets whether the right mouse button was pressed inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the right mouse button was pressed inside the supplied rectangle.</returns>
+        public static bool RightClickPressInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   RightClickPress();
+        }
+
+        /// <summary>
+        /// Right Click Release Inside.
+        /// Gets whether the right mouse button was released inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the right mouse button was released inside the supplied rectangle.</returns>
+        public static bool RightClickReleaseInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   RightClickRelease();
         }
 
         #endregion
@@ -360,72 +470,67 @@ namespace Softfire.MonoGame.IO
         #region Button One
 
         /// <summary>
-        /// Button One Click Down Method.
-        /// Detects if a button one click was performed.
+        /// Button One Click Idle.
+        /// Gets whether mouse button one is currently idle.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool ButtonOneClickDown()
+        /// <returns>Returns a boolean indicating whether mouse button one is idle.</returns>
+        public static bool ButtonOneClickIdle()
         {
-            State = States.Click;
-
-            return PreviousMouseState.XButton1 == ButtonState.Released &&
-                   MouseState.XButton1 == ButtonState.Pressed;
+            return ButtonIdle(Buttons.One);
         }
 
         /// <summary>
-        /// Button One Click Up Method.
-        /// Detects if a button one click was released.
+        /// Button One Click Press.
+        /// Gets whether mouse button one is currently being pressed.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool ButtonOneClickUp()
+        /// <returns>Returns a boolean indicating whether mouse button one was pressed.</returns>
+        public static bool ButtonOneClickPress()
         {
-            State = States.Click;
-
-            return PreviousMouseState.XButton1 == ButtonState.Pressed &&
-                   MouseState.XButton1 == ButtonState.Released;
+            return ButtonPress(Buttons.One);
         }
 
         /// <summary>
-        /// Button One Down Inside.
-        /// Detects if a button one click was performed inside the specified Rectangle.
+        /// Button One Click Release.
+        /// Gets whether mouse button one is currently not being pressed.
         /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the button one click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool ButtonOneClickDownInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether mouse button one was released.</returns>
+        public static bool ButtonOneClickRelease()
         {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.XButton1 == ButtonState.Released &&
-                   MouseState.XButton1 == ButtonState.Pressed;
-        }
-
-        /// <summary>
-        /// Button One Click Up Inside.
-        /// Detects if a button one click was released inside the specified Rectangle.
-        /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the button one click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool ButtonOneClickUpInside(Rectangle rectangle)
-        {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.XButton1 == ButtonState.Pressed &&
-                   MouseState.XButton1 == ButtonState.Released;
+            return ButtonRelease(Buttons.One);
         }
 
         /// <summary>
         /// Button One Click Held.
-        /// Detects if a button one click is being held.
+        /// Gets whether mouse button one is currently being pressed and held.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
+        /// <returns>Returns a boolean indicating whether mouse button one is being held down.</returns>
         public static bool ButtonOneClickHeld()
         {
-            State = States.Held;
+            return ButtonHeld(Buttons.One);
+        }
 
-            return PreviousMouseState.XButton1 == ButtonState.Pressed &&
-                   MouseState.XButton1 == ButtonState.Pressed;
+        /// <summary>
+        /// Button One Click Press Inside.
+        /// Gets whether mouse button one was pressed inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button one was pressed inside the supplied rectangle.</returns>
+        public static bool ButtonOneClickPressInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   ButtonOneClickPress();
+        }
+
+        /// <summary>
+        /// Button One Click Release Inside.
+        /// Gets whether mouse button one was released inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button one was released inside the supplied rectangle.</returns>
+        public static bool ButtonOneClickReleaseInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   ButtonOneClickRelease();
         }
 
         #endregion
@@ -433,72 +538,67 @@ namespace Softfire.MonoGame.IO
         #region Button Two
 
         /// <summary>
-        /// Button Two Click Down Method.
-        /// Detects if a button two click was performed.
+        /// Button Two Click Idle.
+        /// Gets whether mouse button two is currently idle.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool ButtonTwoClickDown()
+        /// <returns>Returns a boolean indicating whether mouse button two is idle.</returns>
+        public static bool ButtonTwoClickIdle()
         {
-            State = States.Click;
-
-            return PreviousMouseState.XButton2 == ButtonState.Released &&
-                   MouseState.XButton2 == ButtonState.Pressed;
+            return ButtonIdle(Buttons.Two);
         }
 
         /// <summary>
-        /// Button Two Click Up Method.
-        /// Detects if a button two click was released.
+        /// Button Two Click Press.
+        /// Gets whether mouse button two is currently being pressed.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
-        public static bool ButtonTwoClickUp()
+        /// <returns>Returns a boolean indicating whether mouse button two was pressed.</returns>
+        public static bool ButtonTwoClickPress()
         {
-            State = States.Click;
-
-            return PreviousMouseState.XButton2 == ButtonState.Pressed &&
-                   MouseState.XButton2 == ButtonState.Released;
+            return ButtonPress(Buttons.Two);
         }
 
         /// <summary>
-        /// Button Two Down Inside.
-        /// Detects if a button two click was performed inside the specified Rectangle.
+        /// Button Two Click Release.
+        /// Gets whether mouse button two is currently not being pressed.
         /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the button two click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool ButtonTwoClickDownInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether mouse button two was released.</returns>
+        public static bool ButtonTwoClickRelease()
         {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.XButton2 == ButtonState.Released &&
-                   MouseState.XButton2 == ButtonState.Pressed;
-        }
-
-        /// <summary>
-        /// Button Two Click Up Inside.
-        /// Detects if a button two click was released inside the specified Rectangle.
-        /// </summary>
-        /// <param name="rectangle">Specified Rectangle in which to detect the button two click.</param>
-        /// <returns>Returns a boolean.</returns>
-        public static bool ButtonTwoClickUpInside(Rectangle rectangle)
-        {
-            State = States.Click;
-
-            return rectangle.Contains(Rectangle) &&
-                   PreviousMouseState.XButton2 == ButtonState.Pressed &&
-                   MouseState.XButton2 == ButtonState.Released;
+            return ButtonRelease(Buttons.Two);
         }
 
         /// <summary>
         /// Button Two Click Held.
-        /// Detects if a button two click is being held.
+        /// Gets whether mouse button two is currently being pressed and held.
         /// </summary>
-        /// <returns>Returns a boolean.</returns>
+        /// <returns>Returns a boolean indicating whether mouse button two is being held down.</returns>
         public static bool ButtonTwoClickHeld()
         {
-            State = States.Held;
+            return ButtonHeld(Buttons.Two);
+        }
 
-            return PreviousMouseState.XButton2 == ButtonState.Pressed &&
-                   MouseState.XButton2 == ButtonState.Pressed;
+        /// <summary>
+        /// Button Two Click Press Inside.
+        /// Gets whether mouse button two was pressed inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button two was pressed inside the supplied rectangle.</returns>
+        public static bool ButtonTwoClickPressInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   ButtonTwoClickPress();
+        }
+
+        /// <summary>
+        /// Button Two Click Release Inside.
+        /// Gets whether mouse button two was released inside the provided Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button two was released inside the supplied rectangle.</returns>
+        public static bool ButtonTwoClickReleaseInside(Rectangle rectangle)
+        {
+            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
+                   ButtonTwoClickRelease();
         }
 
         #endregion
