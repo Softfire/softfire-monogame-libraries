@@ -261,8 +261,22 @@ namespace Softfire.MonoGame.IO
 
         #region Input Handling
 
+        #region Idle
+
         /// <summary>
         /// Input Idle.
+        /// Checks the input for the active player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <returns>Returns a boolean indicating whether the input is idle.</returns>
+        public static bool InputIdle(InputType inputType)
+        {
+            return InputIdle(inputType, ActivePlayer);
+        }
+
+        /// <summary>
+        /// Input Idle.
+        /// Checks the input for the supplied player.
         /// </summary>
         /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
         /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
@@ -275,7 +289,49 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Input Idle.
+        /// Checks the input for the active player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <param name="bounds">The bounds to check against. Intaken as a Rectangle.</param>
+        /// <returns>Returns a boolean indicating whether the input is idle.</returns>
+        public static bool InputIdle(InputType inputType, Rectangle bounds)
+        {
+            return InputIdle(inputType, ActivePlayer, bounds);
+        }
+
+        /// <summary>
+        /// Input Idle.
+        /// Checks the input for the supplied player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
+        /// <param name="bounds">The bounds to check against. Intaken as a Rectangle.</param>
+        /// <returns>Returns a boolean indicating whether the input is idle.</returns>
+        public static bool InputIdle(InputType inputType, int playerIndex, Rectangle bounds)
+        {
+            return (IOMouse.ButtonIdle(ManagedMouseButtons[inputType]) || playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonIdle(ManagedGamepadButtons[inputType])) &&
+                   IOMouse.CheckBounds(bounds);
+        }
+
+        #endregion
+
+        #region Released
+
+        /// <summary>
         /// Input Released.
+        /// Checks the input for the active player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <returns>Returns a boolean indicating whether the input was released.</returns>
+        public static bool InputReleased(InputType inputType)
+        {
+            return InputReleased(inputType, ActivePlayer);
+        }
+
+        /// <summary>
+        /// Input Released.
+        /// Checks the input for the supplied player.
         /// </summary>
         /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
         /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
@@ -288,7 +344,49 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Input Released.
+        /// Checks the input for the active player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <param name="bounds">The bounds to check against. Intaken as a Rectangle.</param>
+        /// <returns>Returns a boolean indicating whether the input was released.</returns>
+        public static bool InputReleased(InputType inputType, Rectangle bounds)
+        {
+            return InputReleased(inputType, ActivePlayer, bounds);
+        }
+
+        /// <summary>
+        /// Input Released.
+        /// Checks the input for the supplied player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
+        /// <param name="bounds">The bounds to check against. Intaken as a Rectangle.</param>
+        /// <returns>Returns a boolean indicating whether the input was released.</returns>
+        public static bool InputReleased(InputType inputType, int playerIndex, Rectangle bounds)
+        {
+            return (IOMouse.ButtonRelease(ManagedMouseButtons[inputType]) || playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonRelease(ManagedGamepadButtons[inputType])) &&
+                   IOMouse.CheckBounds(bounds);
+        }
+
+        #endregion
+
+        #region Pressed
+
+        /// <summary>
         /// Input Pressed.
+        /// Checks the input for the active player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <returns>Returns a boolean indicating whether the input was pressed.</returns>
+        public static bool InputPressed(InputType inputType)
+        {
+            return InputPressed(inputType, ActivePlayer);
+        }
+
+        /// <summary>
+        /// Input Pressed.
+        /// Checks the input for the supplied player.
         /// </summary>
         /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
         /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
@@ -301,7 +399,50 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Input Pressed.
+        /// Checks the input for the supplied player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
+        /// <param name="bounds">The bounds to check against. Intaken as a Rectangle.</param>
+        /// <returns>Returns a boolean indicating whether the input was pressed.</returns>
+        public static bool InputPressed(InputType inputType, Rectangle bounds)
+        {
+            return InputPressed(inputType, ActivePlayer, bounds);
+        }
+
+        /// <summary>
+        /// Input Pressed.
+        /// Checks the input for the supplied player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
+        /// <param name="bounds">The bounds to check against. Intaken as a Rectangle.</param>
+        /// <returns>Returns a boolean indicating whether the input was pressed.</returns>
+        public static bool InputPressed(InputType inputType, int playerIndex, Rectangle bounds)
+        {
+            return (IOMouse.ButtonPress(ManagedMouseButtons[inputType]) || playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonPress(ManagedGamepadButtons[inputType])) &&
+                   IOMouse.CheckBounds(bounds);
+        }
+
+        #endregion
+
+        #region Held
+
+        /// <summary>
         /// Input Held.
+        /// Checks the input for the active player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <returns>Returns a boolean indicating whether the input is being held.</returns>
+        public static bool InputHeld(InputType inputType)
+        {
+            return InputHeld(inputType, ActivePlayer);
+        }
+
+        /// <summary>
+        /// Input Held.
+        /// Checks the input for the supplied player.
         /// </summary>
         /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
         /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
@@ -312,6 +453,34 @@ namespace Softfire.MonoGame.IO
                    IOMouse.ButtonHeld(ManagedMouseButtons[inputType]) ||
                    playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonHeld(ManagedGamepadButtons[inputType]);
         }
+
+        /// <summary>
+        /// Input Held.
+        /// Checks the input for the active player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <param name="bounds">The bounds to check against. Intaken as a Rectangle.</param>
+        /// <returns>Returns a boolean indicating whether the input is being held.</returns>
+        public static bool InputHeld(InputType inputType, Rectangle bounds)
+        {
+            return InputHeld(inputType, ActivePlayer, bounds);
+        }
+
+        /// <summary>
+        /// Input Held.
+        /// Checks the input for the supplied player.
+        /// </summary>
+        /// <param name="inputType">Type of input to check. Intaken as an InputType.</param>
+        /// <param name="playerIndex">Player's device to check. Intaken as an int.</param>
+        /// <param name="bounds">The bounds to check against. Intaken as a Rectangle.</param>
+        /// <returns>Returns a boolean indicating whether the input is being held.</returns>
+        public static bool InputHeld(InputType inputType, int playerIndex, Rectangle bounds)
+        {
+            return (IOMouse.ButtonHeld(ManagedMouseButtons[inputType]) || playerIndex <= Gamepads.Count && Gamepads[playerIndex].ButtonHeld(ManagedGamepadButtons[inputType])) &&
+                   IOMouse.CheckBounds(bounds);
+        }
+
+        #endregion
 
         #endregion
 

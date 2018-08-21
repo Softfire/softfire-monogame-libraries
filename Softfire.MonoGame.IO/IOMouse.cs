@@ -31,9 +31,10 @@ namespace Softfire.MonoGame.IO
         public static bool IsInUse { get; private set; }
 
         /// <summary>
-        /// Are Boundaries Enforced?
+        /// Is Remote Controlled?
+        /// Enable to allow another device to control the mouse.
         /// </summary>
-        private static bool AreBoundariesEnforced { get; set; }
+        public static bool IsRemoteControlled { get; set; }
 
         /// <summary>
         /// Use Custom Cursor?
@@ -67,6 +68,18 @@ namespace Softfire.MonoGame.IO
         /// Mouse Position.
         /// </summary>
         public static Vector2 Position { get; set; }
+
+        /// <summary>
+        /// Remote State.
+        /// The remote device's state. Used to remotely control the mouse.
+        /// </summary>
+        private static Vector2 RemoteState { get; set; }
+
+        /// <summary>
+        /// Boundaries Rectangle.
+        /// If defined, boundaries are enforced.
+        /// </summary>
+        private static Rectangle BoundariesRectangle { get; set; } = Rectangle.Empty;
 
         /// <summary>
         /// Cursor States.
@@ -267,7 +280,7 @@ namespace Softfire.MonoGame.IO
 
         /// <summary>
         /// Left Click Idle.
-        /// Gets whether the left mouse button is currently idle.
+        /// Gets whether the left mouse button is idle.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the left mouse button is idle.</returns>
         public static bool LeftClickIdle()
@@ -276,8 +289,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Left Click Idle.
+        /// Gets whether the left mouse button is idle inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the left mouse button was was inside the supplied rectangle.</returns>
+        public static bool LeftClickIdle(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && LeftClickIdle();
+        }
+
+        /// <summary>
         /// Left Click Press.
-        /// Gets whether the left mouse button is currently being pressed.
+        /// Gets whether the left mouse button was pressed.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the left mouse button was pressed.</returns>
         public static bool LeftClickPress()
@@ -286,8 +310,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Left Click Press.
+        /// Gets whether the left mouse button was pressed inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the left mouse button was pressed inside the supplied rectangle.</returns>
+        public static bool LeftClickPress(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && LeftClickPress();
+        }
+
+        /// <summary>
         /// Left Click Release.
-        /// Gets whether the left mouse button is currently not being pressed.
+        /// Gets whether the left mouse button was released.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the left mouse button was released.</returns>
         public static bool LeftClickRelease()
@@ -296,8 +331,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Left Click Release.
+        /// Gets whether the left mouse button was released inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the left mouse button was released inside the supplied rectangle.</returns>
+        public static bool LeftClickRelease(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && LeftClickRelease();
+        }
+
+        /// <summary>
         /// Left Click Held.
-        /// Gets whether the left mouse button is currently being pressed and held.
+        /// Gets whether the left mouse button is being held down.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the left mouse button is being held down.</returns>
         public static bool LeftClickHeld()
@@ -306,27 +352,14 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Left Click Press Inside.
-        /// Gets whether the left mouse button was pressed inside the provided Rectangle.
+        /// Left Click Held.
+        /// Gets whether the left mouse button was being held down inside the supplied Rectangle.
         /// </summary>
         /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether the left mouse button was pressed inside the supplied rectangle.</returns>
-        public static bool LeftClickPressInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether the left mouse button was being held down inside the supplied rectangle.</returns>
+        public static bool LeftClickHeld(Rectangle rectangle)
         {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   LeftClickPress();
-        }
-
-        /// <summary>
-        /// Left Click Release Inside.
-        /// Gets whether the left mouse button was released inside the provided Rectangle.
-        /// </summary>
-        /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether the left mouse button was released inside the supplied rectangle.</returns>
-        public static bool LeftClickReleaseInside(Rectangle rectangle)
-        {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   LeftClickRelease();
+            return CheckBounds(rectangle) && LeftClickHeld();
         }
 
         #endregion
@@ -335,7 +368,7 @@ namespace Softfire.MonoGame.IO
 
         /// <summary>
         /// Middle Click Idle.
-        /// Gets whether the middle mouse button is currently idle.
+        /// Gets whether the middle mouse button is idle.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the middle mouse button is idle.</returns>
         public static bool MiddleClickIdle()
@@ -344,8 +377,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Middle Click Idle.
+        /// Gets whether the middle mouse button is idle inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the middle mouse button is idle inside the supplied rectangle.</returns>
+        public static bool MiddleClickIdle(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && MiddleClickIdle();
+        }
+
+        /// <summary>
         /// Middle Click Press.
-        /// Gets whether the middle mouse button is currently being pressed.
+        /// Gets whether the middle mouse button is being pressed.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the middle mouse button was pressed.</returns>
         public static bool MiddleClickPress()
@@ -354,8 +398,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Middle Click Press.
+        /// Gets whether the middle mouse button was pressed inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the middle mouse button was pressed inside the supplied rectangle.</returns>
+        public static bool MiddleClickPress(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && MiddleClickPress();
+        }
+
+        /// <summary>
         /// Middle Click Release.
-        /// Gets whether the middle mouse button is currently not being pressed.
+        /// Gets whether the middle mouse button was released.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the middle mouse button was released.</returns>
         public static bool MiddleClickRelease()
@@ -364,8 +419,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Middle Click Release.
+        /// Gets whether the middle mouse button was released inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the middle mouse button was released inside the supplied rectangle.</returns>
+        public static bool MiddleClickRelease(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && MiddleClickRelease();
+        }
+
+        /// <summary>
         /// Middle Click Held.
-        /// Gets whether the middle mouse button is currently being pressed and held.
+        /// Gets whether the middle mouse button is being pressed and held.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the middle mouse button is being held down.</returns>
         public static bool MiddleClickHeld()
@@ -374,27 +440,14 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Middle Click Press Inside.
-        /// Gets whether the middle mouse button was pressed inside the provided Rectangle.
+        /// Middle Click Held.
+        /// Gets whether the middle mouse button is being pressed and held inside the supplied Rectangle.
         /// </summary>
         /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether the middle mouse button was pressed inside the supplied rectangle.</returns>
-        public static bool MiddleClickPressInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether the middle mouse button is being held down inside the supplied rectangle.</returns>
+        public static bool MiddleClickHeld(Rectangle rectangle)
         {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   MiddleClickPress();
-        }
-
-        /// <summary>
-        /// Middle Click Release Inside.
-        /// Gets whether the middle mouse button was released inside the provided Rectangle.
-        /// </summary>
-        /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether the middle mouse button was released inside the supplied rectangle.</returns>
-        public static bool MiddleClickReleaseInside(Rectangle rectangle)
-        {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   MiddleClickRelease();
+            return CheckBounds(rectangle) && MiddleClickHeld();
         }
 
         #endregion
@@ -403,7 +456,7 @@ namespace Softfire.MonoGame.IO
 
         /// <summary>
         /// Right Click Idle.
-        /// Gets whether the right mouse button is currently idle.
+        /// Gets whether the right mouse button is idle.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the right mouse button is idle.</returns>
         public static bool RightClickIdle()
@@ -412,8 +465,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Right Click Idle.
+        /// Gets whether the right mouse button is idle inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the right mouse button is idle inside the supplied rectangle.</returns>
+        public static bool RightClickIdle(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && RightClickIdle();
+        }
+
+        /// <summary>
         /// Right Click Press.
-        /// Gets whether the right mouse button is currently being pressed.
+        /// Gets whether the right mouse button is being pressed.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the right mouse button was pressed.</returns>
         public static bool RightClickPress()
@@ -422,8 +486,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Right Click Press.
+        /// Gets whether the right mouse button was pressed inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the right mouse button was pressed inside the supplied rectangle.</returns>
+        public static bool RightClickPress(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && RightClickPress();
+        }
+
+        /// <summary>
         /// Right Click Release.
-        /// Gets whether the right mouse button is currently not being pressed.
+        /// Gets whether the right mouse button was released.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the right mouse button was released.</returns>
         public static bool RightClickRelease()
@@ -432,8 +507,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Right Click Release.
+        /// Gets whether the right mouse button was released inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether the right mouse button was released inside the supplied rectangle.</returns>
+        public static bool RightClickRelease(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && RightClickRelease();
+        }
+
+        /// <summary>
         /// Right Click Held.
-        /// Gets whether the right mouse button is currently being pressed and held.
+        /// Gets whether the right mouse button is being pressed and held.
         /// </summary>
         /// <returns>Returns a boolean indicating whether the right mouse button is being held down.</returns>
         public static bool RightClickHeld()
@@ -442,27 +528,14 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Right Click Press Inside.
-        /// Gets whether the right mouse button was pressed inside the provided Rectangle.
+        /// Right Click Held.
+        /// Gets whether the right mouse button is being pressed and held inside the supplied Rectangle.
         /// </summary>
         /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether the right mouse button was pressed inside the supplied rectangle.</returns>
-        public static bool RightClickPressInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether the right mouse button is being held down inside the supplied rectangle.</returns>
+        public static bool RightClickHeld(Rectangle rectangle)
         {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   RightClickPress();
-        }
-
-        /// <summary>
-        /// Right Click Release Inside.
-        /// Gets whether the right mouse button was released inside the provided Rectangle.
-        /// </summary>
-        /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether the right mouse button was released inside the supplied rectangle.</returns>
-        public static bool RightClickReleaseInside(Rectangle rectangle)
-        {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   RightClickRelease();
+            return CheckBounds(rectangle) && RightClickHeld();
         }
 
         #endregion
@@ -470,8 +543,8 @@ namespace Softfire.MonoGame.IO
         #region Button One
 
         /// <summary>
-        /// Button One Click Idle.
-        /// Gets whether mouse button one is currently idle.
+        /// Button One Idle.
+        /// Gets whether mouse button one is idle.
         /// </summary>
         /// <returns>Returns a boolean indicating whether mouse button one is idle.</returns>
         public static bool ButtonOneClickIdle()
@@ -480,8 +553,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Button One Click Press.
-        /// Gets whether mouse button one is currently being pressed.
+        /// Button One Idle.
+        /// Gets whether mouse button one is idle inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button one is idle inside the supplied rectangle.</returns>
+        public static bool ButtonOneClickIdle(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && ButtonOneClickIdle();
+        }
+
+        /// <summary>
+        /// Button One Press.
+        /// Gets whether mouse button one is being pressed.
         /// </summary>
         /// <returns>Returns a boolean indicating whether mouse button one was pressed.</returns>
         public static bool ButtonOneClickPress()
@@ -490,8 +574,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Button One Click Release.
-        /// Gets whether mouse button one is currently not being pressed.
+        /// Button One Press.
+        /// Gets whether mouse button one was pressed inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button one was pressed inside the supplied rectangle.</returns>
+        public static bool ButtonOneClickPress(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && ButtonOneClickPress();
+        }
+
+        /// <summary>
+        /// Button One Release.
+        /// Gets whether mouse button one was released.
         /// </summary>
         /// <returns>Returns a boolean indicating whether mouse button one was released.</returns>
         public static bool ButtonOneClickRelease()
@@ -500,8 +595,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Button One Click Held.
-        /// Gets whether mouse button one is currently being pressed and held.
+        /// Button One Release.
+        /// Gets whether mouse button one was released inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button one was released inside the supplied rectangle.</returns>
+        public static bool ButtonOneClickRelease(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && ButtonOneClickRelease();
+        }
+
+        /// <summary>
+        /// Button One Held.
+        /// Gets whether mouse button one is being pressed and held.
         /// </summary>
         /// <returns>Returns a boolean indicating whether mouse button one is being held down.</returns>
         public static bool ButtonOneClickHeld()
@@ -510,27 +616,14 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Button One Click Press Inside.
-        /// Gets whether mouse button one was pressed inside the provided Rectangle.
+        /// Button One Held.
+        /// Gets whether mouse button one is being pressed and held inside the supplied Rectangle.
         /// </summary>
         /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether mouse button one was pressed inside the supplied rectangle.</returns>
-        public static bool ButtonOneClickPressInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether mouse button one is being held down inside the supplied rectangle.</returns>
+        public static bool ButtonOneClickHeld(Rectangle rectangle)
         {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   ButtonOneClickPress();
-        }
-
-        /// <summary>
-        /// Button One Click Release Inside.
-        /// Gets whether mouse button one was released inside the provided Rectangle.
-        /// </summary>
-        /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether mouse button one was released inside the supplied rectangle.</returns>
-        public static bool ButtonOneClickReleaseInside(Rectangle rectangle)
-        {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   ButtonOneClickRelease();
+            return CheckBounds(rectangle) && ButtonOneClickHeld();
         }
 
         #endregion
@@ -538,8 +631,8 @@ namespace Softfire.MonoGame.IO
         #region Button Two
 
         /// <summary>
-        /// Button Two Click Idle.
-        /// Gets whether mouse button two is currently idle.
+        /// Button Two Idle.
+        /// Gets whether mouse button two is idle.
         /// </summary>
         /// <returns>Returns a boolean indicating whether mouse button two is idle.</returns>
         public static bool ButtonTwoClickIdle()
@@ -548,8 +641,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Button Two Click Press.
-        /// Gets whether mouse button two is currently being pressed.
+        /// Button Two Idle.
+        /// Gets whether mouse button two is idle inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button two is idle inside the supplied rectangle.</returns>
+        public static bool ButtonTwoClickIdle(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && ButtonTwoClickIdle();
+        }
+
+        /// <summary>
+        /// Button Two Press.
+        /// Gets whether mouse button two is being pressed.
         /// </summary>
         /// <returns>Returns a boolean indicating whether mouse button two was pressed.</returns>
         public static bool ButtonTwoClickPress()
@@ -558,8 +662,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Button Two Click Release.
-        /// Gets whether mouse button two is currently not being pressed.
+        /// Button Two Press.
+        /// Gets whether mouse button two was pressed inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button two was pressed inside the supplied rectangle.</returns>
+        public static bool ButtonTwoClickPress(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && ButtonTwoClickPress();
+        }
+
+        /// <summary>
+        /// Button Two Release.
+        /// Gets whether mouse button two was released.
         /// </summary>
         /// <returns>Returns a boolean indicating whether mouse button two was released.</returns>
         public static bool ButtonTwoClickRelease()
@@ -568,8 +683,19 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Button Two Click Held.
-        /// Gets whether mouse button two is currently being pressed and held.
+        /// Button Two Release.
+        /// Gets whether mouse button two was released inside the supplied Rectangle.
+        /// </summary>
+        /// <param name="rectangle">The Rectangle to check.</param>
+        /// <returns>Returns a boolean indicating whether mouse button two was released inside the supplied rectangle.</returns>
+        public static bool ButtonTwoClickRelease(Rectangle rectangle)
+        {
+            return CheckBounds(rectangle) && ButtonTwoClickRelease();
+        }
+
+        /// <summary>
+        /// Button Two Held.
+        /// Gets whether mouse button two is being pressed and held.
         /// </summary>
         /// <returns>Returns a boolean indicating whether mouse button two is being held down.</returns>
         public static bool ButtonTwoClickHeld()
@@ -578,30 +704,28 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
-        /// Button Two Click Press Inside.
-        /// Gets whether mouse button two was pressed inside the provided Rectangle.
+        /// Button Two Held.
+        /// Gets whether mouse button two is being pressed and held inside the supplied Rectangle.
         /// </summary>
         /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether mouse button two was pressed inside the supplied rectangle.</returns>
-        public static bool ButtonTwoClickPressInside(Rectangle rectangle)
+        /// <returns>Returns a boolean indicating whether mouse button two is being held down inside the supplied rectangle.</returns>
+        public static bool ButtonTwoClickHeld(Rectangle rectangle)
         {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   ButtonTwoClickPress();
-        }
-
-        /// <summary>
-        /// Button Two Click Release Inside.
-        /// Gets whether mouse button two was released inside the provided Rectangle.
-        /// </summary>
-        /// <param name="rectangle">The Rectangle to check.</param>
-        /// <returns>Returns a boolean indicating whether mouse button two was released inside the supplied rectangle.</returns>
-        public static bool ButtonTwoClickReleaseInside(Rectangle rectangle)
-        {
-            return (Rectangle.Intersects(rectangle) || rectangle.Contains(Rectangle)) &&
-                   ButtonTwoClickRelease();
+            return CheckBounds(rectangle) && ButtonTwoClickHeld();
         }
 
         #endregion
+
+        /// <summary>
+        /// Check Bounds.
+        /// Checks supplied Rectangle for interaction with Mouse.
+        /// </summary>
+        /// <param name="bounds">The Rectangle to check for intersection.</param>
+        /// <returns>Returns a boolean indicating whether the Mouse is intersecting or is contained within the Rectangle</returns>
+        public static bool CheckBounds(Rectangle bounds)
+        {
+            return Rectangle.Intersects(bounds) || bounds.Contains(Rectangle);
+        }
 
         /// <summary>
         /// Hover.
@@ -686,6 +810,16 @@ namespace Softfire.MonoGame.IO
         }
 
         /// <summary>
+        /// Remote Control.
+        /// Update with controller vectors to control mouse.
+        /// </summary>
+        /// <param name="remoteVector">The vectors of the remote device.</param>
+        public static void RemoteControl(Vector2 remoteVector)
+        {
+            RemoteState += remoteVector;
+        }
+
+        /// <summary>
         /// Menu Entry Selection By Detection.
         /// </summary>
         /// <param name="currentMenuEntryIndex">The current menu item index.</param>
@@ -757,13 +891,10 @@ namespace Softfire.MonoGame.IO
 
         /// <summary>
         /// Boundaries.
-        /// Keeps Mouse Cursor within the provided rectangle.
+        /// Keeps Mouse Cursor within the BoundariesRectangle.
         /// </summary>
-        /// <param name="rectangle">The rectangle to contain the mouse cursor.</param>
-        public static void Boundaries(Rectangle rectangle)
+        private static Vector2 Boundaries()
         {
-            AreBoundariesEnforced = true;
-
             var mousePosition = new Vector2(MouseState.X, MouseState.Y);
 
             // Left
@@ -773,9 +904,9 @@ namespace Softfire.MonoGame.IO
             }
 
             // Right
-            if (MouseState.X > rectangle.Width)
+            if (MouseState.X > BoundariesRectangle.Width)
             {
-                mousePosition = new Vector2(rectangle.Width, MouseState.Y);
+                mousePosition = new Vector2(BoundariesRectangle.Width, MouseState.Y);
             }
 
             // Top
@@ -785,9 +916,9 @@ namespace Softfire.MonoGame.IO
             }
 
             // Bottom
-            if (MouseState.Y > rectangle.Height)
+            if (MouseState.Y > BoundariesRectangle.Height)
             {
-                mousePosition = new Vector2(MouseState.X, rectangle.Height);
+                mousePosition = new Vector2(MouseState.X, BoundariesRectangle.Height);
             }
 
             // Top Left
@@ -797,24 +928,34 @@ namespace Softfire.MonoGame.IO
             }
 
             // Top Right
-            if (MouseState.X > rectangle.Width && MouseState.Y < 0)
+            if (MouseState.X > BoundariesRectangle.Width && MouseState.Y < 0)
             {
-                mousePosition = new Vector2(rectangle.Width, 0);
+                mousePosition = new Vector2(BoundariesRectangle.Width, 0);
             }
 
             // Bottom Left
-            if (MouseState.X < 0 && MouseState.Y > rectangle.Height)
+            if (MouseState.X < 0 && MouseState.Y > BoundariesRectangle.Height)
             {
-                mousePosition = new Vector2(0, rectangle.Height);
+                mousePosition = new Vector2(0, BoundariesRectangle.Height);
             }
 
             // Bottom Right
-            if (MouseState.X > rectangle.Width && MouseState.Y > rectangle.Height)
+            if (MouseState.X > BoundariesRectangle.Width && MouseState.Y > BoundariesRectangle.Height)
             {
-                mousePosition = new Vector2(rectangle.Width, rectangle.Height);
+                mousePosition = new Vector2(BoundariesRectangle.Width, BoundariesRectangle.Height);
             }
 
-            Position = mousePosition;
+            return mousePosition;
+        }
+
+        public static void SetBoundaries(Rectangle bounds)
+        {
+            BoundariesRectangle = bounds;
+        }
+
+        public static void ResetBoundaries()
+        {
+            SetBoundaries(Rectangle.Empty);
         }
 
         /// <summary>
@@ -844,12 +985,9 @@ namespace Softfire.MonoGame.IO
 
             IsInUse = MouseState != PreviousMouseState;
 
-            Rectangle = new Rectangle(MouseState.X, MouseState.Y, 1, 1);
+            Rectangle = IsRemoteControlled ? new Rectangle((int)RemoteState.X, (int)RemoteState.Y, 1, 1) : new Rectangle(MouseState.X, MouseState.Y, 1, 1);
 
-            if (!AreBoundariesEnforced)
-            {
-                Position = new Vector2(Rectangle.X, Rectangle.Y);
-            }
+            Position = BoundariesRectangle != Rectangle.Empty ? Boundaries() : new Vector2(Rectangle.X, Rectangle.Y);
 
             if (UseCustomCursor &&
                 Cursor != null)
