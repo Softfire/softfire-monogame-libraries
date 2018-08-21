@@ -74,7 +74,7 @@ namespace Softfire.MonoGame.UI.Items
 
             if (IsClickable)
             {
-                if (IOMouse.LeftClickPressInside(Rectangle))
+                if (IOMouse.LeftClickPress(Rectangle))
                 {
                     AssignedAction();
                 }
