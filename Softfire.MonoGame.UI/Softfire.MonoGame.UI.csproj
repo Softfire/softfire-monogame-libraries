@@ -61,15 +61,24 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Effects\Highlighting\UIEffectHighlight.cs" />
-    <Compile Include="Effects\Transitions\UIEffectBackgroundColorGradiant.cs" />
-    <Compile Include="Effects\Transitions\UIEffectFadeOut.cs" />
-    <Compile Include="Effects\Transitions\UIEffectMoveDown.cs" />
-    <Compile Include="Effects\Transitions\UIEffectMoveLeft.cs" />
-    <Compile Include="Effects\Transitions\UIEffectMoveRight.cs" />
-    <Compile Include="Effects\Transitions\UIEffectMoveUp.cs" />
-    <Compile Include="Effects\Highlighting\UIEffectHighlightColorGradiant.cs" />
-    <Compile Include="Effects\Transitions\UIEffectOutlineColorGradiant.cs" />
+    <Compile Include="Effects\Coloring\UIEffectFontColorGradiant.cs" />
+    <Compile Include="Effects\Coloring\UIEffectFontHighlightColorGradiant.cs" />
+    <Compile Include="Effects\Scaling\UIEffectScaleDown.cs" />
+    <Compile Include="Effects\Scaling\UIEffectScaleLeft.cs" />
+    <Compile Include="Effects\Scaling\UIEffectScaleRight.cs" />
+    <Compile Include="Effects\Scaling\UIEffectScaleUp.cs" />
+    <Compile Include="Effects\Shifting\UIEffectShiftDown.cs" />
+    <Compile Include="Effects\Shifting\UIEffectShiftLeft.cs" />
+    <Compile Include="Effects\Shifting\UIEffectShiftRight.cs" />
+    <Compile Include="Effects\Shifting\UIEffectShiftUp.cs" />
+    <Compile Include="Effects\Coloring\UIEffectBackgroundColorGradiant.cs" />
+    <Compile Include="Effects\Fading\UIEffectFadeOut.cs" />
+    <Compile Include="Effects\Moving\UIEffectMoveDown.cs" />
+    <Compile Include="Effects\Moving\UIEffectMoveLeft.cs" />
+    <Compile Include="Effects\Moving\UIEffectMoveRight.cs" />
+    <Compile Include="Effects\Moving\UIEffectMoveUp.cs" />
+    <Compile Include="Effects\Coloring\UIEffectHighlightColorGradiant.cs" />
+    <Compile Include="Effects\Coloring\UIEffectOutlineColorGradiant.cs" />
     <Compile Include="Effects\UIEffectBase.cs" />
     <Compile Include="Effects\UIEffectsManager.cs" />
     <Compile Include="Items\UIText.Effects.cs" />
@@ -104,13 +113,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Effects\Transitions\UIEffectFadeIn.cs" />
+    <Compile Include="Effects\Fading\UIEffectFadeIn.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Effects\Scaling\" />
-    <Folder Include="Effects\Shifting\" />
-    <Folder Include="Effects\Text\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

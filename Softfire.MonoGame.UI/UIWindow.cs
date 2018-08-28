@@ -577,10 +577,10 @@ namespace Softfire.MonoGame.UI
 
             foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
             {
-                if (button.Text != null)
+                if (button.GetText() != null)
                 {
-                    button.Text.IsVisible = IsVisible;
-                    button.Text.ApplyEnhancedTextScaling(button.Rectangle, true);
+                    button.GetText().IsVisible = IsVisible;
+                    button.GetText().ApplyEnhancedTextScaling(button.Rectangle, true);
                 }
 
                 button.IsVisible = IsVisible;

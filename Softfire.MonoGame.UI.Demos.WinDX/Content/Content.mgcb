@@ -1,0 +1,133 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:Windows
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+
+#begin Fonts/Files/UncialAntiqua-Regular.ttf
+/copy:Fonts/Files/UncialAntiqua-Regular.ttf
+
+#begin Fonts/Legal/Uncial Antiqua.txt
+/copy:Fonts/Legal/Uncial Antiqua.txt
+
+#begin Fonts/UncialAntiqua08.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua08.spritefont
+
+#begin Fonts/UncialAntiqua10.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua10.spritefont
+
+#begin Fonts/UncialAntiqua11.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua11.spritefont
+
+#begin Fonts/UncialAntiqua12.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua12.spritefont
+
+#begin Fonts/UncialAntiqua14.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua14.spritefont
+
+#begin Fonts/UncialAntiqua16.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua16.spritefont
+
+#begin Fonts/UncialAntiqua18.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua18.spritefont
+
+#begin Fonts/UncialAntiqua20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua20.spritefont
+
+#begin Fonts/UncialAntiqua21.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua21.spritefont
+
+#begin Fonts/UncialAntiqua22.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua22.spritefont
+
+#begin Fonts/UncialAntiqua24.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua24.spritefont
+
+#begin Fonts/UncialAntiqua26.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua26.spritefont
+
+#begin Fonts/UncialAntiqua28.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua28.spritefont
+
+#begin Fonts/UncialAntiqua36.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua36.spritefont
+
+#begin Fonts/UncialAntiqua48.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua48.spritefont
+
+#begin Fonts/UncialAntiqua72.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UncialAntiqua72.spritefont
+

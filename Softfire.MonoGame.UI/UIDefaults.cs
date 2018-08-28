@@ -23,16 +23,12 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// Default Colors.
         /// </summary>
-        public Dictionary<string, Color> Colors { get; } = new Dictionary<string, Color>();
+        public Dictionary<string, Color> Colors { get; }
         
         /// <summary>
         /// Default Transparencies.
         /// </summary>
-        public Dictionary<string, float> Transparencies { get; } = new Dictionary<string, float>
-        {
-            { "Background", 1f },
-            { "Highlight", 0.25f }
-        };
+        public Dictionary<string, float> Transparencies { get; }
 
         /// <summary>
         /// Default Outlines.
@@ -100,28 +96,20 @@ namespace Softfire.MonoGame.UI
         public SpriteFont Font { get; set; }
 
         /// <summary>
-        /// Font Color.
+        /// UI Defaults for restoration.
         /// </summary>
-        public Color FontColor { get; set; }
-
-        /// <summary>
-        /// Selection Color.
-        /// </summary>
-        public Color SelectionColor { get; set; }
-
-        /// <summary>
-        /// Font Transparency.
-        /// </summary>
-        public float FontTransparency { get; set; }
-
-        /// <summary>
-        /// Selection Transparency.
-        /// </summary>
-        public float SelectionTransparency { get; set; }
-
-        /// <summary>
-        /// UI Defaults Constructor.
-        /// </summary>
+        /// <remarks>Adds the ability to restore a UI back to it's creation state.</remarks>
+        /// <see cref="ResetColors()"/>
+        /// <see cref="ResetDrawDepth()"/>
+        /// <see cref="ResetHeight()"/>
+        /// <see cref="ResetOrderNumber()"/>
+        /// <see cref="ResetOutlines()"/>
+        /// <see cref="ResetPosition()"/>
+        /// <see cref="ResetRotationAngle()"/>
+        /// <see cref="ResetScale()"/>
+        /// <see cref="ResetTransparencies()"/>
+        /// <see cref="ResetVisibility()"/>
+        /// <see cref="ResetWidth()"/>
         public UIDefaults(T parentUIObject)
         {
             ParentUIObject = parentUIObject;
@@ -144,6 +132,25 @@ namespace Softfire.MonoGame.UI
                 new UIBaseOutline(ParentUIObject, 2, "Right", UIBase.GetItemById(ParentUIObject.Outlines, 2).Thickness, UIBase.GetItemById(ParentUIObject.Outlines, 2).Color) ,
                 new UIBaseOutline(ParentUIObject, 3, "Bottom", UIBase.GetItemById(ParentUIObject.Outlines, 3).Thickness, UIBase.GetItemById(ParentUIObject.Outlines, 3).Color) ,
                 new UIBaseOutline(ParentUIObject, 4, "Left", UIBase.GetItemById(ParentUIObject.Outlines, 4).Thickness, UIBase.GetItemById(ParentUIObject.Outlines, 4).Color)
+            };
+
+            Colors = new Dictionary<string, Color>(6)
+            {
+                { "Background", ParentUIObject.Colors["Background"] },
+                { "Highlight", ParentUIObject.Colors["Highlight"] },
+                { "Outline", ParentUIObject.Colors["Outline"] },
+                { "Font", ParentUIObject.Colors["Font"] },
+                { "FontHighlight", ParentUIObject.Colors["FontHighlight"] },
+                { "Selection", ParentUIObject.Colors["Selection"] }
+            };
+
+            Transparencies = new Dictionary<string, float>(5)
+            {
+                { "Background", ParentUIObject.Transparencies["Background"] },
+                { "Highlight", ParentUIObject.Transparencies["Highlight"] },
+                { "Outline", ParentUIObject.Transparencies["Outline"] },
+                { "Font", ParentUIObject.Transparencies["Font"] },
+                { "Selection", ParentUIObject.Transparencies["Selection"] }
             };
         }
 
@@ -186,6 +193,9 @@ namespace Softfire.MonoGame.UI
         {
             ParentUIObject.Colors["Background"] = Colors["Background"];
             ParentUIObject.Colors["Highlight"] = Colors["Highlight"];
+            ParentUIObject.Colors["Outline"] = Colors["Outline"];
+            ParentUIObject.Colors["Font"] = Colors["Font"];
+            ParentUIObject.Colors["FontHighlight"] = Colors["FontHighlight"];
         }
 
         /// <summary>
@@ -195,6 +205,8 @@ namespace Softfire.MonoGame.UI
         {
             ParentUIObject.Transparencies["Background"] = Transparencies["Background"];
             ParentUIObject.Transparencies["Highlight"] = Transparencies["Highlight"];
+            ParentUIObject.Transparencies["Outline"] = Transparencies["Outline"];
+            ParentUIObject.Transparencies["Font"] = Transparencies["Font"];
         }
 
         /// <summary>

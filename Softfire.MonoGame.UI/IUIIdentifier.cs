@@ -1,19 +1,22 @@
 ﻿namespace Softfire.MonoGame.UI
 {
+    /// <summary>
+    /// An interface used for enforcing identification properties on classes.
+    /// </summary>
     internal interface IUIIdentifier
     {
         /// <summary>
-        /// Id.
+        /// A unique id.
         /// </summary>
         int Id { get; }
 
         /// <summary>
-        /// Name
+        /// A unique name.
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// Order Number.
+        /// The order number. Can be used for sorting.
         /// </summary>
         int OrderNumber { get; set; }
     }

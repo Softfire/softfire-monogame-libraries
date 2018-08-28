@@ -343,7 +343,7 @@ namespace Softfire.MonoGame.UI.Items
                     ApplyEnhancedTextOutline(spriteBatch, text);
                     ApplyEnhancedTextShadow(spriteBatch, text);
                     spriteBatch.DrawString(Font, text, new Vector2(Rectangle.X, Rectangle.Y),
-                        IsInFocus ? SelectionColor * Transparencies["Background"] : FontColor * Transparencies["Background"], RotationAngle, Vector2.Zero, Scale, SpriteEffects.None, DrawDepth);
+                        IsInFocus ? SelectionColor * Transparencies["Background"] : Colors["Font"] * Transparencies["Background"], RotationAngle, Vector2.Zero, Scale, SpriteEffects.None, DrawDepth);
 
                     break;
                 case WriteSpeeds.Delayed:
@@ -380,7 +380,7 @@ namespace Softfire.MonoGame.UI.Items
                             ApplyEnhancedTextOutline(spriteBatch, text.Substring(0, WriteIndex));
                             ApplyEnhancedTextShadow(spriteBatch, text.Substring(0, WriteIndex));
                             spriteBatch.DrawString(Font, text.Substring(0, WriteIndex), new Vector2(Rectangle.X, Rectangle.Y),
-                                IsInFocus ? SelectionColor * Transparencies["Background"] : FontColor * Transparencies["Background"], RotationAngle, Vector2.Zero, Scale, SpriteEffects.None, DrawDepth);
+                                IsInFocus ? SelectionColor * Transparencies["Background"] : Colors["Font"] * Transparencies["Background"], RotationAngle, Vector2.Zero, Scale, SpriteEffects.None, DrawDepth);
                         }
                         else if (WriteIndex < text.Length &&
                                  IsWritingComplete == false)
@@ -390,7 +390,7 @@ namespace Softfire.MonoGame.UI.Items
                                 ApplyEnhancedTextOutline(spriteBatch, text.Substring(0, WriteIndex) + text[WriteIndex]);
                                 ApplyEnhancedTextShadow(spriteBatch, text.Substring(0, WriteIndex) + text[WriteIndex]);
                                 spriteBatch.DrawString(Font, text.Substring(0, WriteIndex) + text[WriteIndex], new Vector2(Rectangle.X, Rectangle.Y),
-                                    IsInFocus ? SelectionColor * Transparencies["Background"] : FontColor * Transparencies["Background"], RotationAngle, Vector2.Zero, Scale, SpriteEffects.None, DrawDepth);
+                                    IsInFocus ? SelectionColor * Transparencies["Background"] : Colors["Font"] * Transparencies["Background"], RotationAngle, Vector2.Zero, Scale, SpriteEffects.None, DrawDepth);
 
                                 WriteIndex++;
                                 ElapsedTime = 0;
@@ -400,7 +400,7 @@ namespace Softfire.MonoGame.UI.Items
                                 ApplyEnhancedTextOutline(spriteBatch, text.Substring(0, WriteIndex));
                                 ApplyEnhancedTextShadow(spriteBatch, text.Substring(0, WriteIndex));
                                 spriteBatch.DrawString(Font, text.Substring(0, WriteIndex), new Vector2(Rectangle.X, Rectangle.Y),
-                                    IsInFocus ? SelectionColor * Transparencies["Background"] : FontColor * Transparencies["Background"], RotationAngle, Vector2.Zero, Scale, SpriteEffects.None, DrawDepth);
+                                    IsInFocus ? SelectionColor * Transparencies["Background"] : Colors["Font"] * Transparencies["Background"], RotationAngle, Vector2.Zero, Scale, SpriteEffects.None, DrawDepth);
                             }
 
                         }

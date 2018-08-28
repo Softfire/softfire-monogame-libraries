@@ -7,38 +7,49 @@ using Softfire.MonoGame.UI.Effects;
 namespace Softfire.MonoGame.UI
 {
     /// <summary>
-    /// UIBase Class.
-    /// Extended by UIBase.Effects.
+    /// The base UI class.
     /// </summary>
+    /// <remarks>Extended by UIBase.Effects and UIBase.Generics.</remarks>
     public abstract partial class UIBase : IUIIdentifier
     {
         /// <summary>
-        /// UI Graphics Device.
+        /// The UI's graphics device.
         /// </summary>
         internal static GraphicsDevice GraphicsDevice { get; set; }
 
         /// <summary>
-        /// UI Effects Manager.
+        /// The UI's effects manager.
         /// </summary>
-        protected UIEffectsManager UIEffectsManager { get; } = new UIEffectsManager();
+        public UIEffectsManager UIEffectsManager { get; } = new UIEffectsManager();
 
         /// <summary>
-        /// UI Textures.
+        /// The UI's textures.
         /// </summary>
         protected internal Dictionary<string, Texture2D> Textures { get; } = new Dictionary<string, Texture2D>();
 
         /// <summary>
-        /// UI Colors.
+        /// The UI's colors.
         /// </summary>
-        public Dictionary<string, Color> Colors { get; } = new Dictionary<string, Color>();
+        public Dictionary<string, Color> Colors { get; } = new Dictionary<string, Color>(6)
+        {
+            { "Background", Color.White },
+            { "Highlight", Color.AliceBlue },
+            { "Outline", Color.Black },
+            { "Font", Color.Black },
+            { "FontHighlight", Color.LightGray },
+            { "Selection", Color.Gray }
+        };
 
         /// <summary>
-        /// UI Transparencies.
+        /// The UI's transparency levels.
         /// </summary>
-        public Dictionary<string, float> Transparencies { get; } = new Dictionary<string, float>
+        public Dictionary<string, float> Transparencies { get; } = new Dictionary<string, float>(5)
         {
             { "Background", 1f },
-            { "Highlight", 0.25f }
+            { "Highlight", 0.25f },
+            { "Outline", 1f },
+            { "Font", 1f },
+            { "Selection", 0.75f }
         };
 
         /// <summary>
@@ -341,8 +352,6 @@ namespace Softfire.MonoGame.UI
             Width = width;
             Height = height;
             OrderNumber = orderNumber;
-            Colors.Add("Background", Color.White);
-            Colors.Add("Highlight", Color.AliceBlue);
             Scale = Vector2.One;
             RotationAngle = 0f;
             DrawDepth = 1f;
@@ -350,10 +359,10 @@ namespace Softfire.MonoGame.UI
             // Outlines
             Outlines = new List<UIBaseOutline>(4)
             {
-                new UIBaseOutline(this, 1, "Top", 1, Color.Black),
-                new UIBaseOutline(this, 2, "Right", 1, Color.Black),
-                new UIBaseOutline(this, 3, "Bottom", 1, Color.Black),
-                new UIBaseOutline(this, 4, "Left", 1, Color.Black)
+                new UIBaseOutline(this, 1, "Top", 1, Colors["Outline"]),
+                new UIBaseOutline(this, 2, "Right", 1, Colors["Outline"]),
+                new UIBaseOutline(this, 3, "Bottom", 1, Colors["Outline"]),
+                new UIBaseOutline(this, 4, "Left", 1, Colors["Outline"])
             };
 
             // Defaults
@@ -373,6 +382,19 @@ namespace Softfire.MonoGame.UI
             GetItemById(Outlines, 2).IsVisible = right;
             GetItemById(Outlines, 3).IsVisible = bottom;
             GetItemById(Outlines, 4).IsVisible = left;
+        }
+
+        /// <summary>
+        /// Enables/Disables and sets the UI's highlight color and transparency level.
+        /// </summary>
+        /// <param name="enableHighlighting">The UI's ability to highlight. Intaken as a bool.</param>
+        /// <param name="color">The UI's highlight color. Intaken as a Color. Default id Color.AliceBlue.</param>
+        /// <param name="transparencyLevel">The UI's highlight transparency level. Intaken as a float. Default is 0.5f</param>
+        public void SetHighlight(bool enableHighlighting, Color? color, float transparencyLevel = 0.5f)
+        {
+            IsHighlighting = enableHighlighting;
+            Colors["Highlight"] = color ?? Color.AliceBlue;
+            Transparencies["Highlight"] = MathHelper.Clamp(transparencyLevel, 0f, 1f);
         }
 
         /// <summary>
@@ -464,84 +486,86 @@ namespace Softfire.MonoGame.UI
                                       (int)WidthF,
                                       (int)HeightF);
 
-            if (UIEffectsManager.ActivateEffects)
-            {
-                await UIEffectsManager.RunActiveEffects();
-            }
+            await UIEffectsManager.RunActiveEffects();
 
             if (IsVisible)
             {
-                //if (IsInFocus)
-                //{
-                    // If in focus, scale out else scale in.
-                    //if (EnableScaleOutOnSelection)
-                    //{
-                    //    ScaleOut(Defaults.Scale, OnSelectionScaleOutBy, ScalingOutSpeed);
-                    //}
-                    //else if (EnableScaleInOnSelection)
-                    //{
-                    //    ScaleIn(Defaults.Scale, OnSelectionScaleInBy, ScalingInSpeed);
-                    //}
+                if (IsInFocus)
+                {
+                    //If in focus, scale out else scale in.
+                    if (EnableScaleOutOnSelection)
+                    {
+                        ScaleOut();
+                    }
+                    else if (EnableScaleInOnSelection)
+                    {
+                        ScaleIn();
+                    }
+                    
+                    if (EnableShiftUpOnSelection)
+                    {
+                        ShiftUp();
+                    }
 
-                    //if (EnableShiftUpOnSelection)
-                    //{
-                    //    ShiftUp(Defaults.Position, Defaults.Position + OnSelectionShiftUpBy, ShiftingUpSpeed);
-                    //}
+                    if (EnableShiftRightOnSelection)
+                    {
+                        ShiftRight();
+                    }
 
-                    //if (EnableShiftRightOnSelection)
-                    //{
-                    //    ShiftRight(Defaults.Position, Defaults.Position + OnSelectionShiftRightBy, ShiftingRightSpeed);
-                    //}
+                    if (EnableShiftDownOnSelection)
+                    {
+                        ShiftDown();
+                    }
 
-                    //if (EnableShiftDownOnSelection)
-                    //{
-                    //    ShiftDown(Defaults.Position, Defaults.Position + OnSelectionShiftDownBy, ShiftingDownSpeed);
-                    //}
+                    if (EnableShiftLeftOnSelection)
+                    {
+                        ShiftLeft();
+                    }
+                }
+                else
+                {
+                    //If not in focus, scale out else scale in.
+                    if (EnableScaleOutOnSelection)
+                    {
+                        ScaleIn();
+                    }
+                    else if (EnableScaleInOnSelection)
+                    {
+                        ScaleOut();
+                    }
 
-                    //if (EnableShiftLeftOnSelection)
-                    //{
-                    //    ShiftLeft(Defaults.Position, Defaults.Position + OnSelectionShiftLeftBy, ShiftingLeftSpeed);
-                    //}
-                //}
-                //else
-                //{
-                    // If not in focus, scale out else scale in.
-                    //if (EnableScaleOutOnSelection)
-                    //{
-                    //    ScaleIn(OnSelectionScaleOutBy, Defaults.Scale, ScalingInSpeed);
-                    //}
-                    //else if (EnableScaleInOnSelection)
-                    //{
-                    //    ScaleOut(OnSelectionScaleInBy, Defaults.Scale, ScalingOutSpeed);
-                    //}
+                    if (EnableShiftUpOnSelection)
+                    {
+                        if (Position.Y < Defaults.Position.Y)
+                        {
+                            ShiftDown();
+                        }
+                    }
 
-                    //if (EnableShiftUpOnSelection)
-                    //{
-                    //    ShiftDown(Defaults.Position + OnSelectionShiftUpBy, Defaults.Position, ShiftingDownSpeed);
-                    //}
+                    if (EnableShiftRightOnSelection)
+                    {
+                        if (Position.X > Defaults.Position.X)
+                        {
+                            ShiftLeft();
+                        }
+                    }
 
-                    //if (EnableShiftRightOnSelection)
-                    //{
-                    //    ShiftLeft(Defaults.Position + OnSelectionShiftRightBy, Defaults.Position, ShiftingLeftSpeed);
-                    //}
+                    if (EnableShiftDownOnSelection)
+                    {
+                        if (Position.Y > Defaults.Position.Y)
+                        {
+                            ShiftUp();
+                        }
+                    }
 
-                    //if (EnableShiftDownOnSelection)
-                    //{
-                    //    ShiftUp(Defaults.Position + OnSelectionShiftDownBy, Defaults.Position, ShiftingUpSpeed);
-                    //}
-
-                    //if (EnableShiftLeftOnSelection)
-                    //{
-                    //    ShiftRight(Defaults.Position + OnSelectionShiftLeftBy, Defaults.Position, ShiftingRightSpeed);
-                    //}
-                //}
-
-                ScaleOut();
-                ScaleIn();
-                ShiftUp();
-                ShiftRight();
-                ShiftDown();
-                ShiftLeft();
+                    if (EnableShiftLeftOnSelection)
+                    {
+                        if (Position.X < Defaults.Position.X)
+                        {
+                            ShiftRight();
+                        }
+                    }
+                }
             }
         }
 

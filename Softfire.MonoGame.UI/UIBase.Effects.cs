@@ -1,30 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Softfire.MonoGame.UI.Effects;
-using Softfire.MonoGame.UI.Effects.Highlighting;
-using Softfire.MonoGame.UI.Effects.Transitions;
+﻿using Microsoft.Xna.Framework;
 
 namespace Softfire.MonoGame.UI
 {
     /// <summary>
-    /// UIBase Class.
+    /// UI Base Class.
     /// </summary>
     public abstract partial class UIBase
     {
         #region Scaling Properties
-
-        /// <summary>
-        /// Is Currently Scaling Out?
-        /// Indicates whether the object is scaling out.
-        /// </summary>
-        public bool IsCurrentlyScalingOut { get; private set; }
-
-        /// <summary>
-        /// Is Currently Scaling In?
-        /// Indicates whether the object is scaling in.
-        /// </summary>
-        public bool IsCurrentlyScalingIn { get; private set; }
 
         /// <summary>
         /// Enable Scale Out On Selection?
@@ -39,14 +22,14 @@ namespace Softfire.MonoGame.UI
         private bool EnableScaleInOnSelection { get; set; }
 
         /// <summary>
-        /// On Selection Scale Out By.
+        /// On Selection Scale Out To.
         /// </summary>
-        private Vector2 OnSelectionScaleOutBy { get; set; } = Vector2.One;
+        private Vector2 OnSelectionScaleOutTo { get; set; }
 
         /// <summary>
-        /// On Selection Scale In By.
+        /// On Selection Scale In To.
         /// </summary>
-        private Vector2 OnSelectionScaleInBy { get; set; } = Vector2.One;
+        private Vector2 OnSelectionScaleInTo { get; set; }
 
         /// <summary>
         /// Scaling Out Rate of Change.
@@ -58,16 +41,6 @@ namespace Softfire.MonoGame.UI
         /// </summary>
         private Vector2 ScalingInRateOfChange { get; set; }
 
-        /// <summary>
-        /// Scaling Out Speed.
-        /// </summary>
-        private double ScalingOutSpeed { get; set; } = 15D;
-
-        /// <summary>
-        /// Scaling In Speed.
-        /// </summary>
-        private double ScalingInSpeed { get; set; } = 15D;
-
         #endregion
 
         #region Scaling Methods
@@ -75,31 +48,35 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// Set Scaling Out Properties.
         /// </summary>
-        /// <param name="enableScaleOutOnSelection">A bool indicating whether the UI element will scale out when in focus.</param>
-        /// <param name="onSelectionScaleOutBy">A Vector2 indicating to what scale the UI element will scale out to.</param>
-        /// <param name="scalingOutSpeed">The value defining the rate of change the UI element will scale out at.</param>
-        /// <param name="scalingInSpeed">The value defining the rate of change the UI element will scale in at.</param>
-        public void SetScalingOutProperties(bool enableScaleOutOnSelection, Vector2 onSelectionScaleOutBy, double scalingOutSpeed = 15D, double scalingInSpeed = 15D)
+        /// <param name="enableScaleOutOnSelection">A boolean indicating whether the UI element will scale out when in focus.</param>
+        /// <param name="onSelectionScaleOutTo">A Vector2 indicating to what scale the UI element will scale out to.</param>
+        /// <param name="scalingOutSpeed">The value, in milliseconds, defining the rate of change the UI element will scale out at.</param>
+        /// <param name="scalingInSpeed">The value, in milliseconds, defining the rate of change the UI element will scale in at.</param>
+        public void SetScalingOutProperties(bool enableScaleOutOnSelection, Vector2 onSelectionScaleOutTo, float scalingOutSpeed = 1000f, float scalingInSpeed = 1000f)
         {
             EnableScaleOutOnSelection = enableScaleOutOnSelection;
-            OnSelectionScaleOutBy = onSelectionScaleOutBy;
-            ScalingOutSpeed = scalingOutSpeed;
-            ScalingInSpeed = scalingInSpeed;
+            OnSelectionScaleOutTo = onSelectionScaleOutTo;
+            ScalingOutRateOfChange = (OnSelectionScaleOutTo - Defaults.Scale) / (scalingOutSpeed / 1000f);
+
+            OnSelectionScaleInTo = Defaults.Scale;
+            ScalingInRateOfChange = (OnSelectionScaleOutTo - Defaults.Scale) / (scalingInSpeed / 1000f);
         }
 
         /// <summary>
         /// Set Scaling In Properties.
         /// </summary>
-        /// <param name="enableScaleInOnSelection">A bool indicating whether the UI element will scale out when in focus.</param>
-        /// <param name="onSelectionScaleInBy">A Vector2 indicating to what scale the UI element will scale in by.</param>
-        /// <param name="scalingInSpeed">The value defining the rate of change the UI element will scale in at.</param>
-        /// <param name="scalingOutSpeed">The value defining the rate of change the UI element will scale out at.</param>
-        public void SetScalingInProperties(bool enableScaleInOnSelection, Vector2 onSelectionScaleInBy, double scalingInSpeed = 15D, double scalingOutSpeed = 15D)
+        /// <param name="enableScaleInOnSelection">A boolean indicating whether the UI element will scale out when in focus.</param>
+        /// <param name="onSelectionScaleInTo">A Vector2 indicating to what scale the UI element will scale in to.</param>
+        /// <param name="scalingInSpeed">The value, in milliseconds, defining the rate of change the UI element will scale in at.</param>
+        /// <param name="scalingOutSpeed">The value, in milliseconds, defining the rate of change the UI element will scale out at.</param>
+        public void SetScalingInProperties(bool enableScaleInOnSelection, Vector2 onSelectionScaleInTo, float scalingInSpeed = 1000f, float scalingOutSpeed = 1000f)
         {
             EnableScaleInOnSelection = enableScaleInOnSelection;
-            OnSelectionScaleInBy = onSelectionScaleInBy;
-            ScalingInSpeed = scalingInSpeed;
-            ScalingOutSpeed = scalingOutSpeed;
+            OnSelectionScaleInTo = onSelectionScaleInTo;
+            ScalingInRateOfChange = (Defaults.Scale - OnSelectionScaleInTo) / (scalingInSpeed / 1000f);
+
+            OnSelectionScaleOutTo = Defaults.Scale;
+            ScalingOutRateOfChange = (Defaults.Scale - OnSelectionScaleInTo) / (scalingOutSpeed / 1000f);
         }
 
         /// <summary>
@@ -111,37 +88,12 @@ namespace Softfire.MonoGame.UI
         /// <param name="scalingSpeed">The scaling speed. Default is 15D.</param>
         private void ScaleOut()
         {
-            var initialScale = Defaults.Scale;
-            var targetScale = OnSelectionScaleOutBy;
-
-            if (!EnableScaleOutOnSelection)
-            {
-                initialScale = OnSelectionScaleOutBy;
-                targetScale = Defaults.Scale;
-            }
-
-            if (targetScale.X > 0 ||
-                targetScale.Y > 0)
+            if (OnSelectionScaleOutTo.X > 0 ||
+                OnSelectionScaleOutTo.Y > 0)
             {
                 var scale = Scale;
-
-                if (IsCurrentlyScalingOut)
-                {
-                    scale.X = MathHelper.Clamp(scale.X + ScalingOutRateOfChange.X * (float)DeltaTime, scale.X, targetScale.X);
-                    scale.Y = MathHelper.Clamp(scale.Y + ScalingOutRateOfChange.Y * (float)DeltaTime, scale.Y, targetScale.Y);
-
-                    if (scale == targetScale)
-                    {
-                        IsCurrentlyScalingOut = false;
-                    }
-                }
-                else if (scale != targetScale)
-                {
-                    ScalingOutRateOfChange = (targetScale - initialScale) / ((int)ScalingOutSpeed / 100f);
-
-                    IsCurrentlyScalingOut = true;
-                }
-
+                scale.X = MathHelper.Clamp(scale.X + ScalingOutRateOfChange.X * (float)DeltaTime, scale.X, OnSelectionScaleOutTo.X);
+                scale.Y = MathHelper.Clamp(scale.Y + ScalingOutRateOfChange.Y * (float)DeltaTime, scale.Y, OnSelectionScaleOutTo.Y);
                 Scale = scale;
             }
         }
@@ -155,37 +107,12 @@ namespace Softfire.MonoGame.UI
         /// <param name="scalingSpeed">The scaling speed. Default is 15D.</param>
         private void ScaleIn()
         {
-            var initialScale = Defaults.Scale;
-            var targetScale = OnSelectionScaleInBy;
-
-            if (!EnableScaleInOnSelection)
-            {
-                initialScale = OnSelectionScaleInBy;
-                targetScale = Defaults.Scale;
-            }
-
-            if (targetScale.X > 0 ||
-                targetScale.Y > 0)
+            if (OnSelectionScaleInTo.X > 0 ||
+                OnSelectionScaleInTo.Y > 0)
             {
                 var scale = Scale;
-
-                if (IsCurrentlyScalingIn)
-                {
-                    scale.X = MathHelper.Clamp(scale.X - ScalingInRateOfChange.X * (float)DeltaTime, targetScale.X, scale.X);
-                    scale.Y = MathHelper.Clamp(scale.Y - ScalingInRateOfChange.Y * (float)DeltaTime, targetScale.Y, scale.Y);
-
-                    if (scale == targetScale)
-                    {
-                        IsCurrentlyScalingIn = false;
-                    }
-                }
-                else if (scale != targetScale)
-                {
-                    ScalingInRateOfChange = (initialScale - targetScale) / ((int)ScalingInSpeed / 100f);
-
-                    IsCurrentlyScalingIn = true;
-                }
-
+                scale.X = MathHelper.Clamp(scale.X - ScalingInRateOfChange.X * (float)DeltaTime, OnSelectionScaleInTo.X, scale.X);
+                scale.Y = MathHelper.Clamp(scale.Y - ScalingInRateOfChange.Y * (float)DeltaTime, OnSelectionScaleInTo.Y, scale.Y);
                 Scale = scale;
             }
         }
@@ -193,30 +120,6 @@ namespace Softfire.MonoGame.UI
         #endregion
 
         #region Shifting Properties
-
-        /// <summary>
-        /// Is Currently Shifting Up?
-        /// Indicates whether the object is shifting up.
-        /// </summary>
-        public bool IsCurrentlyShiftingUp { get; private set; }
-
-        /// <summary>
-        /// Is Currently Shifting Right?
-        /// Indicates whether the object is shifting right.
-        /// </summary>
-        public bool IsCurrentlyShiftingRight { get; private set; }
-
-        /// <summary>
-        /// Is Currently Shifting Down?
-        /// Indicates whether the object is shifting down.
-        /// </summary>
-        public bool IsCurrentlyShiftingDown { get; private set; }
-
-        /// <summary>
-        /// Is Currently Shifting Left?
-        /// Indicates whether the object is shifting left.
-        /// </summary>
-        public bool IsCurrentlyShiftingLeft { get; private set; }
 
         /// <summary>
         /// Enable Shift Up On Selection?
@@ -282,26 +185,6 @@ namespace Softfire.MonoGame.UI
         /// </summary>
         private Vector2 ShiftingLeftRateOfChange { get; set; }
 
-        /// <summary>
-        /// Shifting Up Speed.
-        /// </summary>
-        private double ShiftingUpSpeed { get; set; } = 15D;
-
-        /// <summary>
-        /// Shifting Right Speed.
-        /// </summary>
-        private double ShiftingRightSpeed { get; set; } = 15D;
-
-        /// <summary>
-        /// Shifting Down Speed.
-        /// </summary>
-        private double ShiftingDownSpeed { get; set; } = 15D;
-
-        /// <summary>
-        /// Shifting Left Speed.
-        /// </summary>
-        private double ShiftingLeftSpeed { get; set; } = 15D;
-
         #endregion
 
         #region Shifting Methods
@@ -313,12 +196,12 @@ namespace Softfire.MonoGame.UI
         /// <param name="onSelectionShiftUpBy">A Vector2 indicating by what value the UI element will shift up by.</param>
         /// <param name="shiftingUpSpeed">The value defining the rate of change the UI element will shift up at.</param>
         /// <param name="shiftingDownSpeed">The value defining the rate of change the UI element will shift down at</param>
-        public void SetShiftUpProperties(bool enableShiftUpOnSelection, Vector2 onSelectionShiftUpBy, double shiftingUpSpeed = 15D, double shiftingDownSpeed = 15D)
+        public void SetShiftUpProperties(bool enableShiftUpOnSelection, Vector2 onSelectionShiftUpBy, float shiftingUpSpeed = 1000f, float shiftingDownSpeed = 1000f)
         {
             EnableShiftUpOnSelection = enableShiftUpOnSelection;
-            OnSelectionShiftUpBy = onSelectionShiftUpBy;
-            ShiftingUpSpeed = shiftingUpSpeed;
-            ShiftingDownSpeed = shiftingDownSpeed;
+            OnSelectionShiftDownBy = OnSelectionShiftUpBy = onSelectionShiftUpBy;
+            ShiftingUpRateOfChange = OnSelectionShiftUpBy / (shiftingUpSpeed / 1000f);
+            ShiftingDownRateOfChange = OnSelectionShiftUpBy / (shiftingDownSpeed / 1000f);
         }
 
         /// <summary>
@@ -328,12 +211,14 @@ namespace Softfire.MonoGame.UI
         /// <param name="onSelectionShiftRightBy">A Vector2 indicating by what value the UI element will shift right by.</param>
         /// <param name="shiftingRightSpeed">The value defining the rate of change the UI element will shift right at.</param>
         /// <param name="shiftingLeftSpeed">The value defining the rate of change the UI element will shift left at</param>
-        public void SetShiftRightProperties(bool enableShiftRightOnSelection, Vector2 onSelectionShiftRightBy, double shiftingRightSpeed = 15D, double shiftingLeftSpeed = 15D)
+        public void SetShiftRightProperties(bool enableShiftRightOnSelection, Vector2 onSelectionShiftRightBy, float shiftingRightSpeed = 1000f, float shiftingLeftSpeed = 1000f)
         {
             EnableShiftRightOnSelection = enableShiftRightOnSelection;
             OnSelectionShiftRightBy = onSelectionShiftRightBy;
-            ShiftingRightSpeed = shiftingRightSpeed;
-            ShiftingLeftSpeed = shiftingLeftSpeed;
+            ShiftingRightRateOfChange = (Defaults.Position - OnSelectionShiftRightBy) / (shiftingRightSpeed / 1000f);
+
+            OnSelectionShiftLeftBy = Defaults.Position;
+            ShiftingLeftRateOfChange = (Defaults.Position - OnSelectionShiftLeftBy) / (shiftingLeftSpeed / 1000f);
         }
 
         /// <summary>
@@ -343,12 +228,12 @@ namespace Softfire.MonoGame.UI
         /// <param name="onSelectionShiftDownBy">A Vector2 indicating by what value the UI element will shift down by.</param>
         /// <param name="shiftingDownSpeed">The value defining the rate of change the UI element will shift down at</param>
         /// <param name="shiftingUpSpeed">The value defining the rate of change the UI element will shift up at.</param>
-        public void SetShiftDownProperties(bool enableShiftDownOnSelection, Vector2 onSelectionShiftDownBy, double shiftingDownSpeed = 15D, double shiftingUpSpeed = 15D)
+        public void SetShiftDownProperties(bool enableShiftDownOnSelection, Vector2 onSelectionShiftDownBy, float shiftingDownSpeed = 1000f, float shiftingUpSpeed = 1000f)
         {
             EnableShiftDownOnSelection = enableShiftDownOnSelection;
-            OnSelectionShiftDownBy = onSelectionShiftDownBy;
-            ShiftingDownSpeed = shiftingDownSpeed;
-            ShiftingUpSpeed = shiftingUpSpeed;
+            OnSelectionShiftUpBy = OnSelectionShiftDownBy = onSelectionShiftDownBy;
+            ShiftingDownRateOfChange = (Defaults.Position - OnSelectionShiftDownBy) / (shiftingDownSpeed / 1000f);
+            ShiftingUpRateOfChange = (Defaults.Position - OnSelectionShiftDownBy) / (shiftingUpSpeed / 1000f);
         }
 
         /// <summary>
@@ -358,12 +243,14 @@ namespace Softfire.MonoGame.UI
         /// <param name="onSelectionShiftLeftBy">A Vector2 indicating by what value the UI element will shift left by.</param>
         /// <param name="shiftingLeftSpeed">The value defining the rate of change the UI element will shift left at.</param>
         /// <param name="shiftingRightSpeed">The value defining the rate of change the UI element will shift right at</param>
-        public void SetShiftLeftProperties(bool enableShiftLeftOnSelection, Vector2 onSelectionShiftLeftBy, double shiftingLeftSpeed = 15D, double shiftingRightSpeed = 15D)
+        public void SetShiftLeftProperties(bool enableShiftLeftOnSelection, Vector2 onSelectionShiftLeftBy, float shiftingLeftSpeed = 1000f, float shiftingRightSpeed = 1000f)
         {
             EnableShiftLeftOnSelection = enableShiftLeftOnSelection;
             OnSelectionShiftLeftBy = onSelectionShiftLeftBy;
-            ShiftingLeftSpeed = shiftingLeftSpeed;
-            ShiftingRightSpeed = shiftingRightSpeed;
+            ShiftingLeftRateOfChange = (Defaults.Position - OnSelectionShiftLeftBy) / (shiftingLeftSpeed / 1000f);
+
+            OnSelectionShiftRightBy = Defaults.Position;
+            ShiftingRightRateOfChange = (Defaults.Position - OnSelectionShiftRightBy) / (shiftingRightSpeed / 1000f);
         }
 
         /// <summary>
@@ -372,29 +259,7 @@ namespace Softfire.MonoGame.UI
         private void ShiftUp()
         {
             var position = Position;
-            var targetPosition = Defaults.Position;
-
-            if (!EnableShiftUpOnSelection)
-            {
-                targetPosition += OnSelectionShiftUpBy;
-            }
-
-            if (IsCurrentlyShiftingUp)
-            {
-                position.Y = MathHelper.Clamp(position.Y - ShiftingUpRateOfChange.Y * (float)DeltaTime, targetPosition.Y, position.Y);
-
-                if (position.Y <= targetPosition.Y)
-                {
-                    IsCurrentlyShiftingUp = false;
-                }
-            }
-            else if (position.Y > targetPosition.Y)
-            {
-                ShiftingUpRateOfChange = (Defaults.Position - targetPosition) / ((int)ShiftingUpSpeed / 100f);
-
-                IsCurrentlyShiftingUp = true;
-            }
-
+            position.Y = MathHelper.Clamp(position.Y - ShiftingUpRateOfChange.Y * (float)DeltaTime, -OnSelectionShiftUpBy.Y, OnSelectionShiftUpBy.Y);
             Position = position;
         }
 
@@ -404,29 +269,7 @@ namespace Softfire.MonoGame.UI
         private void ShiftRight()
         {
             var position = Position;
-            var targetPosition = Defaults.Position;
-
-            if (!EnableShiftRightOnSelection)
-            {
-                targetPosition += OnSelectionShiftRightBy;
-            }
-
-            if (IsCurrentlyShiftingRight)
-            {
-                position.X = MathHelper.Clamp(position.X + ShiftingRightRateOfChange.X * (float)DeltaTime, position.X, targetPosition.X);
-
-                if (position.X >= targetPosition.X)
-                {
-                    IsCurrentlyShiftingRight = false;
-                }
-            }
-            else if (position.X < targetPosition.X)
-            {
-                ShiftingRightRateOfChange = (targetPosition - Defaults.Position) / ((int)ShiftingRightSpeed / 100f);
-
-                IsCurrentlyShiftingRight = true;
-            }
-
+            position.X = MathHelper.Clamp(position.X + ShiftingRightRateOfChange.X * (float)DeltaTime, -OnSelectionShiftRightBy.X, OnSelectionShiftRightBy.X);
             Position = position;
         }
 
@@ -436,29 +279,7 @@ namespace Softfire.MonoGame.UI
         private void ShiftDown()
         {
             var position = Position;
-            var targetPosition = Defaults.Position;
-
-            if (!EnableShiftDownOnSelection)
-            {
-                targetPosition += OnSelectionShiftDownBy;
-            }
-
-            if (IsCurrentlyShiftingDown)
-            {
-                position.Y = MathHelper.Clamp(position.Y + ShiftingDownRateOfChange.Y * (float)DeltaTime, position.Y, targetPosition.Y);
-
-                if (position.Y >= targetPosition.Y)
-                {
-                    IsCurrentlyShiftingDown = false;
-                }
-            }
-            else if (position.Y < targetPosition.Y)
-            {
-                ShiftingDownRateOfChange = (targetPosition - Defaults.Position) / ((int)ShiftingDownSpeed / 100f);
-
-                IsCurrentlyShiftingDown = true;
-            }
-
+            position.Y = MathHelper.Clamp(position.Y + ShiftingDownRateOfChange.Y * (float)DeltaTime, -OnSelectionShiftDownBy.Y, OnSelectionShiftDownBy.Y);
             Position = position;
         }
 
@@ -468,29 +289,7 @@ namespace Softfire.MonoGame.UI
         private void ShiftLeft()
         {
             var position = Position;
-            var targetPosition = Defaults.Position;
-
-            if (!EnableShiftLeftOnSelection)
-            {
-                targetPosition += OnSelectionShiftLeftBy;
-            }
-
-            if (IsCurrentlyShiftingLeft)
-            {
-                position.X = MathHelper.Clamp(position.X - ShiftingLeftRateOfChange.X * (float)DeltaTime, targetPosition.X, position.X);
-
-                if (position.X <= targetPosition.X)
-                {
-                    IsCurrentlyShiftingLeft = false;
-                }
-            }
-            else if (position.X > targetPosition.X)
-            {
-                ShiftingLeftRateOfChange = (Defaults.Position - targetPosition) / ((int)ShiftingLeftSpeed / 100f);
-
-                IsCurrentlyShiftingLeft = true;
-            }
-
+            position.X = MathHelper.Clamp(position.X - ShiftingLeftRateOfChange.X * (float)DeltaTime, -OnSelectionShiftLeftBy.X, OnSelectionShiftLeftBy.X);
             Position = position;
         }
 
@@ -676,121 +475,6 @@ namespace Softfire.MonoGame.UI
             }
         }
 
-        #endregion
-
-        #region Effect Triggers
-
-        /// <summary>
-        /// Trigger Background Color Gradiant.
-        /// When the condition is met a UIEffectBackgroundColorGradiant object is loaded and activated.
-        /// </summary>
-        /// <param name="condition">Boolean statement used to trigger the color change.</param>
-        /// <param name="triggerEffectIdentifier">The unique identifier used to retrieve the Effect. Intaken as a string.</param>
-        /// <param name="initialColor">The initial Color.</param>
-        /// <param name="targetColor">The target Color.</param>
-        /// <param name="durationInSeconds">Effect duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Effect start delay in seconds. Intaken as a float.</param>
-        /// <param name="storeEffect">A boolean indicating whether to store the effect for reuse. False will load then discard a new effect.</param>
-        /// <returns>Returns a bool indicating whether the condition was met.</returns>
-        public bool TriggerBackgroundColorGradiant(bool condition, string triggerEffectIdentifier, Color initialColor, Color targetColor, float durationInSeconds = 1, float startDelayInSeconds = 0, bool storeEffect = true)
-        {
-            if (condition)
-            {
-                if (storeEffect)
-                {
-                    if (UIEffectsManager.CheckForLoadedEffect(triggerEffectIdentifier) == false)
-                    {
-                        UIEffectsManager.LoadEffect(triggerEffectIdentifier, new UIEffectBackgroundColorGradiant(this, initialColor, targetColor, durationInSeconds, startDelayInSeconds));
-                    }
-
-                    if (UIEffectsManager.CheckForActivatedEffect(triggerEffectIdentifier) == false)
-                    {
-                        UIEffectsManager.ActivateLoadedEffect(triggerEffectIdentifier);
-                    }
-                }
-                else
-                {
-                    UIEffectsManager.ActivateImmediateEffect(new UIEffectBackgroundColorGradiant(this, initialColor, targetColor, durationInSeconds, startDelayInSeconds));
-                }
-            }
-
-            return condition;
-        }
-
-        /// <summary>
-        /// Trigger Outline Color Gradiant.
-        /// When the condition is met a UIEffectOutlineColorGradiant object is loaded and activated.
-        /// </summary>
-        /// <param name="condition">Boolean statement used to trigger the color change.</param>
-        /// <param name="triggerEffectIdentifier">The unique identifier used to retrieve the Effect. Intaken as a string.</param>
-        /// <param name="initialColor">The initial Color.</param>
-        /// <param name="targetColor">The target Color.</param>
-        /// <param name="durationInSeconds">Effect duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Effect start delay in seconds. Intaken as a float.</param>
-        /// <param name="storeEffect">A boolean indicating whether to store the effect for reuse. False will load then discard a new effect.</param>
-        /// <returns>Returns a bool indicating whether the condition was met.</returns>
-        public bool TriggerOutlineColorGradiant(bool condition, string triggerEffectIdentifier, Color initialColor, Color targetColor, float durationInSeconds = 1, float startDelayInSeconds = 0, bool storeEffect = true)
-        {
-            if (condition)
-            {
-                if (storeEffect)
-                {
-                    if (UIEffectsManager.CheckForLoadedEffect(triggerEffectIdentifier) == false)
-                    {
-                        UIEffectsManager.LoadEffect(triggerEffectIdentifier, new UIEffectOutlineColorGradiant(this, initialColor, targetColor, durationInSeconds, startDelayInSeconds));
-                    }
-
-                    if (UIEffectsManager.CheckForActivatedEffect(triggerEffectIdentifier) == false)
-                    {
-                        UIEffectsManager.ActivateLoadedEffect(triggerEffectIdentifier);
-                    }
-                }
-                else
-                {
-                    UIEffectsManager.ActivateImmediateEffect(new UIEffectOutlineColorGradiant(this, initialColor, targetColor, durationInSeconds, startDelayInSeconds));
-                }
-            }
-
-            return condition;
-        }
-
-        /// <summary>
-        /// Trigger Highlight Color Gradiant.
-        /// When the condition is met a UIEffectHighlightColorGradiant object is loaded and activated.
-        /// </summary>
-        /// <param name="condition">Boolean statement used to trigger the color change.</param>
-        /// <param name="triggerEffectIdentifier">The unique identifier used to retrieve the Effect. Intaken as a string.</param>
-        /// <param name="initialColor">The initial Color.</param>
-        /// <param name="targetColor">The target Color.</param>
-        /// <param name="durationInSeconds">Effect duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Effect start delay in seconds. Intaken as a float.</param>
-        /// <param name="storeEffect">A boolean indicating whether to store the effect for reuse. False will load then discard a new effect.</param>
-        /// <returns>Returns a bool indicating whether the condition was met.</returns>
-        public bool TriggerHighlightColorGradiant(bool condition, string triggerEffectIdentifier, Color initialColor, Color targetColor, float durationInSeconds = 1, float startDelayInSeconds = 0, bool storeEffect = true)
-        {
-            if (condition)
-            {
-                if (storeEffect)
-                {
-                    if (UIEffectsManager.CheckForLoadedEffect(triggerEffectIdentifier) == false)
-                    {
-                        UIEffectsManager.LoadEffect(triggerEffectIdentifier, new UIEffectHighlightColorGradiant(this, initialColor, targetColor, durationInSeconds, startDelayInSeconds));
-                    }
-
-                    if (UIEffectsManager.CheckForActivatedEffect(triggerEffectIdentifier) == false)
-                    {
-                        UIEffectsManager.ActivateLoadedEffect(triggerEffectIdentifier);
-                    }
-                }
-                else
-                {
-                    UIEffectsManager.ActivateImmediateEffect(new UIEffectHighlightColorGradiant(this, initialColor, targetColor, durationInSeconds, startDelayInSeconds));
-                }
-            }
-
-            return condition;
-        }
-        
         #endregion
     }
 }

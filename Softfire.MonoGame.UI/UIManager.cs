@@ -184,9 +184,9 @@ namespace Softfire.MonoGame.UI
         #endregion
 
         /// <summary>
-        /// Get Viewport Dimensions.
+        /// Gets the viewport's dimensions.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns a Rectangle of the viewport's dimentsions.</returns>
         internal Rectangle GetViewportDimenions()
         {
             return GraphicsDevice.Viewport.Bounds;
@@ -205,7 +205,7 @@ namespace Softfire.MonoGame.UI
             // From lowest to highest.
             foreach (var group in Groups.OrderBy(grp => grp.OrderNumber))
             {
-                await group.Update(gameTime);
+                await group.Update(gameTime).ConfigureAwait(false);
             }
         }
 

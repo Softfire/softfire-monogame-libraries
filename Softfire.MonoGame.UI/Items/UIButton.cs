@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,14 +22,20 @@ namespace Softfire.MonoGame.UI.Items
         public double HoverDelay { get; set; } = 1.0D;
 
         /// <summary>
-        /// Is Hovered?
+        /// On Hover.
         /// </summary>
-        private bool IsHovered { get; set; }
-
+        public bool OnHover { get; set; }
+        
         /// <summary>
         /// UIButton Text.
         /// </summary>
-        public UIText Text { get; set; }
+        private UIText Text { get; set; }
+
+        /// <summary>
+        /// Activate.
+        /// Activates assigned action.
+        /// </summary>
+        public bool Activate { get; set; }
 
         /// <summary>
         /// Assigned Action.
@@ -41,7 +48,7 @@ namespace Softfire.MonoGame.UI.Items
         /// Assigns an action to the UIButton.
         /// Use "() => Method()" to assign an action.
         /// </summary>
-        /// <param name="action"></param>
+        /// <param name="action">The method to process. OnPress and OnRelease control execution.</param>
         public void AssignAction(Action action)
         {
             AssignedAction = action;
@@ -61,6 +68,34 @@ namespace Softfire.MonoGame.UI.Items
 
         }
 
+        /// <summary>
+        /// Add Text.
+        /// Adds text to the button.
+        /// </summary>
+        /// <param name="font">The font to use for the button's text. Intaken as a SpriteFont.</param>
+        /// <param name="text">The button's text. Intaken as a string.</param>
+        public void AddText(SpriteFont font, string text)
+        {
+            Text = new UIText(0, "Text", font, text, 1);
+            Text.LoadContent();
+        }
+
+        /// <summary>
+        /// Get Text.
+        /// Retrieves the button's text.
+        /// </summary>
+        /// <returns></returns>
+        public UIText GetText()
+        {
+            UIText result = null;
+
+            if (Text != null)
+            {
+                result = Text;
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// UIButton Update Method.
@@ -68,13 +103,11 @@ namespace Softfire.MonoGame.UI.Items
         /// <param name="gameTime">Intakes MonoGame GameTime.</param>
         public override async Task Update(GameTime gameTime)
         {
-            //IsHovered = IOMouse.Hover(Rectangle, HoverDelay);
-            
             await base.Update(gameTime);
 
             if (IsClickable)
             {
-                if (IOMouse.LeftClickPress(Rectangle))
+                if (Activate)
                 {
                     AssignedAction();
                 }

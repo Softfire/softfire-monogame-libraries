@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.UI.Effects.Transitions;
+using Softfire.MonoGame.UI.Effects.Coloring;
 
 namespace Softfire.MonoGame.UI.Items
 {
@@ -28,11 +28,6 @@ namespace Softfire.MonoGame.UI.Items
         /// Text Font.
         /// </summary>
         public SpriteFont Font { get; set; }
-
-        /// <summary>
-        /// Font Color.
-        /// </summary>
-        public Color FontColor { get; set; }
 
         /// <summary>
         /// Selection Text Color.
@@ -94,13 +89,11 @@ namespace Softfire.MonoGame.UI.Items
         {
             Font = font;
             String = text ?? "Text";
-            FontColor = Color.Black;
             SelectionColor = Color.LightGray;
 
             AlteredString = null;
             ActivateOutlines(OutlineDepth);
 
-            Defaults.SelectionColor = SelectionColor;
             Defaults.Font = Font;
             Defaults.Texts.Add(1, String);
         }
@@ -170,24 +163,6 @@ namespace Softfire.MonoGame.UI.Items
         }
 
         /// <summary>
-        /// Reset Font Color.
-        /// Uses Defaults.
-        /// </summary>
-        public void ResetFontColor()
-        {
-            FontColor = Defaults.FontColor;
-        }
-
-        /// <summary>
-        /// Reset Selection Color.
-        /// Uses Defaults.
-        /// </summary>
-        public void ResetSelectionColor()
-        {
-            SelectionColor = Defaults.SelectionColor;
-        }
-
-        /// <summary>
         /// Reset String.
         /// Uses Defaults.
         /// </summary>
@@ -213,90 +188,6 @@ namespace Softfire.MonoGame.UI.Items
         {
             ResetString();
             ResetAlteredString();
-        }
-
-        /// <summary>
-        /// Change Font Color Trigger.
-        /// When the condition is met a UIEffectColorGradiant object is loaded and activated.
-        /// </summary>
-        /// <param name="condition">Boolean statement used to </param>
-        /// <param name="triggerEffectIdentifier">The unique identifier used to retrieve the Effect. Intaken as a string.</param>
-        /// <param name="targetColor">The target Color in the transition.</param>
-        /// <param name="durationInSeconds">Effect duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Effect start delay in seconds. Intaken as a float.</param>
-        /// <returns>Returns a bool indicating whether the condition was met.</returns>
-        public bool ChangeFontColorTrigger(bool condition, string triggerEffectIdentifier, Color targetColor, float durationInSeconds = 1, float startDelayInSeconds = 0)
-        {
-            if (condition)
-            {
-                if (UIEffectsManager.CheckForLoadedEffect(triggerEffectIdentifier) == false)
-                {
-                    UIEffectsManager.LoadEffect(triggerEffectIdentifier, new UIEffectBackgroundColorGradiant(this, FontColor, targetColor, durationInSeconds, startDelayInSeconds));
-                }
-
-                if (UIEffectsManager.CheckForActivatedEffect(triggerEffectIdentifier) == false)
-                {
-                    UIEffectsManager.ActivateLoadedEffect(triggerEffectIdentifier);
-                }
-            }
-
-            return condition;
-        }
-
-        /// <summary>
-        /// Change Selection Color Trigger.
-        /// When the condition is met a UIEffectColorGradiant object is loaded and activated.
-        /// </summary>
-        /// <param name="condition">Boolean statement used to trigger the color change.</param>
-        /// <param name="triggerEffectIdentifier">The unique identifier used to retrieve the Effect. Intaken as a string.</param>
-        /// <param name="targetColor">The target Color in the transition.</param>
-        /// <param name="durationInSeconds">Effect duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Effect start delay in seconds. Intaken as a float.</param>
-        /// <returns>Returns a bool indicating whether the condition was met.</returns>
-        public bool ChangeSelectionColorTrigger(bool condition, string triggerEffectIdentifier, Color targetColor, float durationInSeconds = 1, float startDelayInSeconds = 0)
-        {
-            if (condition)
-            {
-                if (UIEffectsManager.CheckForLoadedEffect(triggerEffectIdentifier) == false)
-                {
-                    UIEffectsManager.LoadEffect(triggerEffectIdentifier, new UIEffectBackgroundColorGradiant(this, SelectionColor, targetColor, durationInSeconds, startDelayInSeconds));
-                }
-
-                if (UIEffectsManager.CheckForActivatedEffect(triggerEffectIdentifier) == false)
-                {
-                    UIEffectsManager.ActivateLoadedEffect(triggerEffectIdentifier);
-                }
-            }
-
-            return condition;
-        }
-
-        /// <summary>
-        /// Change Outline Color Trigger.
-        /// When the condition is met a UIEffectColorGradiant object is loaded and activated.
-        /// </summary>
-        /// <param name="condition">Boolean statement used to trigger the color change.</param>
-        /// <param name="triggerEffectIdentifier">The unique identifier used to retrieve the Effect. Intaken as a string.</param>
-        /// <param name="targetColor">The target Color in the transition.</param>
-        /// <param name="durationInSeconds">Effect duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Effect start delay in seconds. Intaken as a float.</param>
-        /// <returns>Returns a bool indicating whether the condition was met.</returns>
-        public bool ChangeOutlineColorTrigger(bool condition, string triggerEffectIdentifier, Color targetColor, float durationInSeconds = 1, float startDelayInSeconds = 0)
-        {
-            if (condition)
-            {
-                if (UIEffectsManager.CheckForLoadedEffect(triggerEffectIdentifier) == false)
-                {
-                    UIEffectsManager.LoadEffect(triggerEffectIdentifier, new UIEffectBackgroundColorGradiant(this, Color.Black, targetColor, durationInSeconds, startDelayInSeconds));
-                }
-
-                if (UIEffectsManager.CheckForActivatedEffect(triggerEffectIdentifier) == false)
-                {
-                    UIEffectsManager.ActivateLoadedEffect(triggerEffectIdentifier);
-                }
-            }
-
-            return condition;
         }
 
         /// <summary>

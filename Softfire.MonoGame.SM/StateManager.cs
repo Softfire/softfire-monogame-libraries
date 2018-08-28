@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -117,7 +118,7 @@ namespace Softfire.MonoGame.SM
         /// Update Method.
         /// </summary>
         /// <param name="gameTime">Intakes MonoGame GameTime.</param>
-        public void Update(GameTime gameTime)
+        public async Task Update(GameTime gameTime)
         {
             // Maintain DeltaTime for transitions.
             Transition.DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
@@ -125,7 +126,7 @@ namespace Softfire.MonoGame.SM
             // Update Active States.
             foreach (var state in ActiveStates.OrderBy(st => st.Value.OrderNumber))
             {
-                state.Value.Update(gameTime);
+                await state.Value.Update(gameTime).ConfigureAwait(false);
             }
         }
 

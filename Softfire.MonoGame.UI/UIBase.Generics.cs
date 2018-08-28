@@ -6,7 +6,7 @@ namespace Softfire.MonoGame.UI
     public partial class UIBase
     {
         /// <summary>
-        /// Get Next Valid Item Id.
+        /// Retrieves the next valid id from the supplied list.
         /// </summary>
         /// <returns>Returns a valid item id as an int.</returns>
         internal static int GetNextValidItemId<T>(IList<T> list) where T : IUIIdentifier
@@ -21,7 +21,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Get Item By Id.
+        /// Retrieves an item by it's unique id.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
         /// <param name="list">The list to check against.</param>
@@ -33,7 +33,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Get Item By Name.
+        /// Retrieves an item by it's unique name.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
         /// <param name="list">The list to check against.</param>
@@ -45,7 +45,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Item By Id.
+        /// Removes an item by it's unique id.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
         /// <param name="list">The list to check against.</param>
@@ -65,7 +65,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Item By Name.
+        /// Removes an item by it's unique name.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
         /// <param name="list">The list to check against.</param>
@@ -84,13 +84,13 @@ namespace Softfire.MonoGame.UI
             return result;
         }
 
-        /// <summary>
-        /// Increase Item Order Number.
+        /// <summary> 
+        /// Increases an item's order number by it's unique id.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
         /// <param name="list">The list to check against.</param>
         /// <param name="itemId">The id of the item to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a boolean indicating whether the item's Order Number was increased.</returns>
+        /// <returns>Returns a boolean indicating whether the item's order number was increased.</returns>
         internal static bool IncreaseItemOrderNumber<T>(IList<T> list, int itemId) where T : IUIIdentifier
         {
             var result = false;
@@ -112,12 +112,12 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Item Order Number.
+        /// Increases an item's order number by it's unique name.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
         /// <param name="list">The list to check against.</param>
         /// <param name="itemName">The name of the item to retrieve. Intaken as a string.</param>
-        /// <returns>Returns a boolean indicating whether the item's Order Number was increased.</returns>
+        /// <returns>Returns a boolean indicating whether the item's order number was increased.</returns>
         internal static bool IncreaseItemOrderNumber<T>(IList<T> list, string itemName) where T : IUIIdentifier
         {
             var result = false;
@@ -139,12 +139,12 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Item Order Number.
+        /// Decreases an item's order number by it's unique id.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
         /// <param name="list">The list to check against.</param>
         /// <param name="itemId">The id of the item to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a boolean indicating whether the group's Order Number was decreased.</returns>
+        /// <returns>Returns a boolean indicating whether the group's order number was decreased.</returns>
         internal static bool DecreaseItemOrderNumber<T>(IList<T> list, int itemId) where T : IUIIdentifier
         {
             var result = false;
@@ -166,12 +166,12 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Item Order Number.
+        /// Decreases an item's order number by it's unique name.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
         /// <param name="list">The list to check against.</param>
         /// <param name="itemName">The name of the item to retrieve. Intaken as a string.</param>
-        /// <returns>Returns a boolean indicating whether the group's Order Number was decreased.</returns>
+        /// <returns>Returns a boolean indicating whether the group's order number was decreased.</returns>
         internal static bool DecreaseItemOrderNumber<T>(IList<T> list, string itemName) where T : IUIIdentifier
         {
             var result = false;
