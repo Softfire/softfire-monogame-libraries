@@ -61,7 +61,7 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// Outline Transparency.
         /// </summary>
-        public float Transparency { get; set; } = 1.0f;
+        public float Transparency { get; set; }
 
         /// <summary>
         /// Outline Texture.
@@ -77,13 +77,14 @@ namespace Softfire.MonoGame.UI
         /// <param name="thickness">The outline's thickness. Intaken as an int.</param>
         /// <param name="color">The outline's color.</param>
         /// <param name="transparency">The outline's transparency level. Intaken as a float.</param>
-        public UIBaseOutline(UIBase parentUIBase, int id, string name, int thickness, Color color)
+        public UIBaseOutline(UIBase parentUIBase, int id, string name, int thickness = 1, Color? color = null, float transparency = 1.0f)
         {
             ParentUIBase = parentUIBase;
             Id = id;
             Name = name;
             Thickness = thickness;
-            Color = color;
+            Color = color ?? Color.Black;
+            Transparency = transparency;
 
             Texture = ParentUIBase.CreateTexture2D();
         }

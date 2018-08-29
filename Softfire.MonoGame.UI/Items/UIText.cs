@@ -25,11 +25,6 @@ namespace Softfire.MonoGame.UI.Items
         public string AlteredString { get; set; }
 
         /// <summary>
-        /// Text Font.
-        /// </summary>
-        public SpriteFont Font { get; set; }
-
-        /// <summary>
         /// Selection Text Color.
         /// </summary>
         public Color SelectionColor { get; set; }
@@ -151,15 +146,6 @@ namespace Softfire.MonoGame.UI.Items
         public Vector2 GetLength()
         {
             return Font.MeasureString(AlteredString ?? String);
-        }
-
-        /// <summary>
-        /// Reset Font.
-        /// Uses Defaults.
-        /// </summary>
-        public void ResetFont()
-        {
-            Font = Defaults.Font;
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace Softfire.MonoGame.UI
         public string Name { get; }
 
         /// <summary>
-        /// Is Active?
+        /// Is the group active?
         /// </summary>
         public bool IsActive { get; private set; } = true;
 
@@ -59,7 +59,7 @@ namespace Softfire.MonoGame.UI
 
         /// <summary>
         /// Order Number.
-        /// Window will be updated/drawn in order from smallest to largest.
+        /// Group will be updated in order from smallest to largest.
         /// </summary>
         public int OrderNumber
         {

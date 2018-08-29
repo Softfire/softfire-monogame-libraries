@@ -85,6 +85,8 @@
     <Compile Include="IUIIdentifier.cs" />
     <Compile Include="Menu\UIMenuColumn.cs" />
     <Compile Include="Menu\UIMenu.cs" />
+    <Compile Include="Themes\UITheme.cs" />
+    <Compile Include="Themes\UIThemeManager.cs" />
     <Compile Include="UIBase.cs" />
     <Compile Include="UIBase.Effects.cs" />
     <Compile Include="Items\UIBorder.cs" />

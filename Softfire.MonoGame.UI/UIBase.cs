@@ -8,6 +8,7 @@ namespace Softfire.MonoGame.UI
 {
     /// <summary>
     /// The base UI class.
+    /// The root of all UI.
     /// </summary>
     /// <remarks>Extended by UIBase.Effects and UIBase.Generics.</remarks>
     public abstract partial class UIBase : IUIIdentifier
@@ -43,12 +44,13 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// The UI's transparency levels.
         /// </summary>
-        public Dictionary<string, float> Transparencies { get; } = new Dictionary<string, float>(5)
+        public Dictionary<string, float> Transparencies { get; } = new Dictionary<string, float>(6)
         {
             { "Background", 1f },
             { "Highlight", 0.25f },
             { "Outline", 1f },
             { "Font", 1f },
+            { "FontHighlight", 0.75f },
             { "Selection", 0.75f }
         };
 
@@ -278,6 +280,11 @@ namespace Softfire.MonoGame.UI
         /// UI Draw Depth.
         /// </summary>
         public float DrawDepth { get; set; }
+        
+        /// <summary>
+        /// UI Font.
+        /// </summary>
+        public SpriteFont Font { get; set; }
 
         #region Booleans
 
@@ -328,7 +335,8 @@ namespace Softfire.MonoGame.UI
         #endregion
 
         /// <summary>
-        /// UIBase Default Constructor.
+        /// The UIBase default constructor.
+        /// Everything a UI should have in it's base.
         /// </summary>
         /// <param name="id">The base's id. Intaken as an int.</param>
         /// <param name="name">The base's name. Intaken as a string.</param>
@@ -359,15 +367,17 @@ namespace Softfire.MonoGame.UI
             // Outlines
             Outlines = new List<UIBaseOutline>(4)
             {
-                new UIBaseOutline(this, 1, "Top", 1, Colors["Outline"]),
-                new UIBaseOutline(this, 2, "Right", 1, Colors["Outline"]),
-                new UIBaseOutline(this, 3, "Bottom", 1, Colors["Outline"]),
-                new UIBaseOutline(this, 4, "Left", 1, Colors["Outline"])
+                new UIBaseOutline(this, 1, "Top", 1, Colors["Outline"], Transparencies["Outline"]),
+                new UIBaseOutline(this, 2, "Right", 1, Colors["Outline"], Transparencies["Outline"]),
+                new UIBaseOutline(this, 3, "Bottom", 1, Colors["Outline"], Transparencies["Outline"]),
+                new UIBaseOutline(this, 4, "Left", 1, Colors["Outline"], Transparencies["Outline"])
             };
 
             // Defaults
             Defaults = new UIDefaults<UIBase>(this);
         }
+
+        #region Outlines
 
         /// <summary>
         /// Set Outline Visiblity.
@@ -385,20 +395,65 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Enables/Disables and sets the UI's highlight color and transparency level.
+        /// Sets the all the outlines to the color in Colors["Outline"].
         /// </summary>
-        /// <param name="enableHighlighting">The UI's ability to highlight. Intaken as a bool.</param>
-        /// <param name="color">The UI's highlight color. Intaken as a Color. Default id Color.AliceBlue.</param>
-        /// <param name="transparencyLevel">The UI's highlight transparency level. Intaken as a float. Default is 0.5f</param>
-        public void SetHighlight(bool enableHighlighting, Color? color, float transparencyLevel = 0.5f)
+        /// <see cref="Colors"/>
+        public void SetOutlineColor()
         {
-            IsHighlighting = enableHighlighting;
-            Colors["Highlight"] = color ?? Color.AliceBlue;
-            Transparencies["Highlight"] = MathHelper.Clamp(transparencyLevel, 0f, 1f);
+            foreach (var outline in Outlines)
+            {
+                outline.Color = Colors["Outline"];
+            }
         }
 
         /// <summary>
-        /// Check Is In Focus.
+        /// Set outline color for each outline.
+        /// </summary>
+        /// <param name="top">The color for the top outline. Intaken as a Color.</param>
+        /// <param name="right">The color for the right outline. Intaken as a Color.</param>
+        /// <param name="bottom">The color for the bottom outline. Intaken as a Color.</param>
+        /// <param name="left">The color for the left outline. Intaken as a Color.</param>
+        public void SetOutlineColor(Color top, Color right, Color bottom, Color left)
+        {
+            GetItemById(Outlines, 1).Color = top;
+            GetItemById(Outlines, 2).Color = right;
+            GetItemById(Outlines, 3).Color = bottom;
+            GetItemById(Outlines, 4).Color = left;
+        }
+
+        /// <summary>
+        /// Sets the all the outlines transparency level to the transparecny level in Transparencies["Outline"].
+        /// </summary>
+        /// <see cref="Transparencies"/>
+        public void SetOutlineTransparency()
+        {
+            foreach (var outline in Outlines)
+            {
+                outline.Transparency = Transparencies["Outline"];
+            }
+        }
+
+        /// <summary>
+        /// Set outline transparency.
+        /// </summary>
+        /// <param name="top">The transparency level for the top outline. Intaken as a float.</param>
+        /// <param name="right">The transparency level for the right outline. Intaken as a float.</param>
+        /// <param name="bottom">The transparency level for the bottom outline. Intaken as a float.</param>
+        /// <param name="left">The transparency level for the left outline. Intaken as a float.</param>
+        public void SetOutlineTransparency(float top, float right, float bottom, float left)
+        {
+            GetItemById(Outlines, 1).Transparency = top;
+            GetItemById(Outlines, 2).Transparency = right;
+            GetItemById(Outlines, 3).Transparency = bottom;
+            GetItemById(Outlines, 4).Transparency = left;
+        }
+
+        #endregion
+
+        #region Focus Checks
+
+        /// <summary>
+        /// Checks if the UI element is in focus.
         /// Pass in a rectangle to check if it intersects with or is inside this object's Rectangle.
         /// IsInFocus is updated in this call.
         /// </summary>
@@ -418,7 +473,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary> 
-        /// Check Is In Focus.
+        /// Checks if the UI element is in focus.
         /// Pass in an index number to be used to check if it matches the Index Number.
         /// IsInFocus is updated in this call.
         /// </summary>
@@ -437,7 +492,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Check Is In Focus.
+        /// Checks if the UI element is in focus.
         /// Pass in a condition that will determine if the object is in focus.
         /// IsInFocus is updated in this call.
         /// </summary>
@@ -447,6 +502,8 @@ namespace Softfire.MonoGame.UI
         {
             return IsInFocus = condition;
         }
+
+        #endregion
 
         /// <summary>
         /// Create Texture2D.

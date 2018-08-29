@@ -101,6 +101,7 @@ namespace Softfire.MonoGame.UI
         /// <remarks>Adds the ability to restore a UI back to it's creation state.</remarks>
         /// <see cref="ResetColors()"/>
         /// <see cref="ResetDrawDepth()"/>
+        /// <see cref="ResetFont()"/>
         /// <see cref="ResetHeight()"/>
         /// <see cref="ResetOrderNumber()"/>
         /// <see cref="ResetOutlines()"/>
@@ -144,12 +145,13 @@ namespace Softfire.MonoGame.UI
                 { "Selection", ParentUIObject.Colors["Selection"] }
             };
 
-            Transparencies = new Dictionary<string, float>(5)
+            Transparencies = new Dictionary<string, float>(6)
             {
                 { "Background", ParentUIObject.Transparencies["Background"] },
                 { "Highlight", ParentUIObject.Transparencies["Highlight"] },
                 { "Outline", ParentUIObject.Transparencies["Outline"] },
                 { "Font", ParentUIObject.Transparencies["Font"] },
+                { "FontHighlight", ParentUIObject.Transparencies["FontHighlight"] },
                 { "Selection", ParentUIObject.Transparencies["Selection"] }
             };
         }
@@ -196,6 +198,7 @@ namespace Softfire.MonoGame.UI
             ParentUIObject.Colors["Outline"] = Colors["Outline"];
             ParentUIObject.Colors["Font"] = Colors["Font"];
             ParentUIObject.Colors["FontHighlight"] = Colors["FontHighlight"];
+            ParentUIObject.Colors["Selection"] = Colors["Selection"];
         }
 
         /// <summary>
@@ -207,6 +210,8 @@ namespace Softfire.MonoGame.UI
             ParentUIObject.Transparencies["Highlight"] = Transparencies["Highlight"];
             ParentUIObject.Transparencies["Outline"] = Transparencies["Outline"];
             ParentUIObject.Transparencies["Font"] = Transparencies["Font"];
+            ParentUIObject.Transparencies["FontHighlight"] = Transparencies["FontHighlight"];
+            ParentUIObject.Transparencies["Selection"] = Transparencies["Selection"];
         }
 
         /// <summary>
@@ -256,6 +261,14 @@ namespace Softfire.MonoGame.UI
         public void ResetRotationAngle()
         {
             ParentUIObject.RotationAngle = RotationAngle;
+        }
+
+        /// <summary>
+        /// Reset UI Font.
+        /// </summary>
+        public void ResetFont()
+        {
+            ParentUIObject.Font = Font;
         }
     }
 }

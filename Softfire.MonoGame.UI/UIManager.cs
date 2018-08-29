@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Softfire.MonoGame.UI.Effects;
+using Softfire.MonoGame.UI.Themes;
 
 namespace Softfire.MonoGame.UI
 {
@@ -14,87 +15,56 @@ namespace Softfire.MonoGame.UI
     public class UIManager
     {
         /// <summary>
-        /// UIManager Content Manager.
+        /// The UI manager's content manager.
         /// </summary>
         private ContentManager Content { get; }
 
         /// <summary>
-        /// UIManager Graphics Device.
+        /// The graphics device used by the UI manager.
         /// </summary>
         private GraphicsDevice GraphicsDevice { get; }
 
         /// <summary>
-        /// Fonts.
+        /// Loaded fonts availble for use.
         /// </summary>
         public UIFonts Fonts { get; }
 
         /// <summary>
-        /// Input Devices.
-        /// </summary>
-        internal Dictionary<string, Rectangle> InputDevices { get; }
-
-        /// <summary>
-        /// UIManager Window Dictionary.
+        /// The UI groups in use.
         /// </summary>
         private List<UIGroup> Groups { get; } = new List<UIGroup>();
 
         /// <summary>
-        /// UIManager Constructor.
-        /// UIManager updates and draws all UI and their contents.
+        /// A Theme manager.
+        /// Add, get, remove, reorder and apply themes.
         /// </summary>
-        /// <param name="graphicsDevice">Intakes a GraphicsDevice.</param>
-        /// <param name="parentContentManager">Intakes a ContentManager.</param>
+        public UIThemeManager Themes { get; } = new UIThemeManager();
+        
+        /// <summary>
+        /// The UI manager creates, maintains, updates and draws all UI and their contents.
+        /// </summary>
+        /// <param name="graphicsDevice">The graphics device to use to display the UI. Intakes a GraphicsDevice.</param>
+        /// <param name="parentContentManager">The parent content manager used to generate an independant content manager for UI elements. Intakes a ContentManager.</param>
         public UIManager(GraphicsDevice graphicsDevice, ContentManager parentContentManager)
         {
             GraphicsDevice = graphicsDevice;
             UIBase.GraphicsDevice = GraphicsDevice;
             Content = new ContentManager(parentContentManager.ServiceProvider, "Content");
             Fonts = new UIFonts(Content);
-
-            InputDevices = new Dictionary<string, Rectangle>();
-        }
-
-        /// <summary>
-        /// Add Input Device.
-        /// Pass in the Rectangle of an input device to have it checked for detection against all Windows.
-        /// Features can be available once focus has been given. Such as scrolling and zoom.
-        /// </summary>
-        /// <param name="identifier">Intakes a unique identifier as a string.</param>
-        /// <param name="deviceRectangle">Intakes a device Rectangle.</param>
-        public void AddInputDevice(string identifier, Rectangle deviceRectangle)
-        {
-            if (InputDevices.ContainsKey(identifier) == false)
-            {
-                InputDevices.Add(identifier, deviceRectangle);
-            }
-        }
-
-        /// <summary>
-        /// Update Input Device.
-        /// Updates the corresponding input device's rectangle.
-        /// </summary>
-        /// <param name="identifier">Intakes a unique identifier as a string.</param>
-        /// <param name="deviceRectangle">Intakes a device Rectangle.</param>
-        public void UpdateInputDevice(string identifier, Rectangle deviceRectangle)
-        {
-            if (InputDevices.ContainsKey(identifier))
-            {
-                InputDevices[identifier] = deviceRectangle;
-            }
         }
 
         #region Groups
 
         /// <summary>
-        /// Add Group.
+        /// Adds a new UI group.
         /// </summary>
-        /// <param name="name">The group's name. Intaken as a string.</param>
+        /// <param name="groupName">The group's name. Intaken as a string.</param>
         /// <returns>Returns the group id of the newly added group as an int.</returns>
-        public int AddGroup(string name)
+        public int AddGroup(string groupName)
         {
             var nextGroupId = UIBase.GetNextValidItemId(Groups);
 
-            var newGroup = new UIGroup(this, nextGroupId, name, nextGroupId);
+            var newGroup = new UIGroup(this, nextGroupId, groupName, nextGroupId);
 
             Groups.Add(newGroup);
 
@@ -102,27 +72,27 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Get Group.
+        /// Gets a group by id.
         /// </summary>
         /// <param name="groupId">The id of the group to retrieve. Intaken as an int.</param>
-        /// <returns>Returns the group with the specified name, if present, otherwise null.</returns>
+        /// <returns>Returns the group with the specified id, if present, otherwise null.</returns>
         public UIGroup GetGroup(int groupId)
         {
             return UIBase.GetItemById(Groups, groupId);
         }
 
         /// <summary>
-        /// Get Group.
+        /// Gets a group by name.
         /// </summary>
-        /// <param name="name">The name of the group to retrieve. Intaken as a string.</param>
+        /// <param name="groupName">The name of the group to retrieve. Intaken as a string.</param>
         /// <returns>Returns the group with the specified name, if present, otherwise null.</returns>
-        public UIGroup GetGroup(string name)
+        public UIGroup GetGroup(string groupName)
         {
-            return UIBase.GetItemByName(Groups, name);
+            return UIBase.GetItemByName(Groups, groupName);
         }
 
         /// <summary>
-        /// Remove Group.
+        /// Removes a group by id.
         /// </summary>
         /// <param name="groupId">The id of the group to remove. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the group was removed.</returns>
@@ -132,7 +102,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Group.
+        /// Removes a group by name.
         /// </summary>
         /// <param name="groupName">The name of the group to remove. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the group was removed.</returns>
@@ -142,7 +112,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Group Order Number.
+        /// Increases a groups order number by id.
         /// </summary>
         /// <param name="groupId">The id of the group to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the group's order number was increased.</returns>
@@ -152,7 +122,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Group Order Number.
+        /// Increases a groups order number by name.
         /// </summary>
         /// <param name="groupName">The name of the group to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the group's order number was increased.</returns>
@@ -162,7 +132,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Group Order Number.
+        /// Decreases a groups order number by id.
         /// </summary>
         /// <param name="groupId">The id of the group to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the group's order number was decreased.</returns>
@@ -172,7 +142,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Group Order Number.
+        /// Decreases a groups order number by name.
         /// </summary>
         /// <param name="groupName">The name of the group to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the group's order number was decreased.</returns>
@@ -186,7 +156,7 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// Gets the viewport's dimensions.
         /// </summary>
-        /// <returns>Returns a Rectangle of the viewport's dimentsions.</returns>
+        /// <returns>Returns a Rectangle of the viewport's dimensions.</returns>
         internal Rectangle GetViewportDimenions()
         {
             return GraphicsDevice.Viewport.Bounds;
@@ -201,8 +171,7 @@ namespace Softfire.MonoGame.UI
             // UI Effects Delta Time.
             UIEffectBase.DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
 
-            // Update Order is Ascending.
-            // From lowest to highest.
+            // Update order is ascending.
             foreach (var group in Groups.OrderBy(grp => grp.OrderNumber))
             {
                 await group.Update(gameTime).ConfigureAwait(false);

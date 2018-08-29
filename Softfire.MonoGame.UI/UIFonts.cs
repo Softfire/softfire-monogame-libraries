@@ -9,7 +9,7 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// UI Font Content Manager.
         /// </summary>
-        private ContentManager UIContent { get; }
+        private ContentManager Content { get; }
 
         /// <summary>
         /// Fonts.
@@ -22,7 +22,7 @@ namespace Softfire.MonoGame.UI
         /// <param name="parentContentManager">Intakes the parent's ContentManager.</param>
         public UIFonts(ContentManager parentContentManager)
         {
-            UIContent = parentContentManager;
+            Content = new ContentManager(parentContentManager.ServiceProvider, "Content");
 
             Fonts = new Dictionary<string, SpriteFont>();
         }
@@ -39,7 +39,7 @@ namespace Softfire.MonoGame.UI
 
             if (Fonts.ContainsKey(identifier) == false)
             {
-                Fonts.Add(identifier, UIContent.Load<SpriteFont>(fontFilePath));
+                Fonts.Add(identifier, Content.Load<SpriteFont>(fontFilePath));
                 result = true;
             }
 
@@ -69,7 +69,7 @@ namespace Softfire.MonoGame.UI
         /// </summary>
         public void UnloadAllFonts()
         {
-            UIContent.Unload();
+            Content.Unload();
         }
 
         /// <summary>

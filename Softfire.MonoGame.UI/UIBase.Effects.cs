@@ -2,9 +2,6 @@
 
 namespace Softfire.MonoGame.UI
 {
-    /// <summary>
-    /// UI Base Class.
-    /// </summary>
     public abstract partial class UIBase
     {
         #region Scaling Properties
