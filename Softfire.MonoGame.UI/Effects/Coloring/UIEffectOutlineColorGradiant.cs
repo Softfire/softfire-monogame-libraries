@@ -6,13 +6,8 @@ namespace Softfire.MonoGame.UI.Effects.Coloring
     /// <summary>
     /// An effect to transition the UI's outline color to another color.
     /// </summary>
-    public class UIEffectOutlineColorGradiant : UIEffectBase
+    public class UIEffectOutlineColorGradient : UIEffectBase
     {
-        /// <summary>
-        /// The effect's initial color.
-        /// </summary>
-        private Color InitialColor { get; }
-
         /// <summary>
         /// The effect's target Color.
         /// </summary>
@@ -28,10 +23,9 @@ namespace Softfire.MonoGame.UI.Effects.Coloring
         /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a float. Default is 1f.</param>
         /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a float. Default is 0f.</param>
         /// <param name="orderNumber">The effect's run order number. Intaken as an int. Default is 0.</param>
-        public UIEffectOutlineColorGradiant(UIBase uiBase, int id, string name, Color targetColor,
+        public UIEffectOutlineColorGradient(UIBase uiBase, int id, string name, Color targetColor,
                                             float durationInSeconds = 1f, float startDelayInSeconds = 0f, int orderNumber = 0) : base(uiBase, id, name, durationInSeconds, startDelayInSeconds, orderNumber)
         {
-            InitialColor = ParentUIBase.Colors["Outline"];
             TargetColor = targetColor;
         }
 
@@ -41,13 +35,13 @@ namespace Softfire.MonoGame.UI.Effects.Coloring
         /// <returns>Returns a bool indicating whether the color was transitioned.</returns>
         protected override bool Action()
         {
-            RateOfChange = ElapsedTime / DurationInSeconds;
-
             if (ElapsedTime >= StartDelayInSeconds)
             {
+                RateOfChange += DeltaTime / DurationInSeconds;
+
                 foreach (var outline in ParentUIBase.Outlines)
                 {
-                    outline.Color = Color.Lerp(InitialColor, TargetColor, (float)RateOfChange);
+                    outline.Color = Color.Lerp(outline.Color, TargetColor, (float)RateOfChange);
                 }
             }
 

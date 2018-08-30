@@ -35,22 +35,22 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// UI Group Buttons.
         /// </summary>
-        private List<UIButton> Buttons { get; } = new List<UIButton>();
+        internal List<UIButton> Buttons { get; } = new List<UIButton>();
 
         /// <summary>
         /// UI Group Texts.
         /// </summary>
-        private List<UIText> Texts { get; } = new List<UIText>();
+        internal List<UIText> Texts { get; } = new List<UIText>();
 
         /// <summary>
         /// UI Group Menus.
         /// </summary>
-        private List<UIMenu> Menus { get; } = new List<UIMenu>();
+        internal List<UIMenu> Menus { get; } = new List<UIMenu>();
 
         /// <summary>
         /// UI Group Windows.
         /// </summary>
-        private List<UIWindow> Windows { get; } = new List<UIWindow>();
+        internal List<UIWindow> Windows { get; } = new List<UIWindow>();
 
         /// <summary>
         /// Internal Order Number.
@@ -105,46 +105,76 @@ namespace Softfire.MonoGame.UI
         #region Buttons
 
         /// <summary>
-        /// Add Button.
+        /// Adds a button.
         /// </summary>
-        /// <param name="name">The button's name. Intaken as a string.</param>
-        /// <returns>Returns the button id of the newly added button as an int.</returns>
-        public int AddButton(string name)
+        /// <param name="buttonName">The button's name. Intaken as a string.</param>
+        /// <returns>Returns the button id, if added, otherwise zero.</returns>
+        /// <remarks>If a button already exists with the provided name then a zero is returned indicating failure to add the button.</remarks>
+        public int AddButton(string buttonName)
         {
-            var nextButtonId = UIBase.GetNextValidItemId(Buttons);
+            var nextButtonId = 0;
 
-            var button = new UIButton(nextButtonId, name, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f), 100, 50, nextButtonId);
-            button.LoadContent();
+            if (CheckForButton(buttonName) == false)
+            {
+                nextButtonId = UIBase.GetNextValidItemId(Buttons);
 
-            Buttons.Add(button);
+                if (CheckForButton(nextButtonId) == false)
+                {
+                    var button = new UIButton(nextButtonId, buttonName, new Vector2(ParentManager.GetViewportDimenions().Width / 2f,
+                                                                                    ParentManager.GetViewportDimenions().Height / 2f), 100, 50, nextButtonId);
+                    button.LoadContent();
+
+                    Buttons.Add(button);
+                }
+            }
 
             return nextButtonId;
         }
 
         /// <summary>
-        /// Get Button.
+        /// Checks for a button by id.
+        /// </summary>
+        /// <param name="buttonId">The id of the button to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the button is present.</returns>
+        public bool CheckForButton(int buttonId)
+        {
+            return UIBase.CheckItemById(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Checks for a button by name.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the button is present.</returns>
+        public bool CheckForButton(string buttonName)
+        {
+            return UIBase.CheckItemByName(Buttons, buttonName);
+        }
+
+        /// <summary>
+        /// Gets a button by id.
         /// </summary>
         /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a UIButton with the requested id.</returns>
+        /// <returns>Returns the button with the specified id, if present, otherwise null.</returns>
         public UIButton GetButton(int buttonId)
         {
-            return UIBase.GetItemById(Buttons, buttonId);
+            return CheckForButton(buttonId) ? UIBase.GetItemById(Buttons, buttonId) : default(UIButton);
         }
 
         /// <summary>
-        /// Get Button.
+        /// Ges a button by name.
         /// </summary>
-        /// <param name="buttonName">The name of the button to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a UIButton with the requested name.</returns>
+        /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
+        /// <returns>Returns the button with the specified name, if present, otherwise null.</returns>
         public UIButton GetButton(string buttonName)
         {
-            return UIBase.GetItemByName(Buttons, buttonName);
+            return CheckForButton(buttonName) ? UIBase.GetItemByName(Buttons, buttonName) : default(UIButton);
         }
 
         /// <summary>
-        /// Remove Button.
+        /// Removes a button by id.
         /// </summary>
-        /// <param name="buttonName">The id of the button to be removed. Intaken as an int.</param>
+        /// <param name="buttonId">The id of the button to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the button was removed.</returns>
         public bool RemoveButton(int buttonId)
         {
@@ -152,7 +182,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Button.
+        /// Removes a button by name.
         /// </summary>
         /// <param name="buttonName">The name of the button to be removed. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the button was removed.</returns>
@@ -162,7 +192,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Button Order Number.
+        /// Increases a button's order number by id.
         /// </summary>
         /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the button's order number was increased.</returns>
@@ -172,7 +202,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Button Order Number.
+        /// Increases a button's order number bu name.
         /// </summary>
         /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the button's order number was increased.</returns>
@@ -182,7 +212,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Button Order Number.
+        /// Decreases a button's order number by id.
         /// </summary>
         /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the button's order number was decreased.</returns>
@@ -192,7 +222,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Button Order Number.
+        /// Decreases a button's order number by name.
         /// </summary>
         /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the button's order number was decreased.</returns>
@@ -209,44 +239,74 @@ namespace Softfire.MonoGame.UI
         /// Add Text.
         /// Adds a new text on to the group.
         /// </summary>
-        /// <param name="name">The text's name. Intaken as a string.</param>
+        /// <param name="textName">The text's name. Intaken as a string.</param>
         /// <param name="font">The text's font. Intaken as a SpriteFont.</param>
         /// <param name="text">The text's text. Intaken as a string.</param>
-        /// <returns>Returns the text id of the newly added text as an int.</returns>
-        public int AddText(string name, SpriteFont font, string text)
+        /// <returns>Returns the text id, if added, otherwise zero.</returns>
+        /// <remarks>If text already exists with the provided name then a zero is returned indicating failure to add the text.</remarks>
+        public int AddText(string textName, SpriteFont font, string text)
         {
-            var nextTextId = UIBase.GetNextValidItemId(Texts);
+            var nextTextId = 0;
 
-            var newText = new UIText(nextTextId, name, font, text, nextTextId, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f));
-            newText.LoadContent();
+            if (CheckForText(textName) == false)
+            {
+                nextTextId = UIBase.GetNextValidItemId(Texts);
 
-            Texts.Add(newText);
+                if (CheckForText(nextTextId) == false)
+                {
+                    var newText = new UIText(nextTextId, textName, font, text, nextTextId, new Vector2(ParentManager.GetViewportDimenions().Width / 2f,
+                                                                                                       ParentManager.GetViewportDimenions().Height / 2f));
+                    newText.LoadContent();
+
+                    Texts.Add(newText);
+                }
+            }
 
             return nextTextId;
         }
 
         /// <summary>
-        /// Get Text.
+        /// Checks for text by id.
+        /// </summary>
+        /// <param name="textId">The id of the text to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the text is present.</returns>
+        public bool CheckForText(int textId)
+        {
+            return UIBase.CheckItemById(Texts, textId);
+        }
+
+        /// <summary>
+        /// Checks for text by name.
+        /// </summary>
+        /// <param name="textName">The name of the text to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the text is present.</returns>
+        public bool CheckForText(string textName)
+        {
+            return UIBase.CheckItemByName(Texts, textName);
+        }
+
+        /// <summary>
+        /// Gets text by id.
         /// </summary>
         /// <param name="textId">The id of the text to retrieve.</param>
         /// <returns>Returns a UIText with the requested id, if present, otherwise null.</returns>
         public UIText GetText(int textId)
         {
-            return UIBase.GetItemById(Texts, textId);
+            return CheckForText(textId) ? UIBase.GetItemById(Texts, textId) : default(UIText);
         }
 
         /// <summary>
-        /// Get Text.
+        /// Gets text by name.
         /// </summary>
         /// <param name="textName">The name of the text to retrieve.</param>
         /// <returns>Returns a UIText with the requested name, if present, otherwise null.</returns>
         public UIText GetText(string textName)
         {
-            return UIBase.GetItemByName(Texts, textName);
+            return CheckForText(textName) ? UIBase.GetItemByName(Texts, textName) : default(UIText);
         }
 
         /// <summary>
-        /// Remove Text.
+        /// Removes text by id.
         /// </summary>
         /// <param name="textId">The id of the text to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the text was removed.</returns>
@@ -256,7 +316,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Text.
+        /// Removes text by name.
         /// </summary>
         /// <param name="textName">The name of the text to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the text was removed.</returns>
@@ -266,7 +326,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Text Order Number.
+        /// Increases text order number by id.
         /// </summary>
         /// <param name="textId">The id of the text to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the text's order number was increased.</returns>
@@ -276,7 +336,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Text Order Number.
+        /// Increases text order number by name.
         /// </summary>
         /// <param name="textName">The name of the text to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the text's order number was increased.</returns>
@@ -286,7 +346,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Text Order Number.
+        /// Decreases text order number by id.
         /// </summary>
         /// <param name="textId">The id of the text to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the text's order number was decreased.</returns>
@@ -296,7 +356,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Text Order Number.
+        /// Decreases text order number by name.
         /// </summary>
         /// <param name="textName">The name of the text to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the text's order number was decreased.</returns>
@@ -312,44 +372,72 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// Add Menu.
         /// </summary>
-        /// <param name="name">The menu's name. Intaken as a string.</param>
+        /// <param name="menuName">The menu's name. Intaken as a string.</param>
         /// <param name="width">The menu's width. Intaken as an int. Default is 100.</param>
         /// <param name="height">The menu's height. Intaken as an int. Default is 400.</param>
         /// <returns>Returns the menu id of the newly added menu as an int.</returns>
-        public int AddMenu(string name, int width = 100, int height = 400)
+        public int AddMenu(string menuName, int width = 100, int height = 400)
         {
-            var nextMenuId = UIBase.GetNextValidItemId(Menus);
+            var nextMenuId = 0;
 
-            var newMenu = new UIMenu(this, nextMenuId, name, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f), width, height, nextMenuId);
-            newMenu.LoadContent();
+            if (CheckForMenu(menuName) == false)
+            {
+                nextMenuId = UIBase.GetNextValidItemId(Texts);
 
-            Menus.Add(newMenu);
+                if (CheckForMenu(nextMenuId) == false)
+                {
+                    var newMenu = new UIMenu(this, nextMenuId, menuName, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f), width, height, nextMenuId);
+                    newMenu.LoadContent();
+
+                    Menus.Add(newMenu);
+                }
+            }
 
             return nextMenuId;
         }
 
         /// <summary>
-        /// Get Menu.
+        /// Checks for menu by id.
+        /// </summary>
+        /// <param name="menuId">The id of the menu to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the menu is present.</returns>
+        public bool CheckForMenu(int menuId)
+        {
+            return UIBase.CheckItemById(Menus, menuId);
+        }
+
+        /// <summary>
+        /// Checks for menu by name.
+        /// </summary>
+        /// <param name="menuName">The name of the menu to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the menu is present.</returns>
+        public bool CheckForMenu(string menuName)
+        {
+            return UIBase.CheckItemByName(Menus, menuName);
+        }
+
+        /// <summary>
+        /// Gets a menu ny id.
         /// </summary>
         /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
         /// <returns>Returns a UIMenu with the requested id, if present, otherwise null.</returns>
         public UIMenu GetMenu(int menuId)
         {
-            return UIBase.GetItemById(Menus, menuId);
+            return CheckForMenu(menuId) ? UIBase.GetItemById(Menus, menuId) : default(UIMenu);
         }
 
         /// <summary>
-        /// Get Menu.
+        /// Gets a menu by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
         /// <returns>Returns a UIMenu with the requested name, if present, otherwise null.</returns>
         public UIMenu GetMenu(string menuName)
         {
-            return UIBase.GetItemByName(Menus, menuName);
+            return CheckForMenu(menuName) ? UIBase.GetItemByName(Menus, menuName) : default(UIMenu);
         }
 
         /// <summary>
-        /// Remove Menu.
+        /// Removes a menu by id.
         /// </summary>
         /// <param name="menuId">The id of the menu to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the menu was removed.</returns>
@@ -359,7 +447,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Menu.
+        /// Removes a menu by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the menu was removed.</returns>
@@ -369,7 +457,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Menu Order Number.
+        /// Increases a menu's order number by id.
         /// </summary>
         /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the menu's order number was increased.</returns>
@@ -379,7 +467,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Menu Order Number.
+        /// Increases a menu's order number by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the menu's order number was increased.</returns>
@@ -389,7 +477,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Menu Order Number.
+        /// Decreases a menu's order number by id.
         /// </summary>
         /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the menu's order number was decreased.</returns>
@@ -399,7 +487,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Menu Order Number.
+        /// Decreases a menu's order number by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the menu's order number was decreased.</returns>
@@ -432,27 +520,47 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Get Window.
+        /// Checks for window by id.
+        /// </summary>
+        /// <param name="windowId">The id of the window to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the window is present.</returns>
+        public bool CheckForWindow(int windowId)
+        {
+            return UIBase.CheckItemById(Windows, windowId);
+        }
+
+        /// <summary>
+        /// Checks for window by name.
+        /// </summary>
+        /// <param name="windowName">The name of the window to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the window is present.</returns>
+        public bool CheckForWindow(string windowName)
+        {
+            return UIBase.CheckItemByName(Windows, windowName);
+        }
+
+        /// <summary>
+        /// Get window by id.
         /// </summary>
         /// <param name="windowId">The id of the window to retrieve. Intaken as an int.</param>
         /// <returns>Returns a UIWindow with the requested id, if present, otherwise null.</returns>
         public UIWindow GetWindow(int windowId)
         {
-            return UIBase.GetItemById(Windows, windowId);
+            return CheckForWindow(windowId) ? UIBase.GetItemById(Windows, windowId) : default(UIWindow);
         }
 
         /// <summary>
-        /// Get Window.
+        /// Get window by name.
         /// </summary>
         /// <param name="windowName">The name of the window to retrieve. Intaken as a string.</param>
         /// <returns>Returns a UIWindow with the requested name, if present, otherwise null.</returns>
         public UIWindow GetWindow(string windowName)
         {
-            return UIBase.GetItemByName(Windows, windowName);
+            return CheckForWindow(windowName) ? UIBase.GetItemByName(Windows, windowName) : default(UIWindow);
         }
 
         /// <summary>
-        /// Remove Window.
+        /// Removes a window by id.
         /// </summary>
         /// <param name="windowId">The id of the window to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the window was removed.</returns>
@@ -462,7 +570,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Window.
+        /// Removes a window by name.
         /// </summary>
         /// <param name="windowName">The name of the window to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the window was removed.</returns>
@@ -472,7 +580,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Windows Order Number.
+        /// Increases window's order number by id.
         /// </summary>
         /// <param name="windowId">The id of the window to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the window's order number was increased.</returns>
@@ -482,7 +590,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Windows Order Number.
+        /// Increases window's order number by name.
         /// </summary>
         /// <param name="windowName">The name of the window to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the window's order number was increased.</returns>
@@ -492,7 +600,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Windows Order Number.
+        /// Decreases window's order number by id.
         /// </summary>
         /// <param name="windowId">The id of the window to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the window's order number was decreased.</returns>
@@ -502,7 +610,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Windows Order Number.
+        /// Decreases window' order number by name.
         /// </summary>
         /// <param name="windowName">The name of the window to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the window's order number was decreased.</returns>
@@ -536,19 +644,6 @@ namespace Softfire.MonoGame.UI
             // From lowest to highest.
             foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
             {
-                if (button.IsVisible)
-                {
-                    // Check if any input devices are over top of any of the texts.
-                    //for (var index = 0; index < ActiveInputDevices.Count; index++)
-                    //{
-                    //    var inputDevice = ActiveInputDevices[index];
-                    //    button.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                    //                                        (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                    //                                        inputDevice.Width,
-                    //                                        inputDevice.Height));
-                    //}
-                }
-
                 await button.Update(gameTime);
             }
 
@@ -570,19 +665,6 @@ namespace Softfire.MonoGame.UI
             // From lowest to highest.
             foreach (var text in Texts.OrderBy(text => text.OrderNumber))
             {
-                if (text.IsVisible)
-                {
-                    // Check if any input devices are over top of any of the texts.
-                    //for (var index = 0; index < ActiveInputDevices.Count; index++)
-                    //{
-                    //    var inputDevice = ActiveInputDevices[index];
-                    //    text.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                    //                                      (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                    //                                      inputDevice.Width,
-                    //                                      inputDevice.Height));
-                    //}
-                }
-
                 await text.Update(gameTime);
             }
 
@@ -604,19 +686,6 @@ namespace Softfire.MonoGame.UI
             // From lowest to highest.
             foreach (var menu in Menus.OrderBy(menu => menu.OrderNumber))
             {
-                if (menu.IsVisible)
-                {
-                    // Check if any input devices are over top of any of the menus.
-                    //for (var index = 0; index < ActiveInputDevices.Count; index++)
-                    //{
-                    //    var inputDevice = ActiveInputDevices[index];
-                    //    menu.CheckIsInFocus(new Rectangle((int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                    //                                      (int)UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                    //                                      inputDevice.Width,
-                    //                                      inputDevice.Height));
-                    //}
-                }
-
                 await menu.Update(gameTime);
             }
 
@@ -638,60 +707,6 @@ namespace Softfire.MonoGame.UI
             // From lowest to highest.
             foreach (var window in Windows.OrderBy(win => win.OrderNumber))
             {
-                //window.ActiveInputDevices = ActiveInputDevices;
-
-                if (AreWindowsMoving() == false)
-                {
-                    if (window.IsVisible)
-                    {
-                        // Check if any input devices are over top of any of the window contents.
-                        //for (var index = 0; index < ActiveInputDevices.Count; index++)
-                        //{
-                        //    var inputDevice = ActiveInputDevices[index];
-
-                        //    // Check Window focus.
-                        //    window.CheckIsInFocus(inputDevice);
-
-                        //    // Check Window contents focus.
-                        //    window.ContentsCamera.CheckIsInFocus(new Rectangle((int) UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                        //                                                       (int) UICamera.GetWorldPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                        //                                                       inputDevice.Width,
-                        //                                                       inputDevice.Height));
-                        //}
-                    }
-                }
-
-                if (CurrentWindowIdentifier == window.Name)
-                {
-                    //if (window.IsMoving == false &&
-                    //    window.GetBorder("Top").IsVisible)
-                    //{
-                    //    window.IsMoving = IOMouse.LeftClickDownInside(window.GetBorder("Top").Rectangle);
-                    //}
-                    //else if (window.IsMoving &&
-                    //         IOMouse.LeftClickHeld())
-                    //{
-                    //    window.Move(IOMouse.MovementDelta());
-                    //}
-                    //else
-                    //{
-                    //    window.IsMoving = false;
-                    //}
-                }
-
-                if (CurrentWindowIdentifier == window.Name)
-                {
-                    if (IOKeyboard.KeyPress(Keys.D1))
-                    {
-                        IncreaseWindowOrderNumber(window.Name);
-                    }
-
-                    if (IOKeyboard.KeyPress(Keys.D2))
-                    {
-                        DecreaseWindowOrderNumber(window.Name);
-                    }
-                }
-
                 await window.Update(gameTime);
             }
 
@@ -761,9 +776,6 @@ namespace Softfire.MonoGame.UI
                 {
                     // Draw Window UIBase.
                     window.Draw(spriteBatch);
-
-                    // Draw Window Contents.
-                    //window.DrawContents(spriteBatch);
                 }
 
                 #endregion

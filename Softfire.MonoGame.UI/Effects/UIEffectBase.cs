@@ -35,17 +35,17 @@ namespace Softfire.MonoGame.UI.Effects
         /// <summary>
         /// The rate of change between calls.
         /// </summary>
-        protected double RateOfChange { get; set; }
+        public double RateOfChange { get; protected set; }
 
         /// <summary>
         /// The duration, in seconds, of the effect.
         /// </summary>
-        protected float DurationInSeconds { get; }
+        public float DurationInSeconds { get; }
 
         /// <summary>
         /// The delay, in seconds, before the start of the effect.
         /// </summary>
-        protected float StartDelayInSeconds { get; }
+        public float StartDelayInSeconds { get; }
 
         /// <summary>
         /// Internal Order Number.
@@ -102,6 +102,7 @@ namespace Softfire.MonoGame.UI.Effects
         internal void Reset()
         {
             ElapsedTime = 0;
+            RateOfChange = 0;
         }
 
         /// <summary>

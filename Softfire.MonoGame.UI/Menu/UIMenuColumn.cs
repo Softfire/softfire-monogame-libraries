@@ -17,7 +17,7 @@ namespace Softfire.MonoGame.UI.Menu
         /// <summary>
         /// UI Menu Column Buttons.
         /// </summary>
-        private List<UIButton> Buttons { get; } = new List<UIButton>();
+        internal List<UIButton> Buttons { get; } = new List<UIButton>();
 
         /// <summary>
         /// UI Menu Column.
@@ -36,45 +36,73 @@ namespace Softfire.MonoGame.UI.Menu
         #region Buttons
 
         /// <summary>
-        /// Add Button.
-        /// Adds a new button on to the menu.
+        /// Adds a button.
         /// </summary>
-        /// <param name="name">The button's name. Intaken as a string.</param>
-        /// <returns>Returns the button id of the newly added button as an int.</returns>
-        public int AddButton(string name)
+        /// <param name="buttonName">The button's name. Intaken as a string.</param>
+        /// <returns>Returns the button id, if added, otherwise zero.</returns>
+        /// <remarks>If a button already exists with the provided name then a zero is returned indicating failure to add the button.</remarks>
+        public int AddButton(string buttonName)
         {
-            var nextButtonId = GetNextValidItemId(Buttons);
+            var nextButtonId = 0;
 
-            var button = new UIButton(nextButtonId, name, Position, Width, Height / 4, nextButtonId);
-            button.LoadContent();
+            if (CheckForButton(buttonName) == false)
+            {
+                nextButtonId = GetNextValidItemId(Buttons);
 
-            Buttons.Add(button);
+                if (CheckForButton(nextButtonId) == false)
+                {
+                    var button = new UIButton(nextButtonId, buttonName, Position, Width, Height / 4, nextButtonId);
+                    button.LoadContent();
+
+                    Buttons.Add(button);
+                }
+            }
 
             return nextButtonId;
         }
 
         /// <summary>
-        /// Get Button.
+        /// Checks for a button by id.
+        /// </summary>
+        /// <param name="buttonId">The id of the button to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the button is present.</returns>
+        public bool CheckForButton(int buttonId)
+        {
+            return CheckItemById(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Checks for a button by name.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the button is present.</returns>
+        public bool CheckForButton(string buttonName)
+        {
+            return CheckItemByName(Buttons, buttonName);
+        }
+
+        /// <summary>
+        /// Gets a button by id.
         /// </summary>
         /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a UIButton with the requested id.</returns>
+        /// <returns>Returns the button with the specified id, if present, otherwise null.</returns>
         public UIButton GetButton(int buttonId)
         {
-            return GetItemById(Buttons, buttonId);
+            return CheckForButton(buttonId) ? GetItemById(Buttons, buttonId) : default(UIButton);
         }
 
         /// <summary>
-        /// Get Button.
+        /// Ges a button by name.
         /// </summary>
-        /// <param name="buttonName">The name of the button to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a UIButton with the requested name.</returns>
+        /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
+        /// <returns>Returns the button with the specified name, if present, otherwise null.</returns>
         public UIButton GetButton(string buttonName)
         {
-            return GetItemByName(Buttons, buttonName);
+            return CheckForButton(buttonName) ? GetItemByName(Buttons, buttonName) : default(UIButton);
         }
 
         /// <summary>
-        /// Remove Button.
+        /// Removes a button by id.
         /// </summary>
         /// <param name="buttonId">The id of the button to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the button was removed.</returns>
@@ -84,13 +112,53 @@ namespace Softfire.MonoGame.UI.Menu
         }
 
         /// <summary>
-        /// Remove Button.
+        /// Removes a button by name.
         /// </summary>
         /// <param name="buttonName">The name of the button to be removed. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the button was removed.</returns>
         public bool RemoveButton(string buttonName)
         {
             return RemoveItemByName(Buttons, buttonName);
+        }
+
+        /// <summary>
+        /// Increases a button's order number by id.
+        /// </summary>
+        /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the button's order number was increased.</returns>
+        public bool IncreaseButtonOrderNumber(int buttonId)
+        {
+            return IncreaseItemOrderNumber(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Increases a button's order number bu name.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the button's order number was increased.</returns>
+        public bool IncreaseButtonOrderNumber(string buttonName)
+        {
+            return IncreaseItemOrderNumber(Buttons, buttonName);
+        }
+
+        /// <summary>
+        /// Decreases a button's order number by id.
+        /// </summary>
+        /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a boolean indicating whether the button's order number was decreased.</returns>
+        public bool DecreaseButtonOrderNumber(int buttonId)
+        {
+            return DecreaseItemOrderNumber(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Decreases a button's order number by name.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a boolean indicating whether the button's order number was decreased.</returns>
+        public bool DecreaseButtonOrderNumber(string buttonName)
+        {
+            return DecreaseItemOrderNumber(Buttons, buttonName);
         }
 
         #endregion

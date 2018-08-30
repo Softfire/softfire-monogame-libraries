@@ -26,7 +26,7 @@ namespace Softfire.MonoGame.UI.Menu
         /// <summary>
         /// Columns.
         /// </summary>
-        private List<UIMenuColumn> Columns { get; } = new List<UIMenuColumn>();
+        internal List<UIMenuColumn> Columns { get; } = new List<UIMenuColumn>();
 
         /// <summary>
         /// Scrollable Area Rectangle.
@@ -52,47 +52,73 @@ namespace Softfire.MonoGame.UI.Menu
         #region Columns
 
         /// <summary>
-        /// Add Column.
-        /// Adds a new column on to the menu.
+        /// Adds a column to the menu.
         /// </summary>
-        /// <param name="name">The column's name. Intaken as a string.</param>
-        /// <returns>Returns the column id of the newly added column as an int.</returns>
-        public int AddColumn(string name)
+        /// <param name="columnName">The column's name. Intaken as a string.</param>
+        /// <returns>Returns the column id, if added, otherwise zero.</returns>
+        /// <remarks>If a column already exists with the provided name then a zero is returned indicating failure to add the column.</remarks>
+        public int AddColumn(string columnName)
         {
-            var nextColumnId = GetNextValidItemId(Columns);
+            var nextColumnId = 0;
 
-            var newColumn = new UIMenuColumn(this, nextColumnId, name, Columns.Count == 0 ? Width : Width / Columns.Count, Height, nextColumnId);
-            newColumn.LoadContent();
+            if (CheckForColumn(columnName) == false)
+            {
+                nextColumnId = GetNextValidItemId(Columns);
 
-            Columns.Add(newColumn);
+                if (CheckForColumn(nextColumnId) == false)
+                {
+                    var newColumn = new UIMenuColumn(this, nextColumnId, columnName, Columns.Count == 0 ? Width : Width / Columns.Count, Height, nextColumnId);
+                    newColumn.LoadContent();
+
+                    Columns.Add(newColumn);
+                }
+            }
 
             return nextColumnId;
         }
 
         /// <summary>
-        /// Get Column.
-        /// Returns the requested column by id.
+        /// Checks for a column by id.
         /// </summary>
-        /// <param name="columnId">The id of the column to retrieve.</param>
-        /// <returns>Returns a UIMenuColumn with the requested id.</returns>
+        /// <param name="columnId">The id of the column to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the column is present.</returns>
+        public bool CheckForColumn(int columnId)
+        {
+            return CheckItemById(Columns, columnId);
+        }
+
+        /// <summary>
+        /// Checks for a column by name.
+        /// </summary>
+        /// <param name="columnName">The name of the column to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the column is present.</returns>
+        public bool CheckForColumn(string columnName)
+        {
+            return CheckItemByName(Columns, columnName);
+        }
+
+        /// <summary>
+        /// Gets a column by id.
+        /// </summary>
+        /// <param name="columnId">The id of the column to retrieve. Intaken as an int.</param>
+        /// <returns>Returns the column with the specified id, if present, otherwise null.</returns>
         public UIMenuColumn GetColumn(int columnId)
         {
-            return GetItemById(Columns, columnId);
+            return CheckForColumn(columnId) ? GetItemById(Columns, columnId) : default(UIMenuColumn);
         }
 
         /// <summary>
-        /// Get Column.
-        /// Returns the requested column by name.
+        /// Gets a column by name.
         /// </summary>
-        /// <param name="columnName">The name of the column to retrieve.</param>
-        /// <returns>Returns a UIMenuColumn with the requested id.</returns>
+        /// <param name="columnName">The name of the column to retrieve. Intaken as a string.</param>
+        /// <returns>Returns the column with the specified name, if present, otherwise null.</returns>
         public UIMenuColumn GetColumn(string columnName)
         {
-            return GetItemByName(Columns, columnName);
+            return CheckForColumn(columnName) ? GetItemByName(Columns, columnName) : default(UIMenuColumn);
         }
 
         /// <summary>
-        /// Remove Column.
+        /// Removes a column by id..
         /// </summary>
         /// <param name="columnId">The id of the column to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the column was removed.</returns>
@@ -102,7 +128,7 @@ namespace Softfire.MonoGame.UI.Menu
         }
         
         /// <summary>
-        /// Remove Column.
+        /// Removes a column by name.
         /// </summary>
         /// <param name="columnName">The name of the column to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the column was removed.</returns>

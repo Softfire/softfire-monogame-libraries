@@ -32,7 +32,6 @@ namespace Softfire.MonoGame.UI.Effects.Fading
         {
             StartingTransparencyLevel = MathHelper.Clamp(startingTransparencyLevel, 0f, 1f);
             TargetTransparencyLevel = MathHelper.Clamp(targetTransparencyLevel, 0f, 1f);
-            RateOfChange = (TargetTransparencyLevel - StartingTransparencyLevel) / DurationInSeconds;
         }
 
         /// <summary>
@@ -43,6 +42,7 @@ namespace Softfire.MonoGame.UI.Effects.Fading
         {
             if (ElapsedTime >= StartDelayInSeconds)
             {
+                RateOfChange = (TargetTransparencyLevel - StartingTransparencyLevel) / DurationInSeconds;
                 ParentUIBase.Transparencies["Background"] += (float)RateOfChange * (float)DeltaTime;
             }
 

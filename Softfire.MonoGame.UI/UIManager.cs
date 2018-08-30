@@ -32,7 +32,7 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// The UI groups in use.
         /// </summary>
-        private List<UIGroup> Groups { get; } = new List<UIGroup>();
+        internal List<UIGroup> Groups { get; } = new List<UIGroup>();
 
         /// <summary>
         /// A Theme manager.
@@ -59,16 +59,43 @@ namespace Softfire.MonoGame.UI
         /// Adds a new UI group.
         /// </summary>
         /// <param name="groupName">The group's name. Intaken as a string.</param>
-        /// <returns>Returns the group id of the newly added group as an int.</returns>
+        /// <returns>Returns the group id, if added, otherwise zero.</returns>
+        /// <remarks>If a group already exists with the provided name then a zero is returned indicating failure to add the group.</remarks>
         public int AddGroup(string groupName)
         {
-            var nextGroupId = UIBase.GetNextValidItemId(Groups);
+            var nextGroupId = 0;
 
-            var newGroup = new UIGroup(this, nextGroupId, groupName, nextGroupId);
+            if (CheckForGroup(groupName) == false)
+            {
+                nextGroupId = UIBase.GetNextValidItemId(Groups);
 
-            Groups.Add(newGroup);
+                if (CheckForGroup(nextGroupId) == false)
+                {
+                    Groups.Add(new UIGroup(this, nextGroupId, groupName, nextGroupId));
+                }
+            }
 
             return nextGroupId;
+        }
+
+        /// <summary>
+        /// Checks for a group by id.
+        /// </summary>
+        /// <param name="groupId">The id of the group to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the group is present.</returns>
+        public bool CheckForGroup(int groupId)
+        {
+            return UIBase.CheckItemById(Groups, groupId);
+        }
+
+        /// <summary>
+        /// Checks for a group by name.
+        /// </summary>
+        /// <param name="groupName">The name of the group to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the group is present.</returns>
+        public bool CheckForGroup(string groupName)
+        {
+            return UIBase.CheckItemByName(Groups, groupName);
         }
 
         /// <summary>
@@ -78,7 +105,7 @@ namespace Softfire.MonoGame.UI
         /// <returns>Returns the group with the specified id, if present, otherwise null.</returns>
         public UIGroup GetGroup(int groupId)
         {
-            return UIBase.GetItemById(Groups, groupId);
+            return CheckForGroup(groupId) ? UIBase.GetItemById(Groups, groupId) : default(UIGroup);
         }
 
         /// <summary>
@@ -88,7 +115,7 @@ namespace Softfire.MonoGame.UI
         /// <returns>Returns the group with the specified name, if present, otherwise null.</returns>
         public UIGroup GetGroup(string groupName)
         {
-            return UIBase.GetItemByName(Groups, groupName);
+            return CheckForGroup(groupName) ? UIBase.GetItemByName(Groups, groupName) : default(UIGroup);
         }
 
         /// <summary>

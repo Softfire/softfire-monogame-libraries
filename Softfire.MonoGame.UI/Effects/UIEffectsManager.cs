@@ -9,19 +9,32 @@ namespace Softfire.MonoGame.UI.Effects
         /// <summary>
         /// Currently loaded effects.
         /// </summary>
-        /// <see cref="LoadEffect(string, UIEffectBase)"/>
+        /// <see cref="LoadEffect{T}"/>
+        /// <see cref="ActivateLoadedEffect(int)"/>
         /// <see cref="ActivateLoadedEffect(string)"/>
+        /// <see cref="CheckForLoadedEffect(int)"/>
+        /// <see cref="CheckForLoadedEffect(string)"/>
+        /// <see cref="GetLoadedEffect(int)"/>
         /// <see cref="GetLoadedEffect(string)"/>
+        /// <seealso cref="RemoveLoadedEffect(int)"/>
         /// <seealso cref="RemoveLoadedEffect(string)"/>
         /// <remarks>A Dictionary containing all loaded effects. Effects can be loaded using {LoadEffect(string, UIEffectBase)} and can be activated with the {ActivateLoadedEffect(string)} method.</remarks>
-        private Dictionary<string, UIEffectBase> LoadedEffects { get; }
+        private List<UIEffectBase> LoadedEffects { get; }
 
         /// <summary>
         /// Currently active effects.
         /// </summary>
-        /// <see cref="ActivateLoadedEffect(string)"/>
-        /// <seealso cref="ActivateImmediateEffect(UIEffectBase)"/>
+        /// <see cref="ActivateEffect{T}"/>
+        /// <see cref="CheckForActivatedEffect(int)"/>
+        /// <see cref="CheckForActivatedEffect(string)"/>
+        /// <see cref="GetActivatedEffect(int)"/>
+        /// <see cref="GetActivatedEffect(string)"/>
         private List<UIEffectBase> ActiveEffects { get; }
+
+        /// <summary>
+        /// The currently active effect.
+        /// </summary>
+        public UIEffectBase CurrentEffect { get; private set; }
 
         /// <summary>
         /// Are effects running? Updated on each update.
@@ -33,6 +46,7 @@ namespace Softfire.MonoGame.UI.Effects
         /// Are effects run in sequencial order?
         /// </summary>
         /// <remarks>Setting to false allows all active effects to run simultaneously as opposed to running one after the next.</remarks>
+        /// <value>true</value>
         public bool AreEffectsRunInSequentialOrder { get; set; } = true;
 
         /// <summary>
@@ -46,28 +60,25 @@ namespace Softfire.MonoGame.UI.Effects
         /// </summary>
         public UIEffectsManager()
         {
-            LoadedEffects = new Dictionary<string, UIEffectBase>();
+            LoadedEffects = new List<UIEffectBase>();
             ActiveEffects = new List<UIEffectBase>();
         }
 
+        #region Loaded Effects
+
         /// <summary>
-        /// Adds the provided effect to the UIBase's loaded effects dictionary and modifying the order number to be equal to the number of current effects, if order number is found to be 0.
+        /// Loads the effect into memory.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to select the effect to run. Intaken as a string.</param>
         /// <param name="effect">The effect to be loaded.</param>
-        /// <returns>Returns a bool indicating whether the effect was added.</returns>
-        public bool LoadEffect(string identifier, UIEffectBase effect)
+        /// <returns>Returns a bool indicating whether the effect was loaded.</returns>
+        public bool LoadEffect<T>(T effect) where T : UIEffectBase
         {
             var result = false;
 
-            if (CheckForLoadedEffect(identifier) == false)
+            if (CheckForLoadedEffect(effect.Name) == false &&
+                CheckForLoadedEffect(effect.Id) == false)
             {
-                if (effect.OrderNumber == 0)
-                {
-                    effect.OrderNumber = LoadedEffects.Count + 1;
-                }
-
-                LoadedEffects.Add(identifier, effect);
+                LoadedEffects.Add(effect);
                 result = true;
             }
 
@@ -75,61 +86,37 @@ namespace Softfire.MonoGame.UI.Effects
         }
 
         /// <summary>
-        /// Gets the loaded effect by the identifier.
+        /// Checks for a loaded effect by id.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to select the effect to retrieve. Intaken as a string.</param>
-        /// <returns>Returns an effect, if found, otherwise null.</returns>
-        public UIEffectBase GetLoadedEffect(string identifier)
+        /// <param name="effectId">The id of the effect to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the effect is present.</returns>
+        public bool CheckForLoadedEffect(int effectId)
         {
-            UIEffectBase result = null;
-
-            if (CheckForLoadedEffect(identifier))
-            {
-                result = LoadedEffects[identifier];
-            }
-
-            return result;
+            return UIBase.CheckItemById(LoadedEffects, effectId);
         }
 
         /// <summary>
-        /// Removes the effect from loaded effects by the identifier.
+        /// Checks for a loaded effect by name.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to select the effect to remove. Intaken as a string.</param>
-        /// <returns>Returns a bool indicating whether the effect was removed.</returns>
-        public bool RemoveLoadedEffect(string identifier)
+        /// <param name="effectName">The name of the effect to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the effect is present.</returns>
+        public bool CheckForLoadedEffect(string effectName)
         {
-            var result = false;
-
-            if (CheckForLoadedEffect(identifier))
-            {
-                result = LoadedEffects.Remove(identifier);
-            }
-
-            return result;
+            return UIBase.CheckItemByName(LoadedEffects, effectName);
         }
 
         /// <summary>
-        /// Checks for a loaded effect by the identifier.
+        /// Call to activate a loaded effect by id.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to search for the effect. Intaken as a string.</param>
-        /// <returns>Returns a bool indicating whether the effect has been loaded.</returns>
-        public bool CheckForLoadedEffect(string identifier)
-        {
-            return LoadedEffects.ContainsKey(identifier);
-        }
-
-        /// <summary>
-        /// Call to activate a loaded effect by the identifier.
-        /// </summary>
-        /// <param name="identifier">The unique identifier used to select the effect to activate. Intaken as a string.</param>
+        /// <param name="effectId">The id of the effect to activate. Intaken as an int.</param>
         /// <returns>Returns a bool indicating whether the effect was activated.</returns>
-        public bool ActivateLoadedEffect(string identifier)
+        public bool ActivateLoadedEffect(int effectId)
         {
             var result = false;
 
-            if (CheckForLoadedEffect(identifier))
+            if (CheckForLoadedEffect(effectId))
             {
-                ActiveEffects.Add(GetLoadedEffect(identifier));
+                ActiveEffects.Add(GetLoadedEffect(effectId));
                 result = true;
             }
 
@@ -137,43 +124,79 @@ namespace Softfire.MonoGame.UI.Effects
         }
 
         /// <summary>
-        /// Gets the specified effect by the identifier.
+        /// Call to activate a loaded effect by name.
         /// </summary>
-        /// <param name="identifier">The unique identifier of the effect to find.</param>
-        /// <returns>Returns the specified effect, if present, otherwise null.</returns>
-        public UIEffectBase GetActivatedEffect(string identifier)
+        /// <param name="effectName">The name of the effect to activate. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the effect was activated.</returns>
+        public bool ActivateLoadedEffect(string effectName)
         {
-            UIEffectBase result = null;
+            var result = false;
 
-            if (CheckForActivatedEffect(identifier))
+            if (CheckForLoadedEffect(effectName))
             {
-                result = ActiveEffects.FirstOrDefault(effect => effect.Name == identifier);
+                ActiveEffects.Add(GetLoadedEffect(effectName));
+                result = true;
             }
 
             return result;
         }
 
         /// <summary>
-        /// Checks for an active Eeffect.
+        /// Gets the loaded effect by name.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to search for the effect. Intaken as a string.</param>
-        /// <returns>Returns a bool indicating whether the effect is currently active.</returns>
-        public bool CheckForActivatedEffect(string identifier)
+        /// <param name="effectName">The name of the effect to retrieve. Intaken as a string.</param>
+        /// <returns>Returns the requested effect, if present, otherwise null.</returns>
+        public UIEffectBase GetLoadedEffect(string effectName)
         {
-            return ActiveEffects.Contains(GetLoadedEffect(identifier));
+            return CheckForLoadedEffect(effectName) ? UIBase.GetItemByName(LoadedEffects, effectName) : default(UIEffectBase);
         }
 
         /// <summary>
-        /// Immediately activate an effect.
+        /// Gets the loaded effect by id.
         /// </summary>
-        /// <param name="effect">The UIBaseEffect object to activate immediately.</param>
+        /// <param name="effectId">The id of the effect to retrieve. Intaken as an int.</param>
+        /// <returns>Returns the requested effect, if present, otherwise null.</returns>
+        public UIEffectBase GetLoadedEffect(int effectId)
+        {
+            return CheckForLoadedEffect(effectId) ? UIBase.GetItemById(LoadedEffects, effectId) : default(UIEffectBase);
+        }
+
+        /// <summary>
+        /// Removes the loaded effect by id.
+        /// </summary>
+        /// <param name="effectId">The id of the effect to remove. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the effect was removed.</returns>
+        public bool RemoveLoadedEffect(int effectId)
+        {
+            return UIBase.RemoveItemById(LoadedEffects, effectId);
+        }
+
+        /// <summary>
+        /// Removes the loaded effect by name.
+        /// </summary>
+        /// <param name="effectName">The name of the effect to remove. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the effect was removed.</returns>
+        public bool RemoveLoadedEffect(string effectName)
+        {
+            return UIBase.RemoveItemByName(LoadedEffects, effectName);
+        }
+
+        #endregion
+
+        #region Activated Effects
+
+        /// <summary>
+        /// Activate an effect.
+        /// </summary>
+        /// <param name="effect">The effect to activate.</param>
         /// <returns>Returns a boolean indicating whether the effect was activated.</returns>
-        /// <remarks>The passed in effect is not stored during this call and are treated as one time use effects.</remarks>
-        public bool ActivateImmediateEffect(UIEffectBase effect)
+        /// <remarks>The effect is a single use effect as it is not stored in memory.</remarks>
+        public bool ActivateEffect<T>(T effect) where T : UIEffectBase
         {
             var result = false;
 
-            if (effect != null)
+            if (CheckForActivatedEffect(effect.Name) == false &&
+                CheckForActivatedEffect(effect.Id) == false)
             {
                 ActiveEffects.Add(effect);
                 result = true;
@@ -183,60 +206,94 @@ namespace Softfire.MonoGame.UI.Effects
         }
 
         /// <summary>
-        /// Called to run all loaded effects.
+        /// Checks for an active effect by id.
+        /// </summary>
+        /// <param name="effectId">The id of the requested effect. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the effect is currently active.</returns>
+        public bool CheckForActivatedEffect(int effectId)
+        {
+            return UIBase.CheckItemById(ActiveEffects, effectId);
+        }
+
+        /// <summary>
+        /// Checks for an active effect by name.
+        /// </summary>
+        /// <param name="effectName">The name of the requested effect. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the effect is currently active.</returns>
+        public bool CheckForActivatedEffect(string effectName)
+        {
+            return UIBase.CheckItemByName(ActiveEffects, effectName);
+        }
+
+        /// <summary>
+        /// Gets the active effect by id.
+        /// </summary>
+        /// <param name="effectId">The id of the effect to retrieve. Intaken as an int.</param>
+        /// <returns>Returns the specified effect, if present, otherwise null.</returns>
+        public UIEffectBase GetActivatedEffect(int effectId)
+        {
+            return CheckForActivatedEffect(effectId) ? UIBase.GetItemById(ActiveEffects, effectId) : default(UIEffectBase);
+        }
+
+        /// <summary>
+        /// Gets the active effect by name.
+        /// </summary>
+        /// <param name="effectName">The name of the effect to retrieve. Intaken as a string</param>
+        /// <returns>Returns the specified effect, if present, otherwise null.</returns>
+        public UIEffectBase GetActivatedEffect(string effectName)
+        {
+            return CheckForActivatedEffect(effectName) ? UIBase.GetItemByName(ActiveEffects, effectName) : default(UIEffectBase);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Runs all active effects.
         /// </summary>
         /// <returns>Returns a bool indicating whether all of the loaded transitions completed.</returns>
+        /// <remarks>
+        /// Updates "AreEffectRunning" boolean during cycle.
+        /// <para>
+        /// Flag "AreEffectsSortedByOrderNumber" as true to sort active effects by their assigned order number.
+        /// Flag "AreEffectsRunInSequentialOrder" as true to run active effects in the order they were activated otherwise set to false to run all activated effects at once.
+        /// </para>
+        /// </remarks>
+        /// <see cref="ActivateEffect{T}"/>
+        /// <see cref="ActivateLoadedEffect(int)"/>
+        /// <see cref="ActivateLoadedEffect(string)"/>
+        /// <see cref="AreEffectsRunning"/>
+        /// <see cref="AreEffectsSortedByOrderNumber"/>
+        /// <see cref="AreEffectsRunInSequentialOrder"/>
         public async Task RunActiveEffects()
         {
             if (ActiveEffects.Count > 0)
             {
                 AreEffectsRunning = true;
 
-                if (AreEffectsSortedByOrderNumber)
+                if (AreEffectsRunInSequentialOrder)
                 {
-                    if (AreEffectsRunInSequentialOrder)
-                    {
-                        var currentEffect = ActiveEffects.OrderBy(effect => effect.OrderNumber).ToList()[0];
+                    var nextEffect = CurrentEffect = AreEffectsSortedByOrderNumber
+                        ? ActiveEffects.OrderBy(effect => effect.OrderNumber).ToList()[0]
+                        : ActiveEffects[0];
 
-                        if (await currentEffect.Run())
-                        {
-                            currentEffect.Reset();
-                            ActiveEffects.RemoveAt(0);
-                        }
-                    }
-                    else
+                    if (await nextEffect.Run())
                     {
-                        foreach (var activeEffect in ActiveEffects.OrderBy(effect => effect.OrderNumber).ToList())
-                        {
-                            if (await activeEffect.Run())
-                            {
-                                activeEffect.Reset();
-                                ActiveEffects.Remove(activeEffect);
-                            }
-                        }
+                        nextEffect.Reset();
+                        ActiveEffects.RemoveAt(0);
                     }
                 }
                 else
                 {
-                    if (AreEffectsRunInSequentialOrder)
-                    {
-                        var currentEffect = ActiveEffects[0];
+                    var effects = AreEffectsSortedByOrderNumber
+                        ? ActiveEffects.OrderBy(effect => effect.OrderNumber).ToList()
+                        : ActiveEffects.ToList();
 
-                        if (await currentEffect.Run())
-                        {
-                            currentEffect.Reset();
-                            ActiveEffects.RemoveAt(0);
-                        }
-                    }
-                    else
+                    foreach (var effect in effects)
                     {
-                        foreach (var activeEffect in ActiveEffects.ToList())
+                        if (await effect.Run())
                         {
-                            if (await activeEffect.Run())
-                            {
-                                activeEffect.Reset();
-                                ActiveEffects.Remove(activeEffect);
-                            }
+                            effect.Reset();
+                            ActiveEffects.Remove(effect);
                         }
                     }
                 }
@@ -244,6 +301,7 @@ namespace Softfire.MonoGame.UI.Effects
             else
             {
                 AreEffectsRunning = false;
+                CurrentEffect = null;
             }
         }
     }

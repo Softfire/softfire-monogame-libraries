@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Softfire.MonoGame.UI.Effects.Shifting
 {
@@ -27,24 +28,10 @@ namespace Softfire.MonoGame.UI.Effects.Shifting
         /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a float. Default is 1f.</param>
         /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a float. Default is 0f.</param>
         /// <param name="orderNumber">The effect's run order number. Intaken as an int. Default is 0.</param>
-        /// <see cref="SetStartPosition()"/>
         public UIEffectShiftUp(UIBase uiBase, int id, string name, Vector2 shiftVector,
                                float durationInSeconds = 1f, float startDelayInSeconds = 0f, int orderNumber = 0) : base(uiBase, id, name, durationInSeconds, startDelayInSeconds, orderNumber)
         {
             ShiftVector = shiftVector;
-            RateOfChange = ShiftVector.Y / DurationInSeconds;
-
-            // Sets the initial start position.
-            SetStartPosition();
-        }
-
-        /// <summary>
-        /// Sets the starting position to the UIBase's Position.
-        /// </summary>
-        /// <remarks>Call this method when you want to begin the shift from the UI's current position.</remarks>
-        public void SetStartPosition()
-        {
-            InitialPosition = ParentUIBase.Position;
         }
 
         /// <summary>
@@ -55,8 +42,14 @@ namespace Softfire.MonoGame.UI.Effects.Shifting
         {
             var position = ParentUIBase.Position;
 
+            if (Math.Abs(ElapsedTime) <= DeltaTime)
+            {
+                InitialPosition = position;
+            }
+
             if (ElapsedTime >= StartDelayInSeconds)
             {
+                RateOfChange = ShiftVector.Y / DurationInSeconds;
                 position.Y -= (float)RateOfChange * (float)DeltaTime;
             }
 

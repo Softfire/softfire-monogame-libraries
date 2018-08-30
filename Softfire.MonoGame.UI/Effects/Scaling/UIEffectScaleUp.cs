@@ -31,8 +31,6 @@ namespace Softfire.MonoGame.UI.Effects.Scaling
         {
             InitialScale = ParentUIBase.Scale;
             TargetScale = targetScale;
-
-            RateOfChange = TargetScale.Y / DurationInSeconds;
         }
 
         /// <summary>
@@ -45,6 +43,7 @@ namespace Softfire.MonoGame.UI.Effects.Scaling
 
             if (ElapsedTime >= StartDelayInSeconds)
             {
+                RateOfChange = TargetScale.Y / DurationInSeconds;
                 scale.Y -= (float)RateOfChange * (float)DeltaTime;
             }
 

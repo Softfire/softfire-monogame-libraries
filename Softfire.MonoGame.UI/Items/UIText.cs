@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.UI.Effects.Coloring;
 
 namespace Softfire.MonoGame.UI.Items
 {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Softfire.MonoGame.UI
@@ -21,6 +22,32 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
+        /// Checks the list for an item by id.
+        /// </summary>
+        /// <typeparam name="T">Type of IUIdentifier.</typeparam>
+        /// <param name="list">The list to check against.</param>
+        /// <param name="id">The id of the item to search.</param>
+        /// <returns>Returns a boolean indicating whether the item is present.</returns>
+        /// <exception cref="ArgumentNullException">Throws an argument null exception if the provided list is null.</exception>
+        internal static bool CheckItemById<T>(IList<T> list, int id) where T : IUIIdentifier
+        {
+            return list?.Any(item => item.Id == id) ?? throw new ArgumentNullException();
+        }
+
+        /// <summary>
+        /// Checks the list for an item by name.
+        /// </summary>
+        /// <typeparam name="T">Type of IUIdentifier.</typeparam>
+        /// <param name="list">The list to check against.</param>
+        /// <param name="name">The name of the item to search.</param>
+        /// <returns>Returns a boolean indicating whether the item is present.</returns>
+        /// <exception cref="ArgumentNullException">Throws an argument null exception if the provided list is null.</exception>
+        internal static bool CheckItemByName<T>(IList<T> list, string name) where T : IUIIdentifier
+        {
+            return list?.Any(item => item.Name == name) ?? throw new ArgumentNullException();
+        }
+
+        /// <summary>
         /// Retrieves an item by it's unique id.
         /// </summary>
         /// <typeparam name="T">Type of IUIdentifier.</typeparam>
@@ -29,7 +56,7 @@ namespace Softfire.MonoGame.UI
         /// <returns>Returns an object of Type T.</returns>
         internal static T GetItemById<T>(IList<T> list, int id) where T : IUIIdentifier
         {
-            return list.FirstOrDefault(item => item.Id == id);
+            return CheckItemById(list, id) ? list.FirstOrDefault(item => item.Id == id) : default(T);
         }
 
         /// <summary>
@@ -41,7 +68,7 @@ namespace Softfire.MonoGame.UI
         /// <returns>Returns an object of Type T.</returns>
         internal static T GetItemByName<T>(IList<T> list, string name) where T : IUIIdentifier
         {
-            return list.FirstOrDefault(item => item.Name == name);
+            return CheckItemByName(list, name) ? list.FirstOrDefault(item => item.Name == name) : default(T);
         }
 
         /// <summary>

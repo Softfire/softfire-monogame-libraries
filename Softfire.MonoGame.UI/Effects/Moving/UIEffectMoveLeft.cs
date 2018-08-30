@@ -33,7 +33,6 @@ namespace Softfire.MonoGame.UI.Effects.Moving
         {
             StartPosition = startPosition;
             TargetPosition = targetPosition;
-            RateOfChange = (StartPosition.X - TargetPosition.X) / DurationInSeconds;
         }
 
         /// <summary>
@@ -42,16 +41,21 @@ namespace Softfire.MonoGame.UI.Effects.Moving
         /// <returns>Returns a bool indicating whether the move was completed.</returns>
         protected override bool Action()
         {
+            var position = ParentUIBase.Position;
+
             if (ElapsedTime >= StartDelayInSeconds)
             {
-                ParentUIBase.Position = new Vector2(ParentUIBase.Position.X - (float)RateOfChange * (float)DeltaTime, ParentUIBase.Position.Y);
+                RateOfChange = (StartPosition.X - TargetPosition.X) / DurationInSeconds;
+                position.X -= (float)RateOfChange * (float)DeltaTime;
             }
 
             // Correction for float calculations.
-            if (ParentUIBase.Position.X <= TargetPosition.X)
+            if (position.X <= TargetPosition.X)
             {
-                ParentUIBase.Position = new Vector2(TargetPosition.X, ParentUIBase.Position.Y);
+                position.X = TargetPosition.X;
             }
+
+            ParentUIBase.Position = position;
 
             return ParentUIBase.Position.X <= TargetPosition.X;
         }

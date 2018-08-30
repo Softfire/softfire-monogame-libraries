@@ -33,7 +33,6 @@ namespace Softfire.MonoGame.UI.Effects.Moving
         {
             StartPosition = startPosition;
             TargetPosition = targetPosition;
-            RateOfChange = (StartPosition.Y - TargetPosition.Y) / DurationInSeconds;
         }
 
         /// <summary>
@@ -46,6 +45,7 @@ namespace Softfire.MonoGame.UI.Effects.Moving
 
             if (ElapsedTime >= StartDelayInSeconds)
             {
+                RateOfChange = (StartPosition.Y - TargetPosition.Y) / DurationInSeconds;
                 position.Y -= (float)RateOfChange * (float)DeltaTime;
             }
 

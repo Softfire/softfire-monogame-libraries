@@ -18,6 +18,31 @@ namespace Softfire.MonoGame.UI.Demos.WinDX
 
         #endregion
 
+        /// <summary>
+        /// Current object's type.
+        /// </summary>
+        private string ObjectType { get; set; }
+
+        /// <summary>
+        /// Current object's name.
+        /// </summary>
+        private string ObjectName { get; set; }
+
+        /// <summary>
+        /// Current object's position.
+        /// </summary>
+        private string ObjectPosition { get; set; }
+
+        /// <summary>
+        /// Current object's duration.
+        /// </summary>
+        private string ObjectDuration { get; set; }
+
+        /// <summary>
+        /// Current object's rate of change.
+        /// </summary>
+        private string ObjectRateOfChange { get; set; }
+
         // TODO: Step 1: Add a UIManager.
         private UIManager UIManager { get; set; }
 
@@ -89,47 +114,65 @@ namespace Softfire.MonoGame.UI.Demos.WinDX
             // Numerous effects are available to customize the actions of a UI element.
             // Loading an effect stores it in the UI's internal Dictionary with the identifier as its key for reuse.
 
+            #region Shifting
+
             // Shift Up - Shifts the UI element up over time.
             UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager
-                     .LoadEffect("Demo_Shift_Up",
-                                 new
+                     .LoadEffect(new
                                      UIEffectShiftUp(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button"), 1, "Demo_Shift_Up",
-                                                     new Vector2(50), .25f));
+                                                     new Vector2(50), .25f, .25f));
 
             // Shift Down - Shifts the UI element down over time.
             UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager
-                     .LoadEffect("Demo_Shift_Down",
-                                 new
+                     .LoadEffect(new
                                      UIEffectShiftDown(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button"), 2, "Demo_Shift_Down",
-                                                       new Vector2(50), .25f));
+                                                       new Vector2(50), .25f, .25f));
 
             // Shift Left - Shifts the UI element left over time.
             UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager
-                     .LoadEffect("Demo_Shift_Left",
-                                 new
+                     .LoadEffect(new
                                      UIEffectShiftLeft(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button"), 3, "Demo_Shift_Left",
-                                                       new Vector2(50), .25f));
+                                                       new Vector2(50), .25f, .25f));
 
             // Shift Right - Shifts the UI element right over time.
             UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager
-                     .LoadEffect("Demo_Shift_Right",
-                                 new
+                     .LoadEffect(new
                                      UIEffectShiftRight(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button"), 4, "Demo_Shift_Right",
-                                                        new Vector2(50), .25f));
+                                                        new Vector2(50), .25f, .25f));
+
+            #endregion
+
+            #region Background Color
 
             // Background Color Change - Changes the UI element's background color over time.
             UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager
-                     .LoadEffect("Demo_Background_Color_Change",
-                                 new
-                                     UIEffectBackgroundColorGradiant(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button"), 5, "Demo_Background_Color_Change",
+                     .LoadEffect(new
+                                     UIEffectBackgroundColorGradient(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button"), 5, "Demo_Background_Color_Change_ForestGreen",
                                                                      Color.ForestGreen));
+
+            // Background Color Change - Changes the UI element's background color over time.
+            UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager
+                     .LoadEffect(new
+                                     UIEffectBackgroundColorGradient(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button"), 6, "Demo_Background_Color_Change_White",
+                                                                     Color.White));
+
+            #endregion
+
+            #region Font Color
 
             // Font Color Change - Changes the UI element's font color over time.
             UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").GetText().UIEffectsManager
-                     .LoadEffect("Demo_Font_Color_Change",
-                                 new
-                                     UIEffectFontColorGradiant(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").GetText(), 5, "Demo_Font_Color_Change",
+                     .LoadEffect(new
+                                     UIEffectFontColorGradient(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").GetText(), 7, "Demo_Font_Color_Change_SlateBlue",
                                                                Color.SlateBlue, startDelayInSeconds: 2f));
+
+            // Font Color Change - Changes the UI element's font color over time.
+            UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").GetText().UIEffectsManager
+                     .LoadEffect(new
+                                     UIEffectFontColorGradient(UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").GetText(), 8, "Demo_Font_Color_Change_Black",
+                                                               Color.Black, startDelayInSeconds: 2f));
+
+            #endregion
 
             // TODO: Step 5.5.3: Activate an Effect.
             // Activating an effect by adding it to an internal List that is processed during the elements Update method.
@@ -174,15 +217,18 @@ namespace Softfire.MonoGame.UI.Demos.WinDX
                     // Activate any loaded effects.
                     // TODO: Step 7.4: Activate Loaded Effects.
                     // Shifting
-                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Shift_Up");
                     UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Shift_Right");
                     UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Shift_Down");
                     UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Shift_Left");
+                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Shift_Left");
                     UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Shift_Up");
+                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Shift_Right");
 
                     // Colors
-                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Background_Color_Change");
-                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").GetText().UIEffectsManager.ActivateLoadedEffect("Demo_Font_Color_Change");
+                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Background_Color_Change_ForestGreen");
+                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.ActivateLoadedEffect("Demo_Background_Color_Change_White");
+                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").GetText().UIEffectsManager.ActivateLoadedEffect("Demo_Font_Color_Change_SlateBlue");
+                    UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").GetText().UIEffectsManager.ActivateLoadedEffect("Demo_Font_Color_Change_Black");
                 }
             }
 
@@ -203,7 +249,33 @@ namespace Softfire.MonoGame.UI.Demos.WinDX
 
             // Draw all UI elements.
             UIManager.Draw(spriteBatch);
-            spriteBatch.DrawString(UIManager.Fonts.GetFont("DemoFont12"), UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").Position.ToString(), new Vector2(), Color.Black);
+
+            spriteBatch.DrawString(UIManager.Fonts.GetFont("DemoFont12"), "Type: " + ObjectType , new Vector2(), Color.Black);
+            spriteBatch.DrawString(UIManager.Fonts.GetFont("DemoFont12"), "Name: " + ObjectName, new Vector2(0, 20), Color.Black);
+            spriteBatch.DrawString(UIManager.Fonts.GetFont("DemoFont12"), "Duration: " + ObjectDuration + "ms" , new Vector2(0, 40), Color.Black);
+            spriteBatch.DrawString(UIManager.Fonts.GetFont("DemoFont12"), "Rate of Change: " + ObjectRateOfChange , new Vector2(0, 60), Color.Black);
+
+            if (UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button").UIEffectsManager.CurrentEffect != null)
+            {
+                ObjectType = UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button")
+                                      .UIEffectsManager.CurrentEffect.GetType().Name;
+
+                ObjectName = UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button")
+                                      .UIEffectsManager.CurrentEffect.Name;
+
+                ObjectDuration = UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button")
+                                          .UIEffectsManager.CurrentEffect.DurationInSeconds.ToString();
+
+                ObjectRateOfChange = UIManager.GetGroup("Demo").GetMenu("Menu").GetColumn("Column").GetButton("Button")
+                                              .UIEffectsManager.CurrentEffect.RateOfChange.ToString();
+            }
+            else
+            {
+                ObjectType = string.Empty;
+                ObjectName = string.Empty;
+                ObjectDuration = "0";
+                ObjectRateOfChange = "0";
+            }
 
             spriteBatch.End();
         }

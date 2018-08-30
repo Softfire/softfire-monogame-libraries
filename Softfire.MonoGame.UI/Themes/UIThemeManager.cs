@@ -86,13 +86,33 @@ namespace Softfire.MonoGame.UI.Themes
         }
 
         /// <summary>
+        /// Checks for a theme by id.
+        /// </summary>
+        /// <param name="themeId">The id of the theme to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the theme is present.</returns>
+        public bool CheckForTheme(int themeId)
+        {
+            return UIBase.CheckItemById(Themes, themeId);
+        }
+
+        /// <summary>
+        /// Checks for a theme by name.
+        /// </summary>
+        /// <param name="themeName">The name of the theme to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the theme is present.</returns>
+        public bool CheckForTheme(string themeName)
+        {
+            return UIBase.CheckItemByName(Themes, themeName);
+        }
+
+        /// <summary>
         /// Gets a theme by id.
         /// </summary>
         /// <param name="themeId">The id of the theme to retrieve. Intaken as an int.</param>
         /// <returns>Returns the theme with the specified id, if present, otherwise null.</returns>
         public UITheme GetTheme(int themeId)
         {
-            return UIBase.GetItemById(Themes, themeId);
+            return CheckForTheme(themeId) ? UIBase.GetItemById(Themes, themeId) : default(UITheme);
         }
 
         /// <summary>
@@ -102,7 +122,7 @@ namespace Softfire.MonoGame.UI.Themes
         /// <returns>Returns the theme with the specified name, if present, otherwise null.</returns>
         public UITheme GetTheme(string themeName)
         {
-            return UIBase.GetItemByName(Themes, themeName);
+            return CheckForTheme(themeName) ? UIBase.GetItemByName(Themes, themeName) : default(UITheme);
         }
 
         /// <summary>
