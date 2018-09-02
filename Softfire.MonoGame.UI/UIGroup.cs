@@ -162,7 +162,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Ges a button by name.
+        /// Gets a button by name.
         /// </summary>
         /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
         /// <returns>Returns the button with the specified name, if present, otherwise null.</returns>
@@ -289,7 +289,7 @@ namespace Softfire.MonoGame.UI
         /// Gets text by id.
         /// </summary>
         /// <param name="textId">The id of the text to retrieve.</param>
-        /// <returns>Returns a UIText with the requested id, if present, otherwise null.</returns>
+        /// <returns>Returns a text with the requested id, if present, otherwise null.</returns>
         public UIText GetText(int textId)
         {
             return CheckForText(textId) ? UIBase.GetItemById(Texts, textId) : default(UIText);
@@ -299,7 +299,7 @@ namespace Softfire.MonoGame.UI
         /// Gets text by name.
         /// </summary>
         /// <param name="textName">The name of the text to retrieve.</param>
-        /// <returns>Returns a UIText with the requested name, if present, otherwise null.</returns>
+        /// <returns>Returns a text with the requested name, if present, otherwise null.</returns>
         public UIText GetText(string textName)
         {
             return CheckForText(textName) ? UIBase.GetItemByName(Texts, textName) : default(UIText);
@@ -382,7 +382,7 @@ namespace Softfire.MonoGame.UI
 
             if (CheckForMenu(menuName) == false)
             {
-                nextMenuId = UIBase.GetNextValidItemId(Texts);
+                nextMenuId = UIBase.GetNextValidItemId(Menus);
 
                 if (CheckForMenu(nextMenuId) == false)
                 {
@@ -420,7 +420,7 @@ namespace Softfire.MonoGame.UI
         /// Gets a menu ny id.
         /// </summary>
         /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a UIMenu with the requested id, if present, otherwise null.</returns>
+        /// <returns>Returns a menu with the requested id, if present, otherwise null.</returns>
         public UIMenu GetMenu(int menuId)
         {
             return CheckForMenu(menuId) ? UIBase.GetItemById(Menus, menuId) : default(UIMenu);
@@ -430,7 +430,7 @@ namespace Softfire.MonoGame.UI
         /// Gets a menu by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
-        /// <returns>Returns a UIMenu with the requested name, if present, otherwise null.</returns>
+        /// <returns>Returns a menu with the requested name, if present, otherwise null.</returns>
         public UIMenu GetMenu(string menuName)
         {
             return CheckForMenu(menuName) ? UIBase.GetItemByName(Menus, menuName) : default(UIMenu);
@@ -507,14 +507,22 @@ namespace Softfire.MonoGame.UI
         /// <param name="width">The window's width. Intaken as an int. Default is 400.</param>
         /// <param name="height">The window's height. Intaken as an int. Default is 500.</param>
         /// <returns>Returns the window id of the newly added window as an int.</returns>
-        public int AddWindow(string name, int width = 400, int height = 400)
+        public int AddWindow(string name, int width = 200, int height = 200)
         {
-            var nextWindowId = UIBase.GetNextValidItemId(Windows);
+            var nextWindowId = 0;
 
-            var newWindow = new UIWindow(this, nextWindowId, name, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f), width, height, nextWindowId);
-            newWindow.LoadContent();
+            if (CheckForWindow(nextWindowId) == false)
+            {
+                nextWindowId = UIBase.GetNextValidItemId(Windows);
 
-            Windows.Add(newWindow);
+                if (CheckForWindow(nextWindowId) == false)
+                {
+                    var newWindow = new UIWindow(this, nextWindowId, name, new Vector2(ParentManager.GetViewportDimenions().Width / 2f, ParentManager.GetViewportDimenions().Height / 2f), width, height, nextWindowId);
+                    newWindow.LoadContent();
+
+                    Windows.Add(newWindow);
+                }
+            }
 
             return nextWindowId;
         }

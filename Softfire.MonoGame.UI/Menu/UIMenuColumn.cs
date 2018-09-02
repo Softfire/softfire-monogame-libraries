@@ -92,7 +92,7 @@ namespace Softfire.MonoGame.UI.Menu
         }
 
         /// <summary>
-        /// Ges a button by name.
+        /// Gets a button by name.
         /// </summary>
         /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
         /// <returns>Returns the button with the specified name, if present, otherwise null.</returns>

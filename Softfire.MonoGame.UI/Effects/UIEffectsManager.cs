@@ -142,16 +142,6 @@ namespace Softfire.MonoGame.UI.Effects
         }
 
         /// <summary>
-        /// Gets the loaded effect by name.
-        /// </summary>
-        /// <param name="effectName">The name of the effect to retrieve. Intaken as a string.</param>
-        /// <returns>Returns the requested effect, if present, otherwise null.</returns>
-        public UIEffectBase GetLoadedEffect(string effectName)
-        {
-            return CheckForLoadedEffect(effectName) ? UIBase.GetItemByName(LoadedEffects, effectName) : default(UIEffectBase);
-        }
-
-        /// <summary>
         /// Gets the loaded effect by id.
         /// </summary>
         /// <param name="effectId">The id of the effect to retrieve. Intaken as an int.</param>
@@ -159,6 +149,16 @@ namespace Softfire.MonoGame.UI.Effects
         public UIEffectBase GetLoadedEffect(int effectId)
         {
             return CheckForLoadedEffect(effectId) ? UIBase.GetItemById(LoadedEffects, effectId) : default(UIEffectBase);
+        }
+
+        /// <summary>
+        /// Gets the loaded effect by name.
+        /// </summary>
+        /// <param name="effectName">The name of the effect to retrieve. Intaken as a string.</param>
+        /// <returns>Returns the requested effect, if present, otherwise null.</returns>
+        public UIEffectBase GetLoadedEffect(string effectName)
+        {
+            return CheckForLoadedEffect(effectName) ? UIBase.GetItemByName(LoadedEffects, effectName) : default(UIEffectBase);
         }
 
         /// <summary>

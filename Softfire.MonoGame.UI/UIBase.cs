@@ -380,12 +380,77 @@ namespace Softfire.MonoGame.UI
         #region Outlines
 
         /// <summary>
-        /// Set Outline Visiblity.
+        /// Checks for an outline by id.
+        /// </summary>
+        /// <param name="outlineId">The id of the outline to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the outline is present.</returns>
+        public bool CheckForOutline(int outlineId)
+        {
+            return CheckItemById(Outlines, outlineId);
+        }
+
+        /// <summary>
+        /// Checks for an outline by name.
+        /// </summary>
+        /// <param name="outlineName">The name of the outline to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the outline is present.</returns>
+        public bool CheckForOutline(string outlineName)
+        {
+            return CheckItemByName(Outlines, outlineName);
+        }
+
+        /// <summary>
+        /// Gets an outline by id.
+        /// </summary>
+        /// <param name="buttonId">The id of the outline to retrieve. Intaken as an int.</param>
+        /// <returns>Returns the outline with the specified id, if present, otherwise null.</returns>
+        public UIBaseOutline GetOutline(int buttonId)
+        {
+            return CheckForOutline(buttonId) ? GetItemById(Outlines, buttonId) : default(UIBaseOutline);
+        }
+
+        /// <summary>
+        /// Gets an outline by name.
+        /// </summary>
+        /// <param name="outlineName">The name of the outline to retrieve. Intaken as a string.</param>
+        /// <returns>Returns the outline with the specified name, if present, otherwise null.</returns>
+        public UIBaseOutline GetOutline(string outlineName)
+        {
+            return CheckForOutline(outlineName) ? GetItemByName(Outlines, outlineName) : default(UIBaseOutline);
+        }
+
+        /// <summary>
+        /// Sets visibility for each outline to that of the base.
+        /// </summary>
+        /// <see cref="IsVisible"/>
+        public void SetOutlineVisibility()
+        {
+            foreach (var outline in Outlines)
+            {
+                outline.IsVisible = IsVisible;
+            }
+        }
+
+        /// <summary>
+        /// Sets visibility for each outline.
+        /// </summary>
+        /// <see cref="IsVisible"/>
+        public void SetOutlineVisibility(bool visibility)
+        {
+            foreach (var outline in Outlines)
+            {
+                outline.IsVisible = visibility;
+            }
+        }
+
+        /// <summary>
+        /// Sets individual outline visibility.
         /// </summary>
         /// <param name="top">A boolean indicating whether the top outline is visible.</param>
         /// <param name="right">A boolean indicating whether the right outline is visible.</param>
         /// <param name="bottom">A boolean indicating whether the bottom outline is visible.</param>
         /// <param name="left">A boolean indicating whether the left outline is visible.</param>
+        /// <see cref="IsVisible"/>
         public void SetOutlineVisibility(bool top, bool right, bool bottom, bool left)
         {
             GetItemById(Outlines, 1).IsVisible = top;
@@ -395,7 +460,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Sets the all the outlines to the color in Colors["Outline"].
+        /// Sets all outline's color to that in Colors["Outline"].
         /// </summary>
         /// <see cref="Colors"/>
         public void SetOutlineColor()
@@ -407,7 +472,18 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Set outline color for each outline.
+        /// Sets Colors["Outline"] to the provided color and applies the color to all outlines.
+        /// </summary>
+        /// <param name="color">The color to set in Colors["Outline"]. Intaken as a Color.</param>
+        /// <see cref="Colors"/>
+        public void SetOutlineColor(Color color)
+        {
+            Colors["Outline"] = color;
+            SetOutlineColor();
+        }
+
+        /// <summary>
+        /// Sets individual outline color.
         /// </summary>
         /// <param name="top">The color for the top outline. Intaken as a Color.</param>
         /// <param name="right">The color for the right outline. Intaken as a Color.</param>
@@ -422,7 +498,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Sets the all the outlines transparency level to the transparecny level in Transparencies["Outline"].
+        /// Sets all the outlines transparency level to the transparency level currently in Transparencies["Outline"].
         /// </summary>
         /// <see cref="Transparencies"/>
         public void SetOutlineTransparency()
@@ -434,7 +510,18 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Set outline transparency.
+        /// Sets Transparencies["Outline"] to the provided transparency level and applies the transparency level to all outlines.
+        /// </summary>
+        /// <param name="transparencyLevel">The transparency level to set in Transparencies["Outline"]. Intaken as a float.</param>
+        /// <see cref="Transparencies"/>
+        public void SetOutlineTransparency(float transparencyLevel)
+        {
+            Transparencies["Outline"] = transparencyLevel;
+            SetOutlineTransparency();
+        }
+
+        /// <summary>
+        /// Sets individual outline transparencies.
         /// </summary>
         /// <param name="top">The transparency level for the top outline. Intaken as a float.</param>
         /// <param name="right">The transparency level for the right outline. Intaken as a float.</param>
@@ -533,10 +620,10 @@ namespace Softfire.MonoGame.UI
         {
             DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
 
-            Origin = new Vector2((Width * Scale.X) / 2f, (Height * Scale.Y) / 2f);
-
             WidthF = Width * Scale.X;
             HeightF = Height * Scale.Y;
+
+            Origin = new Vector2(WidthF / 2f, HeightF / 2f);
 
             Rectangle = new Rectangle((int)(ParentPosition.X + Position.X - Origin.X),
                                       (int)(ParentPosition.Y + Position.Y - Origin.Y),

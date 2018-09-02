@@ -12,135 +12,177 @@ namespace Softfire.MonoGame.UI
     public class UIWindow : UIBase
     {
         /// <summary>
-        /// UI Window Parent Group.
+        /// Internal border thickness.
+        /// </summary>
+        private int _borderThickness = 10;
+
+        /// <summary>
+        /// The parent group for this window.
         /// </summary>
         internal UIGroup ParentGroup { get; }
 
         /// <summary>
-        /// UI Window Border Color.
+        /// The window's buttons. Use AddButton, RemoveButton and GetButton to modify UI Buttons.
         /// </summary>
-        public Color BorderColor { get; set; } = Color.LightGray;
-
-        /// <summary>
-        /// UI Window Border Thickness.
-        /// </summary>
-        public int BorderThickness { get; set; } = 10;
-
-        /// <summary>
-        /// UI Window Active input Devices.
-        /// </summary>
-        public List<Rectangle> ActiveInputDevices { private get; set; } = new List<Rectangle>();
-
-        /// <summary>
-        /// UI Window Buttons.
-        /// Use AddButton, RemoveButton and GetButton to modify UI Buttons.
-        /// </summary>
+        /// <see cref="AddButton(string)"/>
+        /// <see cref="RemoveButton(int)"/>
+        /// <see cref="RemoveButton(string)"/>
+        /// <see cref="GetButton(int)"/>
+        /// <see cref="GetButton(string)"/>
         public List<UIButton> Buttons { get; } = new List<UIButton>();
 
         /// <summary>
-        /// UI Window Borders.
-        /// Use AddBorder, RemoveBorder and GetBorder to modify UI Borders.
+        /// The window's borders.
         /// </summary>
         public List<UIBorder> Borders { get; }
 
         /// <summary>
-        /// UI Window Texts.
-        /// Use AddText, RemoveText and GetText to modify UI Texts.
+        /// The window's texts. Use AddText, RemoveText and GetText to modify UI Texts.
         /// </summary>
+        /// <see cref="AddText(string, SpriteFont, string)"/>
+        /// <see cref="RemoveText(int)"/>
+        /// <see cref="RemoveText(string)"/>
+        /// <see cref="GetText(int)"/>
+        /// <see cref="GetText(string)"/>
         public List<UIText> Texts { get; } = new List<UIText>();
 
         /// <summary>
-        /// UI Window Menus.
-        /// Use AddMenu, RemoveMenu and GetMenu to modify UI Menus.
+        /// The window's menus. Use AddMenu, RemoveMenu and GetMenu to modify UI Menus.
         /// </summary>
+        /// <see cref="AddMenu(string, int, int)"/>
+        /// <see cref="RemoveMenu(int)"/>
+        /// <see cref="RemoveMenu(string)"/>
+        /// <see cref="GetMenu(int)"/>
+        /// <see cref="GetMenu(string)"/>
         public List<UIMenu> Menus { get; } = new List<UIMenu>();
 
         /// <summary>
-        /// UI Window Windows Camera2D.
-        /// Used to scroll the view area of the window.
+        /// An extended rectangle of the window including its borders, if they are enabled.
         /// </summary>
-        public IOCamera2D ContentsCamera { get; }
+        public Rectangle ExtendedRectangle => CalculateExtendedRectangle();
 
         /// <summary>
-        /// UI Window Extended Rectangle.
-        /// A rectangle of the UIWindow including Borders, if they are enabled.
+        /// The window's viewport. Displays only a portion of the WorldRectangle's viewing area unless it's of equal size.
         /// </summary>
-        public Rectangle ExtendedRectangle { get; private set; }
+        public Viewport ViewPort => new Viewport(Rectangle);
 
         /// <summary>
-        /// UI Window.
+        /// The window's world Rectangle. The total viewing area.
         /// </summary>
-        /// <param name="parentGroup">The parent group. Intaken as a UIGroup.</param>
+        public Rectangle WorldRectangle { get; private set; }
+
+        /// <summary>
+        /// A UI window that has borders and can have buttons, texts and menus in them.
+        /// They are scrollable and can have their width and height adjusted.
+        /// </summary>
+        /// <param name="parentGroup">The window's parent group. Intaken as a UIGroup.</param>
         /// <param name="id">The window's id. Intaken as an int.</param>
         /// <param name="name">The window's name. Intaken as a string.</param>
-        /// <param name="position">Intakes the UI's position as a Vector2.</param>
-        /// <param name="width">Intakes the UI's width as a float.</param>
-        /// <param name="height">Intakes the UI's height as a float.</param>
-        /// <param name="orderNumber">Intakes an int that will be used to define the update/draw order. Update/Draw order is from lowest to highest.</param>
-        /// <param name="worldRectangle">Intakes a Rectangle describing the extended view of the UIWindow. Used by Camera2D.</param>
-        public UIWindow(UIGroup parentGroup, int id, string name, Vector2 position, int width, int height, int orderNumber, Rectangle? worldRectangle = null) : base(id, name, position, width, height, orderNumber)
+        /// <param name="position">The window's position. Intaken as a Vector2.</param>
+        /// <param name="width">The window's width. Intaken as a float.</param>
+        /// <param name="height">The window's height. Intaken as a float.</param>
+        /// <param name="orderNumber">The window's order number. Used to sort the window. Intaken as an int.</param>
+        /// <param name="worldRectangle">The window's world Rectangle. The total viewing area of the window. Intaken as a Rectangle.</param>
+        /// <param name="borderThickness">The window's border thickness. Intaken as an int. Set to 0 to disable borders.</param>
+        public UIWindow(UIGroup parentGroup, int id, string name, Vector2 position, int width, int height, int orderNumber,
+                        Rectangle? worldRectangle = null, int borderThickness = 10) : base(id, name, position, width, height, orderNumber)
         {
             ParentGroup = parentGroup;
-            ContentsCamera = new IOCamera2D(new Rectangle((int)position.X - width / 2, (int)position.Y - height / 2, width, height), worldRectangle ?? new Rectangle(0, 0, width, height));
+            WorldRectangle = worldRectangle ?? new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
+            borderThickness = borderThickness >= 0 ? borderThickness : 0;
 
             Borders = new List<UIBorder>(8)
             {
-                new UIBorder(1, "Top", new Vector2(), width, BorderThickness, 1),
-                new UIBorder(2, "Right", new Vector2(), BorderThickness, height, 2),
-                new UIBorder(3, "Bottom", new Vector2(), width, BorderThickness, 3),
-                new UIBorder(4, "Left", new Vector2(), BorderThickness, height, 4),
-                new UIBorder(5, "TopLeft", new Vector2(), BorderThickness + GetItemById(Outlines, 1).Thickness * 2, BorderThickness + GetItemById(Outlines, 4).Thickness * 2, 5),
-                new UIBorder(6, "TopRight", new Vector2(), BorderThickness + GetItemById(Outlines, 1).Thickness * 2, BorderThickness + GetItemById(Outlines, 2).Thickness * 2, 6),
-                new UIBorder(7, "BottomLeft", new Vector2(), BorderThickness + GetItemById(Outlines, 3).Thickness * 2, BorderThickness + GetItemById(Outlines, 4).Thickness * 2, 7),
-                new UIBorder(8, "BottomRight", new Vector2(), BorderThickness + GetItemById(Outlines, 3).Thickness * 2, BorderThickness + GetItemById(Outlines, 2).Thickness * 2, 8)
+                new UIBorder(1, "Top", Vector2.Zero, width, borderThickness, 1),
+                new UIBorder(2, "Right", Vector2.Zero, borderThickness, height, 2),
+                new UIBorder(3, "Bottom", Vector2.Zero, width, borderThickness, 3),
+                new UIBorder(4, "Left", Vector2.Zero, borderThickness, height, 4),
+                new UIBorder(5, "TopLeft", Vector2.Zero, borderThickness, borderThickness, 5),
+                new UIBorder(6, "TopRight", Vector2.Zero, borderThickness, borderThickness, 6),
+                new UIBorder(7, "BottomLeft", Vector2.Zero, borderThickness, borderThickness, 7),
+                new UIBorder(8, "BottomRight", Vector2.Zero, borderThickness, borderThickness, 8)
             };
 
-            UpdateWindowProperties();
+            if (borderThickness == 0)
+            {
+                SetBorderVisibility(false);
+            }
+
+            SetWindowTransparency(Transparencies["Background"]);
         }
 
         #region Buttons
 
         /// <summary>
-        /// Add Button.
+        /// Adds a button.
         /// </summary>
-        /// <param name="name">The button's name. Intaken as a string.</param>
-        /// <returns>Returns the button id of the newly added button as an int.</returns>
-        public int AddButton(string name)
+        /// <param name="buttonName">The button's name. Intaken as a string.</param>
+        /// <returns>Returns the button id, if added, otherwise zero.</returns>
+        /// <remarks>If a button already exists with the provided name then a zero is returned indicating failure to add the button.</remarks>
+        public int AddButton(string buttonName)
         {
-            var nextButtonId = GetNextValidItemId(Buttons);
+            var nextButtonId = 0;
 
-            var button = new UIButton(nextButtonId, name, new Vector2(ParentGroup.ParentManager.GetViewportDimenions().Width / 2f, ParentGroup.ParentManager.GetViewportDimenions().Height / 2f), Width, Height / 4, nextButtonId);
-            button.LoadContent();
+            if (CheckForButton(buttonName) == false)
+            {
+                nextButtonId = GetNextValidItemId(Buttons);
 
-            Buttons.Add(button);
+                if (CheckForButton(nextButtonId) == false)
+                {
+                    var button = new UIButton(nextButtonId, buttonName, new Vector2(ParentGroup.ParentManager.GetViewportDimenions().Width / 2f, ParentGroup.ParentManager.GetViewportDimenions().Height / 2f), Width, Height / 4, nextButtonId);
+                    button.LoadContent();
+
+                    Buttons.Add(button);
+                }
+            }
 
             return nextButtonId;
         }
 
         /// <summary>
-        /// Get Button.
+        /// Checks for a button by id.
+        /// </summary>
+        /// <param name="buttonId">The id of the button to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the button is present.</returns>
+        public bool CheckForButton(int buttonId)
+        {
+            return CheckItemById(Buttons, buttonId);
+        }
+
+        /// <summary>
+        /// Checks for a button by name.
+        /// </summary>
+        /// <param name="buttonName">The name of the button to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the button is present.</returns>
+        public bool CheckForButton(string buttonName)
+        {
+            return CheckItemByName(Buttons, buttonName);
+        }
+
+        /// <summary>
+        /// Gets a button by id.
         /// </summary>
         /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a UIButton with the requested id.</returns>
+        /// <returns>Returns the button with the specified id, if present, otherwise null.</returns>
         public UIButton GetButton(int buttonId)
         {
-            return GetItemById(Buttons, buttonId);
+            return CheckForButton(buttonId) ? GetItemById(Buttons, buttonId) : default(UIButton);
         }
 
         /// <summary>
-        /// Get Button.
+        /// Gets a button by name.
         /// </summary>
-        /// <param name="buttonName">The name of the button to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a UIButton with the requested name.</returns>
+        /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
+        /// <returns>Returns the button with the specified name, if present, otherwise null.</returns>
         public UIButton GetButton(string buttonName)
         {
-            return GetItemByName(Buttons, buttonName);
+            return CheckForButton(buttonName) ? GetItemByName(Buttons, buttonName) : default(UIButton);
         }
 
         /// <summary>
-        /// Remove Button.
+        /// Removes a button by id.
         /// </summary>
-        /// <param name="buttonName">The id of the button to be removed. Intaken as an int.</param>
+        /// <param name="buttonId">The id of the button to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the button was removed.</returns>
         public bool RemoveButton(int buttonId)
         {
@@ -148,7 +190,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Button.
+        /// Removes a button by name.
         /// </summary>
         /// <param name="buttonName">The name of the button to be removed. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the button was removed.</returns>
@@ -158,7 +200,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Button Order Number.
+        /// Increases a button's order number by id.
         /// </summary>
         /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the button's order number was increased.</returns>
@@ -168,7 +210,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Button Order Number.
+        /// Increases a button's order number bu name.
         /// </summary>
         /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the button's order number was increased.</returns>
@@ -178,7 +220,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Button Order Number.
+        /// Decreases a button's order number by id.
         /// </summary>
         /// <param name="buttonId">The id of the button to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the button's order number was decreased.</returns>
@@ -188,7 +230,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Button Order Number.
+        /// Decreases a button's order number by name.
         /// </summary>
         /// <param name="buttonName">The name of the button to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the button's order number was decreased.</returns>
@@ -205,44 +247,73 @@ namespace Softfire.MonoGame.UI
         /// Add Text.
         /// Adds a new text on to the group.
         /// </summary>
-        /// <param name="name">The text's name. Intaken as a string.</param>
+        /// <param name="textName">The text's name. Intaken as a string.</param>
         /// <param name="font">The text's font. Intaken as a SpriteFont.</param>
         /// <param name="text">The text's text. Intaken as a string.</param>
-        /// <returns>Returns the text id of the newly added text as an int.</returns>
-        public int AddText(string name, SpriteFont font, string text)
+        /// <returns>Returns the text id, if added, otherwise zero.</returns>
+        /// <remarks>If text already exists with the provided name then a zero is returned indicating failure to add the text.</remarks>
+        public int AddText(string textName, SpriteFont font, string text)
         {
-            var nextTextId = GetNextValidItemId(Texts);
+            var nextTextId = 0;
 
-            var newText = new UIText(nextTextId, name, font, text, nextTextId);
-            newText.LoadContent();
+            if (CheckForText(textName) == false)
+            {
+                nextTextId = GetNextValidItemId(Texts);
 
-            Texts.Add(newText);
+                if (CheckForText(nextTextId) == false)
+                {
+                    var newText = new UIText(nextTextId, textName, font, text, nextTextId);
+                    newText.LoadContent();
+
+                    Texts.Add(newText);
+                }
+            }
 
             return nextTextId;
         }
 
         /// <summary>
-        /// Get Text.
+        /// Checks for text by id.
+        /// </summary>
+        /// <param name="textId">The id of the text to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the text is present.</returns>
+        public bool CheckForText(int textId)
+        {
+            return CheckItemById(Texts, textId);
+        }
+
+        /// <summary>
+        /// Checks for text by name.
+        /// </summary>
+        /// <param name="textName">The name of the text to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the text is present.</returns>
+        public bool CheckForText(string textName)
+        {
+            return CheckItemByName(Texts, textName);
+        }
+
+        /// <summary>
+        /// Gets text by id.
         /// </summary>
         /// <param name="textId">The id of the text to retrieve.</param>
-        /// <returns>Returns a UIText with the requested id, if present, otherwise null.</returns>
+        /// <returns>Returns a text with the requested id, if present, otherwise null.</returns>
         public UIText GetText(int textId)
         {
-            return GetItemById(Texts, textId);
+            return CheckForText(textId) ? GetItemById(Texts, textId) : default(UIText);
         }
 
         /// <summary>
-        /// Get Text.
+        /// Gets text by name.
         /// </summary>
         /// <param name="textName">The name of the text to retrieve.</param>
-        /// <returns>Returns a UIText with the requested name, if present, otherwise null.</returns>
+        /// <returns>Returns a text with the requested name, if present, otherwise null.</returns>
         public UIText GetText(string textName)
         {
-            return GetItemByName(Texts, textName);
+            return CheckForText(textName) ? GetItemByName(Texts, textName) : default(UIText);
         }
 
         /// <summary>
-        /// Remove Text.
+        /// Removes text by id.
         /// </summary>
         /// <param name="textId">The id of the text to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the text was removed.</returns>
@@ -252,7 +323,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Text.
+        /// Removes text by name.
         /// </summary>
         /// <param name="textName">The name of the text to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the text was removed.</returns>
@@ -262,7 +333,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Text Order Number.
+        /// Increases text order number by id.
         /// </summary>
         /// <param name="textId">The id of the text to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the text's order number was increased.</returns>
@@ -272,7 +343,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Text Order Number.
+        /// Increases text order number by name.
         /// </summary>
         /// <param name="textName">The name of the text to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the text's order number was increased.</returns>
@@ -282,7 +353,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Text Order Number.
+        /// Decreases text order number by id.
         /// </summary>
         /// <param name="textId">The id of the text to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the text's order number was decreased.</returns>
@@ -292,7 +363,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Text Order Number.
+        /// Decreases text order number by name.
         /// </summary>
         /// <param name="textName">The name of the text to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the text's order number was decreased.</returns>
@@ -308,44 +379,72 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// Add Menu.
         /// </summary>
-        /// <param name="name">The menu's name. Intaken as a string.</param>
+        /// <param name="menuName">The menu's name. Intaken as a string.</param>
         /// <param name="width">The menu's width. Intaken as an int. Default is 100.</param>
         /// <param name="height">The menu's height. Intaken as an int. Default is 400.</param>
         /// <returns>Returns the menu id of the newly added menu as an int.</returns>
-        public int AddMenu(string name, int width = 100, int height = 400)
+        public int AddMenu(string menuName, int width = 100, int height = 400)
         {
-            var nextMenuId = GetNextValidItemId(Menus);
+            var nextMenuId = 0;
 
-            var newMenu = new UIMenu(ParentGroup, nextMenuId, name, new Vector2(ParentGroup.ParentManager.GetViewportDimenions().Width / 2f, ParentGroup.ParentManager.GetViewportDimenions().Height / 2f), width, height, nextMenuId);
-            newMenu.LoadContent();
+            if (CheckForMenu(menuName) == false)
+            {
+                nextMenuId = GetNextValidItemId(Texts);
 
-            Menus.Add(newMenu);
+                if (CheckForMenu(nextMenuId) == false)
+                {
+                    var newMenu = new UIMenu(ParentGroup, nextMenuId, menuName, new Vector2(ParentGroup.ParentManager.GetViewportDimenions().Width / 2f, ParentGroup.ParentManager.GetViewportDimenions().Height / 2f), width, height, nextMenuId);
+                    newMenu.LoadContent();
+
+                    Menus.Add(newMenu);
+                }
+            }
 
             return nextMenuId;
         }
 
         /// <summary>
-        /// Get Menu.
+        /// Checks for menu by id.
+        /// </summary>
+        /// <param name="menuId">The id of the menu to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the menu is present.</returns>
+        public bool CheckForMenu(int menuId)
+        {
+            return CheckItemById(Menus, menuId);
+        }
+
+        /// <summary>
+        /// Checks for menu by name.
+        /// </summary>
+        /// <param name="menuName">The name of the menu to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the menu is present.</returns>
+        public bool CheckForMenu(string menuName)
+        {
+            return CheckItemByName(Menus, menuName);
+        }
+
+        /// <summary>
+        /// Gets a menu ny id.
         /// </summary>
         /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a UIMenu with the requested id, if present, otherwise null.</returns>
+        /// <returns>Returns a menu with the requested id, if present, otherwise null.</returns>
         public UIMenu GetMenu(int menuId)
         {
-            return GetItemById(Menus, menuId);
+            return CheckForMenu(menuId) ? GetItemById(Menus, menuId) : default(UIMenu);
         }
 
         /// <summary>
-        /// Get Menu.
+        /// Gets a menu by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
-        /// <returns>Returns a UIMenu with the requested name, if present, otherwise null.</returns>
+        /// <returns>Returns a menu with the requested name, if present, otherwise null.</returns>
         public UIMenu GetMenu(string menuName)
         {
-            return GetItemByName(Menus, menuName);
+            return CheckForMenu(menuName) ? GetItemByName(Menus, menuName) : default(UIMenu);
         }
 
         /// <summary>
-        /// Remove Menu.
+        /// Removes a menu by id.
         /// </summary>
         /// <param name="menuId">The id of the menu to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the menu was removed.</returns>
@@ -355,7 +454,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Remove Menu.
+        /// Removes a menu by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to be removed. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the menu was removed.</returns>
@@ -365,7 +464,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Menu Order Number.
+        /// Increases a menu's order number by id.
         /// </summary>
         /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the menu's order number was increased.</returns>
@@ -375,7 +474,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Increase Menu Order Number.
+        /// Increases a menu's order number by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the menu's order number was increased.</returns>
@@ -385,7 +484,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Menu Order Number.
+        /// Decreases a menu's order number by id.
         /// </summary>
         /// <param name="menuId">The id of the menu to retrieve. Intaken as an int.</param>
         /// <returns>Returns a boolean indicating whether the menu's order number was decreased.</returns>
@@ -395,7 +494,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Decrease Menu Order Number.
+        /// Decreases a menu's order number by name.
         /// </summary>
         /// <param name="menuName">The name of the menu to retrieve. Intaken as a string.</param>
         /// <returns>Returns a boolean indicating whether the menu's order number was decreased.</returns>
@@ -406,99 +505,201 @@ namespace Softfire.MonoGame.UI
 
         #endregion
 
+        #region Borders
+
         /// <summary>
-        /// Move Window Method.
-        /// Used to move the window by detecting if the input device is present.
+        /// Checks for border by id.
         /// </summary>
-        /// <param name="deltas">The input device's deltas.</param>
+        /// <param name="borderId">The id of the border to search. Intaken as an int.</param>
+        /// <returns>Returns a bool indicating whether the border is present.</returns>
+        public bool CheckForBorder(int borderId)
+        {
+            return CheckItemById(Borders, borderId);
+        }
+
+        /// <summary>
+        /// Checks for border by name.
+        /// </summary>
+        /// <param name="borderName">The name of the border to search. Intaken as a string.</param>
+        /// <returns>Returns a bool indicating whether the border is present.</returns>
+        public bool CheckForBorder(string borderName)
+        {
+            return CheckItemByName(Borders, borderName);
+        }
+
+        /// <summary>
+        /// Gets a border ny id.
+        /// </summary>
+        /// <param name="borderId">The id of the border to retrieve. Intaken as an int.</param>
+        /// <returns>Returns a border with the requested id, if present, otherwise null.</returns>
+        public UIBorder GetBorder(int borderId)
+        {
+            return CheckForBorder(borderId) ? GetItemById(Borders, borderId) : default(UIBorder);
+        }
+
+        /// <summary>
+        /// Gets a border by name.
+        /// </summary>
+        /// <param name="borderName">The name of the border to retrieve. Intaken as a string.</param>
+        /// <returns>Returns a border with the requested name, if present, otherwise null.</returns>
+        public UIBorder GetBorder(string borderName)
+        {
+            return CheckForBorder(borderName) ? GetItemByName(Borders, borderName) : default(UIBorder);
+        }
+
+        /// <summary>
+        /// Sets all the window's borders to the provided thickness.
+        /// </summary>
+        /// <param name="borderThickness">The window's border thickness. Intaken as an int.</param>
+        public void SetBorderThickness(int borderThickness)
+        {
+            SetBorderThickness(borderThickness, borderThickness, borderThickness, borderThickness);
+            SetBorderThickness(new Vector2(borderThickness, borderThickness), new Vector2(borderThickness, borderThickness),
+                               new Vector2(borderThickness, borderThickness), new Vector2(borderThickness, borderThickness));
+        }
+
+        /// <summary>
+        /// Sets the window's individual main border thicknesses.
+        /// </summary>
+        /// <param name="top">The window's top border thickness. Intaken as an int.</param>
+        /// <param name="right">The window's right border thickness. Intaken as an int.</param>
+        /// <param name="bottom">The window's bottom border thickness. Intaken as an int.</param>
+        /// <param name="left">The window's left border thickness. Intaken as an int.</param>
+        public void SetBorderThickness(int top, int right, int bottom, int left)
+        {
+            GetBorder(1).Height = top;
+            GetBorder(2).Width = right;
+            GetBorder(3).Height = bottom;
+            GetBorder(4).Width = left;
+        }
+
+        /// <summary>
+        /// Sets the window's individual corner border thicknesses.
+        /// </summary>
+        /// <param name="topLeft">The window's top left border thickness. Intaken as a Vector2. The X axis is the border's width and the Y axis is the the border's height..</param>
+        /// <param name="topRight">The window's top left border thickness. Intaken as a Vector2. The X axis is the border's width and the Y axis is the the border's height..</param>
+        /// <param name="bottomRight">The window's top left border thickness. Intaken as a Vector2. The X axis is the border's width and the Y axis is the the border's height..</param>
+        /// <param name="bottomLeft">The window's top left border thickness. Intaken as a Vector2. The X axis is the border's width and the Y axis is the the border's height..</param>
+        /// <remarks>The window's corner border's thickness. Intaken as a Vector2. The X axis is the border's width and the Y axis is the the border's height.</remarks>
+        public void SetBorderThickness(Vector2 topLeft, Vector2 topRight, Vector2 bottomRight, Vector2 bottomLeft)
+        {
+            GetBorder(5).Width = (int)topLeft.X;
+            GetBorder(5).Height = (int)topLeft.Y;
+            GetBorder(6).Width = (int)topRight.X;
+            GetBorder(6).Height = (int)topRight.Y;
+            GetBorder(7).Width = (int)bottomRight.X;
+            GetBorder(7).Height = (int)bottomRight.Y;
+            GetBorder(8).Width = (int)bottomLeft.X;
+            GetBorder(8).Height = (int)bottomLeft.Y;
+        }
+
+        /// <summary>
+        /// Sets visibility for each border to that of the window.
+        /// </summary>
+        /// <see cref="UIBase.IsVisible"/>
+        public void SetBorderVisibility()
+        {
+            foreach (var border in Borders)
+            {
+                border.IsVisible = IsVisible;
+            }
+        }
+
+        /// <summary>
+        /// Sets visibility for each border.
+        /// </summary>
+        /// <see cref="UIBase.IsVisible"/>
+        public void SetBorderVisibility(bool visibility)
+        {
+            foreach (var border in Borders)
+            {
+                border.IsVisible = visibility;
+            }
+        }
+
+        /// <summary>
+        /// Sets individual border visibility.
+        /// </summary>
+        /// <param name="top">A boolean indicating whether the top border is visible.</param>
+        /// <param name="right">A boolean indicating whether the right border is visible.</param>
+        /// <param name="bottom">A boolean indicating whether the bottom border is visible.</param>
+        /// <param name="left">A boolean indicating whether the left border is visible.</param>
+        /// <param name="topLeft">A boolean indicating whether the top left corner border is visible.</param>
+        /// <param name="topRight">A boolean indicating whether the top right corner border is visible.</param>
+        /// <param name="bottomRight">A boolean indicating whether the bottom right corner border is visible.</param>
+        /// <param name="bottomLeft">A boolean indicating whether the bottom left corner border is visible.</param>
+        /// <see cref="UIBase.IsVisible"/>
+        public void SetBorderVisibility(bool top, bool right, bool bottom, bool left,
+                                        bool topLeft, bool topRight, bool bottomRight, bool bottomLeft)
+        {
+            GetBorder(1).IsVisible = top;
+            GetBorder(2).IsVisible = right;
+            GetBorder(3).IsVisible = bottom;
+            GetBorder(4).IsVisible = left;
+            GetBorder(5).IsVisible = topLeft;
+            GetBorder(6).IsVisible = topRight;
+            GetBorder(7).IsVisible = bottomRight;
+            GetBorder(8).IsVisible = bottomLeft;
+        }
+
+        /// <summary>
+        /// Updates the window's border positions.
+        /// </summary>
+        private async Task UpdateBorderPositions(GameTime gameTime)
+        {
+            var borderTop = GetBorder("Top");
+            var borderRight = GetBorder("Right");
+            var borderBottom = GetBorder("Bottom");
+            var borderLeft = GetBorder("Left");
+            var borderTopLeft = GetBorder("TopLeft");
+            var borderTopRight = GetBorder("TopRight");
+            var borderBottomRight = GetBorder("BottomRight");
+            var borderBottomLeft = GetBorder("BottomLeft");
+
+            // Main borders.
+            borderTop.Position = new Vector2(borderTop.Position.X, -((HeightF / 2f) + borderTop.HeightF - borderTop.GetOutline("Bottom").Thickness));
+            borderRight.Position = new Vector2((WidthF / 2f) + borderRight.WidthF - borderRight.GetOutline("Left").Thickness, borderRight.Position.Y);
+            borderBottom.Position = new Vector2(borderBottom.Position.X, (HeightF / 2f) + borderBottom.HeightF - borderBottom.GetOutline("Top").Thickness);
+            borderLeft.Position = new Vector2(-((WidthF / 2f) + borderLeft.WidthF - borderLeft.GetOutline("Right").Thickness), borderLeft.Position.Y);
+            
+            // Corner borders.
+            borderTopLeft.Position = new Vector2(-((WidthF / 2f) + borderTopLeft.WidthF - borderTopLeft.GetOutline("Right").Thickness),
+                                                 -((HeightF / 2f) + borderTopLeft.HeightF - borderTopLeft.GetOutline("Bottom").Thickness));
+            borderTopRight.Position = new Vector2((WidthF / 2f) + borderTopRight.WidthF - borderTopRight.GetOutline("Left").Thickness,
+                                                  -((HeightF / 2f) + borderTopRight.HeightF - borderTopRight.GetOutline("Bottom").Thickness));
+            borderBottomRight.Position = new Vector2((WidthF / 2f) + borderBottomRight.WidthF - borderBottomRight.GetOutline("Left").Thickness,
+                                                     (HeightF / 2f) + borderBottomRight.HeightF - borderBottomRight.GetOutline("Top").Thickness);
+            borderBottomLeft.Position = new Vector2(-((WidthF / 2f) + borderBottomLeft.WidthF - borderBottomLeft.GetOutline("Right").Thickness),
+                                                    (HeightF / 2f) + borderBottomLeft.HeightF - borderBottomLeft.GetOutline("Top").Thickness);
+
+            foreach (var border in Borders)
+            {
+                border.ParentPosition = Position;
+                await border.Update(gameTime);
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Used to move the window. Pass in an IO devices deltas to sync the window's movements to the IO device.
+        /// </summary>
+        /// <param name="deltas">The input device's deltas. Intaken as a Vector2.</param>
+        /// <see cref="UIBase.IsMovable"/>
+        /// <remarks>IsMovable must be set to true for this to work.</remarks>
         public void Move(Vector2 deltas)
         {
-            if (IsMovable && GetItemByName(Borders, "Top").IsVisible)
+            if (IsMovable)
             {
                 Position = new Vector2(Position.X + deltas.X, Position.Y + deltas.Y);
             }
         }
 
         /// <summary>
-        /// Update Windows Properties.
+        /// Calculates an extended Rectangle that includes the window's borders.
         /// </summary>
-        private void UpdateWindowProperties()
-        {
-            //ContentsCamera.Viewport = new Viewport((int)Position.X - (Width / 2),
-            //                                       (int)Position.Y - (Height / 2),
-            //                                       Width,
-            //                                       Height);
-
-            #region Borders
-
-            var border = GetItemByName(Borders, "Top");
-
-            border.ParentPosition = Position;
-            border.Position = new Vector2(0, -((Height / 2f) + BorderThickness - GetItemByName(border.Outlines, "Bottom").Thickness));
-            border.Width = Width;
-            border.Height = BorderThickness;
-
-            border = GetItemByName(Borders, "Right");
-
-            border.ParentPosition = Position;
-            border.Position = new Vector2((Width / 2f) + BorderThickness - GetItemByName(border.Outlines, "Left").Thickness, 0);
-            border.Width = BorderThickness;
-            border.Height = Height;
-
-            border = GetItemByName(Borders, "Bottom");
-
-            border.ParentPosition = Position;
-            border.Position = new Vector2(0, (Height / 2f) + BorderThickness - GetItemByName(border.Outlines, "Top").Thickness);
-            border.Width = Width;
-            border.Height = BorderThickness;
-
-            border = GetItemByName(Borders, "Left");
-
-            border.ParentPosition = Position;
-            border.Position = new Vector2(-((Width / 2f) + BorderThickness - GetItemByName(border.Outlines, "Right").Thickness), 0);
-            border.Width = BorderThickness;
-            border.Height = Height;
-
-            border = GetItemByName(Borders, "TopLeft");
-
-            border.ParentPosition = Position;
-            border.Position = new Vector2(-((Width / 2f) + BorderThickness - GetItemByName(border.Outlines, "Right").Thickness),
-                                          -((Height / 2f) + BorderThickness - GetItemByName(border.Outlines, "Bottom").Thickness));
-            border.Width = BorderThickness;
-            border.Height = BorderThickness;
-
-            border = GetItemByName(Borders, "TopRight");
-
-            border.ParentPosition = Position;
-            border.Position = new Vector2((Width / 2f) + BorderThickness - GetItemByName(border.Outlines, "Left").Thickness,
-                                          -((Height / 2f) + BorderThickness - GetItemByName(border.Outlines, "Bottom").Thickness));
-            border.Width = BorderThickness;
-            border.Height = BorderThickness;
-
-            border = GetItemByName(Borders, "BottomRight");
-
-            border.ParentPosition = Position;
-            border.Position = new Vector2((Width / 2f) + BorderThickness - GetItemByName(border.Outlines, "Left").Thickness,
-                                          (Height / 2f) + BorderThickness - GetItemByName(border.Outlines, "Top").Thickness);
-            border.Width = BorderThickness;
-            border.Height = BorderThickness;
-
-            border = GetItemByName(Borders, "BottomLeft");
-
-            border.ParentPosition = Position;
-            border.Position = new Vector2(-((Width / 2f) + BorderThickness - GetItemByName(border.Outlines, "Right").Thickness),
-                                                    (Height / 2f) + BorderThickness - GetItemByName(border.Outlines, "Top").Thickness);
-            border.Width = BorderThickness;
-            border.Height = BorderThickness;
-
-            #endregion
-        }
-
-        /// <summary>
-        /// Calculate Extended Rectangle.
-        /// Calculates an extended Rectangle that can be used for detection.
-        /// </summary>
-        private void CalculateExtendedRectangle()
+        /// <returns>Returns a Rectangle that includes the window's borders as a Rectangle.</returns>
+        private Rectangle CalculateExtendedRectangle()
         {
             var rectangle = Rectangle;
             var border = GetItemByName(Borders, "Top");
@@ -541,21 +742,38 @@ namespace Softfire.MonoGame.UI
                                           rectangle.Height);
             }
 
-            ExtendedRectangle = rectangle;
+            return rectangle;
         }
 
         /// <summary>
-        /// Set Window Transparency.
+        /// Sets the window, borders and outlines transparency levels.
         /// </summary>
-        /// <param name="transparencyLevel">Intakes a float to define the transparency level.</param>
+        /// <param name="transparencyLevel">The transparency level to set. Intaken as a float.</param>
         public void SetWindowTransparency(float transparencyLevel)
         {
+            Transparencies["Background"] = transparencyLevel;
+            Transparencies["Outline"] = transparencyLevel;
+
             foreach (var border in Borders)
             {
-                border.Transparencies["Background"] = transparencyLevel;
-            }
+                border.Transparencies["Background"] = Transparencies["Background"];
+                border.Transparencies["Outline"] = Transparencies["Outline"];
 
-            Transparencies["Background"] = transparencyLevel;
+                border.SetOutlineTransparency();
+            }
+        }
+
+        /// <summary>
+        /// Sets the window's world Rectangle to that of the provided one if at least equal to the current Viewport.
+        /// </summary>
+        /// <param name="worldRectangle">The total view area of the window. Intaken as a Rectangle.</param>
+        public void SetWorldRectangle(Rectangle worldRectangle)
+        {
+            if (worldRectangle.Width >= ViewPort.Width &&
+                worldRectangle.Height >= ViewPort.Height)
+            {
+                WorldRectangle = worldRectangle;
+            }
         }
 
         /// <summary>
@@ -564,42 +782,42 @@ namespace Softfire.MonoGame.UI
         /// </summary>
         public void DrawContents(SpriteBatch contentsSpriteBatch, Viewport parentViewport)
         {
-            contentsSpriteBatch.GraphicsDevice.Viewport = ContentsCamera.Viewport;
+            //contentsSpriteBatch.GraphicsDevice.Viewport = ContentsCamera.Viewport;
 
-            contentsSpriteBatch.Begin(transformMatrix: ContentsCamera.Matrix);
+            //contentsSpriteBatch.Begin(transformMatrix: ContentsCamera.Matrix);
 
-            foreach (var border in Borders.OrderBy(border => border.OrderNumber))
-            {
-                border.IsVisible = IsVisible;
-                border.Transparencies["Background"] = Transparencies["Background"];
-                border.Draw(contentsSpriteBatch);
-            }
+            //foreach (var border in Borders.OrderBy(border => border.OrderNumber))
+            //{
+            //    border.IsVisible = IsVisible;
+            //    border.Transparencies["Background"] = Transparencies["Background"];
+            //    border.Draw(contentsSpriteBatch);
+            //}
 
-            foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
-            {
-                if (button.GetText() != null)
-                {
-                    button.GetText().IsVisible = IsVisible;
-                    button.GetText().ApplyEnhancedTextScaling(button.Rectangle, true);
-                }
+            //foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
+            //{
+            //    if (button.GetText() != null)
+            //    {
+            //        button.GetText().IsVisible = IsVisible;
+            //        button.GetText().ApplyEnhancedTextScaling(button.Rectangle, true);
+            //    }
 
-                button.IsVisible = IsVisible;
-                button.Transparencies["Background"] = Transparencies["Background"];
-                button.Draw(contentsSpriteBatch);
-            }
+            //    button.IsVisible = IsVisible;
+            //    button.Transparencies["Background"] = Transparencies["Background"];
+            //    button.Draw(contentsSpriteBatch);
+            //}
 
-            foreach (var text in Texts.OrderBy(text => text.OrderNumber))
-            {
-                text.IsVisible = IsVisible;
-                text.Transparencies["Background"] = Transparencies["Background"];
-                text.ApplyEnhancedTextWrap(ContentsCamera.WorldViewRectangle);
-                text.Draw(contentsSpriteBatch);
-            }
+            //foreach (var text in Texts.OrderBy(text => text.OrderNumber))
+            //{
+            //    text.IsVisible = IsVisible;
+            //    text.Transparencies["Background"] = Transparencies["Background"];
+            //    text.ApplyEnhancedTextWrap(ContentsCamera.WorldViewRectangle);
+            //    text.Draw(contentsSpriteBatch);
+            //}
 
-            contentsSpriteBatch.End();
+            //contentsSpriteBatch.End();
 
-            // Switch back to Parent Viewport.
-            contentsSpriteBatch.GraphicsDevice.Viewport = parentViewport;
+            //// Switch back to Parent Viewport.
+            //contentsSpriteBatch.GraphicsDevice.Viewport = parentViewport;
         }
 
         /// <summary>
@@ -607,12 +825,12 @@ namespace Softfire.MonoGame.UI
         /// </summary>
         public override void LoadContent()
         {
+            base.LoadContent();
+
             foreach (var border in Borders)
             {
                 border.LoadContent();
             }
-
-            base.LoadContent();
         }
 
         /// <summary>
@@ -621,76 +839,24 @@ namespace Softfire.MonoGame.UI
         /// <param name="gameTime">Intakes MonoGame GameTime.</param>
         public override async Task Update(GameTime gameTime)
         {
-            UpdateWindowProperties();
-            SetWindowTransparency(Transparencies["Background"]);
+            await base.Update(gameTime);
 
-            foreach (var border in Borders)
+            await UpdateBorderPositions(gameTime);
+
+            foreach (var menu in Menus.OrderBy(menu => menu.OrderNumber))
             {
-                await border.Update(gameTime);
-            }
-
-            foreach (var text in Texts.OrderBy(text => text.OrderNumber))
-            {
-                for (var index = 0; index < ActiveInputDevices.Count; index++)
-                {
-                    var inputDevice = ActiveInputDevices[index];
-                    text.CheckIsInFocus(new Rectangle((int)ContentsCamera.GetScreenPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                                                      (int)ContentsCamera.GetScreenPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                                                      inputDevice.Width,
-                                                      inputDevice.Height));
-                }
-
-                await text.Update(gameTime);
+                await menu.Update(gameTime);
             }
 
             foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
             {
-                for (var index = 0; index < ActiveInputDevices.Count; index++)
-                {
-                    var inputDevice = ActiveInputDevices[index];
-                    button.CheckIsInFocus(new Rectangle((int)ContentsCamera.GetScreenPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                                                        (int)ContentsCamera.GetScreenPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                                                        inputDevice.Width,
-                                                        inputDevice.Height));
-                }
-
                 await button.Update(gameTime);
             }
 
-            foreach (var border in Borders.OrderBy(border => border.OrderNumber))
+            foreach (var text in Texts.OrderBy(text => text.OrderNumber))
             {
-                for (var index = 0; index < ActiveInputDevices.Count; index++)
-                {
-                    var inputDevice = ActiveInputDevices[index];
-                    border.CheckIsInFocus(new Rectangle((int)ContentsCamera.GetScreenPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                                                        (int)ContentsCamera.GetScreenPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                                                        inputDevice.Width,
-                                                        inputDevice.Height));
-                }
-
-                await border.Update(gameTime);
+                await text.Update(gameTime);
             }
-
-            foreach (var menu in Menus.OrderBy(menu => menu.OrderNumber))
-            {
-                for (var index = 0; index < ActiveInputDevices.Count; index++)
-                {
-                    var inputDevice = ActiveInputDevices[index];
-                    menu.CheckIsInFocus(new Rectangle((int)ContentsCamera.GetScreenPosition(new Vector2(inputDevice.X, inputDevice.Y)).X,
-                                                      (int)ContentsCamera.GetScreenPosition(new Vector2(inputDevice.X, inputDevice.Y)).Y,
-                                                      inputDevice.Width,
-                                                      inputDevice.Height));
-                }
-
-                await menu.Update(gameTime);
-            }
-
-            await base.Update(gameTime);
-
-            CalculateExtendedRectangle();
-
-            ContentsCamera.Update(gameTime);
-            ActiveInputDevices.Clear();
         }
 
         /// <summary>
@@ -701,9 +867,24 @@ namespace Softfire.MonoGame.UI
         {
             base.Draw(spriteBatch);
 
-            foreach (var border in Borders)
+            foreach (var border in Borders.OrderBy(border => border.OrderNumber))
             {
                 border.Draw(spriteBatch);
+            }
+
+            foreach (var menu in Menus.OrderBy(menu => menu.OrderNumber))
+            {
+                menu.Draw(spriteBatch);
+            }
+
+            foreach (var button in Buttons.OrderBy(button => button.OrderNumber))
+            {
+                button.Draw(spriteBatch);
+            }
+
+            foreach (var text in Texts.OrderBy(text => text.OrderNumber))
+            {
+                text.Draw(spriteBatch);
             }
         }
     }

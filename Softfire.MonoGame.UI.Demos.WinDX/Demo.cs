@@ -177,6 +177,9 @@ namespace Softfire.MonoGame.UI.Demos.WinDX
             // TODO: Step 5.5.3: Activate an Effect.
             // Activating an effect by adding it to an internal List that is processed during the elements Update method.
             // See the Update method for this step.
+
+            // TODO: Step 5.6: Windows
+            UIManager.GetGroup("Demo").AddWindow("Window");
         }
 
         /// <summary>
