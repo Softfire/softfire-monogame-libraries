@@ -32,16 +32,16 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// <summary>
         /// Add Server.
         /// </summary>
-        /// <param name="identifier">A unique identifier. Used to Get, Start and Shutdown the server. Intaken as a string.</param>
+        /// <param name="identifier">A unique identifier. Used to Get, Start and Shutdown the server. Intaken as a <see cref="string"/>.</param>
         /// <param name="applicationIdentifier">Intakes a uniques string to identify the application. Used by clients and servers to connect. Default is Softfire.MonoGame.NTWK.</param>
         /// <param name="ipAddress">Intakes an IPAddress that the client will bind to and listen to client responses.</param>
         /// <param name="port">Intakes a port number, as an int, to bind to. Default is 16464.</param>
-        /// <returns>Returns a boolean indicating whether the Server was added or not.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Server was added or not.</returns>
         public bool AddServer(string identifier, string applicationIdentifier = null, IPAddress ipAddress = null, int port = 16464)
         {
             var result = false;
 
-            if (Servers.ContainsKey(identifier) == false)
+            if (!Servers.ContainsKey(identifier))
             {
                 Servers.Add(identifier, (T2)new LidgrenServer(applicationIdentifier, ipAddress, port));
                 result = true;
@@ -139,16 +139,16 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// <summary>
         /// Add Client.
         /// </summary>
-        /// <param name="identifier">A unique identifier. Used to Get, Start and Shutdown the client. Intaken as a string.</param>
+        /// <param name="identifier">A unique identifier. Used to Get, Start and Shutdown the client. Intaken as a <see cref="string"/>.</param>
         /// <param name="applicationIdentifier">Intakes a uniques string to identify the application. Used by clients and servers to connect. Default is Softfire.MonoGame.NTWK.</param>
         /// <param name="ipAddress">Intakes an IPAddress that the client will bind to and listen to client responses.</param>
         /// <param name="port">Intakes a port number, as an int, to bind to. Default is 16462.</param>
-        /// <returns>Returns a boolean indicating whether the Client was added or not.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Client was added or not.</returns>
         public bool AddClient(string identifier, string applicationIdentifier = null, IPAddress ipAddress = null, int port = 16462)
         {
             var result = false;
 
-            if (Clients.ContainsKey(identifier) == false)
+            if (!Clients.ContainsKey(identifier))
             {
                 Clients.Add(identifier, (T1)new LidgrenClient(applicationIdentifier, ipAddress, port));
                 result = true;

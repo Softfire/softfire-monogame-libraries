@@ -7,7 +7,7 @@ namespace Softfire.MonoGame.SND
     public class EffectManager
     {
         /// <summary>
-        /// Effect Catalogue.
+        /// Effect Catalog.
         /// </summary>
         public Dictionary<string, Effect> Catalogue { get; }
 
@@ -28,7 +28,7 @@ namespace Softfire.MonoGame.SND
         }
 
         /// <summary>
-        /// Get Effect From Catalogue.
+        /// Get Effect From Catalog.
         /// </summary>
         /// <param name="identifier">Intakes a unique identifier as a string.</param>
         /// <returns>Returns an Effect.</returns>
@@ -45,8 +45,8 @@ namespace Softfire.MonoGame.SND
         }
 
         /// <summary>
-        /// Play From Catalogue.
-        /// Plays an Effect directly from the Catalogue.
+        /// Play From Catalog.
+        /// Plays an Effect directly from the Catalog.
         /// </summary>
         /// <param name="identifier">Intakes a unique identifier as a string.</param>
         /// <param name="volume">Intakes a float between 0.0f and 1.0f to set the volume of the Effect. Default is 1.0f.</param>

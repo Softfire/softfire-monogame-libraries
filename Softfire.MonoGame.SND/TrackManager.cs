@@ -5,155 +5,134 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Softfire.MonoGame.SND
 {
+    /// <summary>
+    /// A track manager for sound tracks.
+    /// </summary>
     public class TrackManager
     {
         /// <summary>
-        /// Track Catalogue.
+        /// The manager's catalog of tracks.
         /// </summary>
-        public Dictionary<string, Track> Catalogue { get; }
+        public Dictionary<string, Track> Catalog { get; }
 
         /// <summary>
-        /// Track Queue.
+        /// The track queue.
         /// </summary>
-        public TrackQueue Queue { get; }
+        private TrackQueue Queue { get; }
 
         /// <summary>
-        /// Current Volume Level.
+        /// The current volume level.
         /// </summary>
         public float CurrentVolumeLevel { get; private set; }
 
         /// <summary>
-        /// Is Media Player Repeating?
+        /// The current track index.
         /// </summary>
-        public bool IsRepeating { get; set; }
+        private int CurrentTrackIndex { get; set; }
 
         /// <summary>
-        /// Is Media Player Muted?
+        /// Is the track repeating?
         /// </summary>
-        public bool IsMuted { get; set; }
+        public bool IsRepeating
+        {
+            get => MediaPlayer.IsRepeating;
+            set => MediaPlayer.IsRepeating = value;
+        }
 
         /// <summary>
-        /// Track Manager Constructor.
+        /// Is the track muted?
+        /// </summary>
+        public bool IsMuted
+        {
+            get => MediaPlayer.IsMuted;
+            set => MediaPlayer.IsMuted = value;
+        }
+
+        /// <summary>
+        /// The track manager's constructor.
         /// </summary>
         public TrackManager()
         {
-            Catalogue = new Dictionary<string, Track>();
+            Catalog = new Dictionary<string, Track>();
             Queue = new TrackQueue();
 
             IsRepeating = false;
             IsMuted = false;
-            ApplySettings();
 
             // Set Volume
             Volume(0.10f);
         }
 
         /// <summary>
-        /// Get Track From Catalogue.
+        /// Gets a <see cref="Track"/> from the <see cref="Catalog"/>.
         /// </summary>
-        /// <param name="identifier">Intakes a unique identifier as a string.</param>
-        /// <returns>Returns the Track with the supplied identifier or null if not found.</returns>
-        public Track GetTrackFromCatalogue(string identifier)
+        /// <param name="identifier">Intakes a unique identifier as a <see cref="string"/>.</param>
+        /// <returns>Returns the <see cref="Track"/> with the provided identifier, if found, otherwise null.</returns>
+        public Track GetTrackFromCatalog(string identifier)
         {
             Track result = null;
 
-            if (Catalogue.ContainsKey(identifier))
+            if (Catalog.ContainsKey(identifier))
             {
-                result = Catalogue[identifier];
+                result = Catalog[identifier];
             }
 
             return result;
         }
 
         /// <summary>
-        /// Add Track to Queue.
+        /// Adds a <see cref="Track"/> to the <see cref="Queue"/>.
         /// </summary>
-        /// <param name="identifier">Intakes a unique identifier as a string.</param>
-        /// <returns>Returns the Track's index in the Queue.</returns>
-        public int AddToQueue(string identifier)
-        {
-            return Queue.Add(Catalogue[identifier]);
-        }
+        /// <param name="identifier">Intakes a unique identifier as a <see cref="string"/>.</param>
+        /// <returns>Returns the <see cref="Track"/>'s index in the <see cref="Queue"/>.</returns>
+        public int AddToQueue(string identifier) => Queue.Add(Catalog[identifier]);
 
         /// <summary>
-        /// Remove From Queue.
+        /// Removes the <see cref="Track"/> from the <see cref="Queue"/> at the provided position.
         /// </summary>
         /// <param name="queuePosition"></param>
-        /// <returns></returns>
-        public string RemoveFromQueue(int queuePosition)
-        {
-            Track track;
-            var result = $"A track was not found at position {queuePosition} in the queue!";
-
-            if ((track = Queue.GetTrackAt(queuePosition)) != null)
-            {
-                Queue.RemoveAt(queuePosition);
-                result = $"The track '{track.Data.Name}' at position {queuePosition} was removed from the queue!";
-            }
-
-            return result;
-        }
+        public void RemoveFromQueue(int queuePosition) => Queue.Remove(queuePosition);
 
         /// <summary>
-        /// Play From Catalogue.
-        /// Plays a Track directly from the Catalogue.
+        /// Plays a <see cref="Track"/> directly from the <see cref="Catalog"/>.
         /// </summary>
-        /// <param name="identifier">Intakes a unique identifier as a string.</param>
-        /// <param name="startPosition">Intakes a TimeSpan indicating the start position for the song. If null the Track's StartPosition will be used. Default is null.</param>
+        /// <param name="identifier">Intakes a unique identifier as a <see cref="string"/>.</param>
+        /// <param name="startPosition">Intakes a <see cref="TimeSpan"/> indicating the start position for the song.</param>
         /// <returns>Returns a message of the results of the action.</returns>
-        public string PlayDirectFromCatalogue(string identifier, TimeSpan? startPosition = null)
+        public void PlayDirectFromCatalog(string identifier, TimeSpan? startPosition = null)
         {
             Track song;
-            var result = $"Track: '{identifier}' was not found!";
 
-            if ((song = GetTrackFromCatalogue(identifier)) != null)
+            if ((song = GetTrackFromCatalog(identifier)) != null)
             {
                 MediaPlayer.Play(song.Data, startPosition ?? song.StartPosition);
-                result = $"Track: '{identifier}' is now playing!";
             }
-
-            return result;
         }
 
         /// <summary>
-        /// Play Queue.
+        /// Plays the queue in order, by index.
         /// </summary>
         /// <returns>Returns a message of the results of the action.</returns>
-        public string PlayQueue()
+        public void PlayQueue()
         {
             Track song;
-            var result = "No Tracks found in Queue!";
 
-            if ((song = Queue.GetNextTrack()) != null)
+            if ((song = Queue.GetTrack(CurrentTrackIndex)) != null)
             {
-                MediaPlayer.Play(song.Data, song.StartPosition);
-                result = $"Track: '{song.Data.Name}' by '{song.Data.Artist}' is now playing!";
+                // TODO: Setup playback of the entire queue.
+                // MediaPlayer.Play(song.Data, song.StartPosition);
             }
-
-            return result;
         }
 
         /// <summary>
-        /// Pause Track.
+        /// Pauses the <see cref="Track"/>.
         /// </summary>
-        /// <returns>Returns a message of the results of the action.</returns>
-        public string Pause()
-        {
-            MediaPlayer.Pause();
-
-            return $"Track: '{MediaPlayer.Queue.ActiveSong}' by '{MediaPlayer.Queue.ActiveSong.Artist}' has been paused!";
-        }
+        public void Pause() => MediaPlayer.Pause();
 
         /// <summary>
-        /// Resume Track.
+        /// Resumes the <see cref="Track"/>.
         /// </summary>
-        /// <returns>Returns a message of the results of the action.</returns>
-        public string Resume()
-        {
-            MediaPlayer.Resume();
-
-            return $"Track: '{MediaPlayer.Queue.ActiveSong}' by '{MediaPlayer.Queue.ActiveSong.Artist}' has resumed playing!";
-        }
+        public void Resume() => MediaPlayer.Resume();
 
         /// <summary>
         /// Track Volume.
@@ -162,41 +141,24 @@ namespace Softfire.MonoGame.SND
         /// </summary>
         /// <param name="adjustment">Intakes a positive or negative float to modify the volume.</param>
         /// <returns>Returns the current volume.</returns>
-        public float Volume(float adjustment)
-        {
-            MediaPlayer.Volume = CurrentVolumeLevel = MathHelper.Clamp(CurrentVolumeLevel += adjustment, 0f, 1.0f);
-
-            return CurrentVolumeLevel;
-        }
+        public float Volume(float adjustment) => MediaPlayer.Volume = CurrentVolumeLevel = MathHelper.Clamp(CurrentVolumeLevel += adjustment, 0f, 1.0f);
 
         /// <summary>
-        /// Display Time.
-        /// Formats the provided TimeSpan into the format of 0:00.
+        /// Formats the provided <see cref="TimeSpan"/> into the format of 0:00.
         /// </summary>
-        /// <param name="timeSpan">Intakes a TimeSpan.</param>
+        /// <param name="timeSpan">Intakes a <see cref="TimeSpan"/>.</param>
         /// <returns>Returns a string in the format of 0:00.</returns>
-        public string DisplayTime(TimeSpan timeSpan)
-        {
-            var minutes = timeSpan.Minutes;
-            var seconds = timeSpan.Seconds;
-            string result;
-
-            if (seconds < 10)
-                result = minutes + ":0" + seconds;
-            else
-                result = minutes + ":" + seconds;
-
-            return result;
-        }
+        public string DisplayTime(TimeSpan timeSpan) => $"{timeSpan.Minutes}{(timeSpan.Seconds < 10 ? ":0" : ":")}{timeSpan.Seconds}";
 
         /// <summary>
-        /// Apply Settings.
-        /// Applies IsRepeating and IsMuted to MediaPlayer.
+        /// Retrieved the currently playing track info.
         /// </summary>
-        public void ApplySettings()
+        /// <returns>The current track's data.</returns>
+        public string GetCurrentTrackInfo()
         {
-            MediaPlayer.IsRepeating = IsRepeating;
-            MediaPlayer.IsMuted = IsMuted;
+            var track = Queue.GetTrack(CurrentTrackIndex);
+
+            return $"Track: '{track.Data.Name}' by '{track.Data.Artist}' is now playing!";
         }
     }
 }

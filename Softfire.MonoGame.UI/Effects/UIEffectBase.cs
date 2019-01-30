@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using Softfire.MonoGame.CORE.Common;
 
 namespace Softfire.MonoGame.UI.Effects
 {
     /// <summary>
     /// The base UI class for effects.
     /// </summary>
-    public abstract class UIEffectBase : IUIIdentifier
+    public abstract class UIEffectBase : IMonoGameIdentifierComponent
     {
         /// <summary>
         /// Time between update calls in seconds.
@@ -30,56 +30,38 @@ namespace Softfire.MonoGame.UI.Effects
         /// <summary>
         /// The parent UIBase.
         /// </summary>
-        protected UIBase ParentUIBase { get; }
+        protected UIBase Parent { get; }
         
-        /// <summary>
-        /// The rate of change between calls.
-        /// </summary>
-        public double RateOfChange { get; protected set; }
-
         /// <summary>
         /// The duration, in seconds, of the effect.
         /// </summary>
-        public float DurationInSeconds { get; }
+        protected float DurationInSeconds { get; }
 
         /// <summary>
         /// The delay, in seconds, before the start of the effect.
         /// </summary>
-        public float StartDelayInSeconds { get; }
+        protected float StartDelayInSeconds { get; }
 
         /// <summary>
-        /// Internal Order Number.
+        /// Is this the first run?
         /// </summary>
-        private int _orderNumber;
-
-        /// <summary>
-        /// The order number for the effect. To be run in order from smallest to largest.
-        /// </summary>
-        public int OrderNumber
-        {
-            get => _orderNumber;
-            set => _orderNumber = value >= 1 & value < int.MaxValue ? value : 0;
-        }
+        protected bool IsFirstRun { get; set; } = true;
 
         /// <summary>
         /// The base class for UI Effects.
         /// </summary>
-        /// <param name="uiBase">The UIBase that will be affected. Intaken as a UIBase.</param>
-        /// <param name="id">A unique id. Intaken as an int.</param>
-        /// <param name="name">A unique name. Intaken as a string.</param>
-        /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a float. Default is 1f.</param>
-        /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a float. Default is 0f.</param>
-        /// <param name="orderNumber">The effect's run order number. Intaken as an int. Default is 0.</param>
-        /// <see cref="Action()"/>
-        /// <seealso cref="Run()"/>
-        protected UIEffectBase(UIBase uiBase, int id, string name, float durationInSeconds = 1f, float startDelayInSeconds = 0f, int orderNumber = 0)
+        /// <param name="parent">The UIBase that will be affected. Intaken as a UIBase.</param>
+        /// <param name="id">A unique id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">A unique name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a <see cref="float"/>. Default is 1f.</param>
+        /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a <see cref="float"/>. Default is 0f.</param>
+        protected UIEffectBase(UIBase parent, int id, string name, float durationInSeconds = 1f, float startDelayInSeconds = 0f)
         {
-            ParentUIBase = uiBase;
+            Parent = parent;
             Id = id;
             Name = name;
             DurationInSeconds = durationInSeconds;
             StartDelayInSeconds = startDelayInSeconds;
-            OrderNumber = orderNumber;
 
             ElapsedTime = 0;
         }
@@ -87,26 +69,25 @@ namespace Softfire.MonoGame.UI.Effects
         /// <summary>
         /// Runs the effect's Action method.
         /// </summary>
-        /// <returns>Returns a Task{bool} indicating the result of the effect's Action.</returns>
-        internal async Task<bool> Run()
+        /// <returns>Returns a bool indicating the result of the effect's Action.</returns>
+        internal bool Run()
         {
             ElapsedTime += DeltaTime;
 
-            return await Task.Run(() => Action());
+            return Action();
         }
 
         /// <summary>
-        /// Reset.
         /// Resets the effect so it can be run again.
         /// </summary>
-        internal void Reset()
+        protected internal virtual void Reset()
         {
             ElapsedTime = 0;
-            RateOfChange = 0;
+            IsFirstRun = true;
         }
 
         /// <summary>
-        /// Use to define non-drawing effects.
+        /// Used to define effects.
         /// </summary>
         /// <returns>Returns a bool indicating the result of the Action.</returns>
         protected abstract bool Action();

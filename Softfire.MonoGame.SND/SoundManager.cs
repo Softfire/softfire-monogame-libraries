@@ -41,7 +41,7 @@ namespace Softfire.MonoGame.SND
         {
             var track = new Track(filePath);
             track.LoadContent(SoundContent);
-            Tracks.Catalogue.Add(identifier, track);
+            Tracks.Catalog.Add(identifier, track);
         }
 
         /// <summary>

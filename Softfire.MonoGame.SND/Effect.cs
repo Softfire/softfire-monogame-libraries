@@ -63,7 +63,7 @@ namespace Softfire.MonoGame.SND
         {
             string result;
 
-            if (EffectInstances.ContainsKey(identifier) == false)
+            if (!EffectInstances.ContainsKey(identifier))
             {
                 var sfxInstances = new List<SoundEffectInstance>(numberOfInstances);
 

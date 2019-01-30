@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Softfire.MonoGame.CORE.Common;
+using Softfire.MonoGame.CORE.Graphics.Drawing;
+using static Softfire.MonoGame.CORE.Graphics.Identities;
 
 namespace Softfire.MonoGame.UI.Themes
 {
     /// <summary>
     /// A custom theme for easily modifying the UI.
     /// </summary>
-    public class UITheme : IUIIdentifier
+    public class UITheme : IMonoGameIdentifierComponent
     {
         /// <summary>
         /// The theme's unique id.
@@ -18,21 +21,7 @@ namespace Softfire.MonoGame.UI.Themes
         /// The theme's unique name.
         /// </summary>
         public string Name { get; }
-
-        /// <summary>
-        /// The theme's internal order number.
-        /// </summary>
-        private int _orderNumber;
-
-        /// <summary>
-        /// The theme's order number.
-        /// </summary>
-        public int OrderNumber
-        {
-            get => _orderNumber;
-            set => _orderNumber = value >= 1 ? value : 0;
-        }
-
+        
         /// <summary>
         /// Is the theme currently active and being applied?
         /// </summary>
@@ -51,63 +40,61 @@ namespace Softfire.MonoGame.UI.Themes
         /// <summary>
         /// Theme's transparencies.
         /// </summary>
-        public Dictionary<string, float> Transparencies { get; }
+        private List<Transparency> Transparencies { get; }
 
         /// <summary>
         /// A theme that is used to customize the UI.
         /// </summary>
-        /// <param name="id">The theme's id. Intaken as an int.</param>
-        /// <param name="name">The theme's name. Intaken as a string.</param>
-        /// <param name="orderNumber">The theme's order number. Intaken as an int.</param>
-        /// <param name="font">The theme's font to use. Intaken as a SpriteFont.</param>
-        /// <param name="fontColor">The theme's font color to use. Intaken as a Color. Defualt is Color.Black.</param>
-        /// <param name="backgroundColor">The theme's background color to use. Intaken as a Color. Defualt is Color.White.</param>
-        /// <param name="highlightColor">The theme's highlight color to use. Intaken as a Color. Defualt is Color.AliceBlue.</param>
-        /// <param name="outlineColor">The theme's outline color to use. Intaken as a Color. Defualt is Color.Black.</param>
-        /// <param name="fontHighlightColor">The theme's font highlight color to use. Intaken as a Color. Defualt is Color.LightGray.</param>
-        /// <param name="selectionColor">The theme's selection color to use. Intaken as a Color. Defualt is Color.CornflowerBlue.</param>
-        /// <param name="fontTransparencyLevel">The theme's font transparency level. Intaken as a float.</param>
-        /// <param name="backgroundTransparencyLevel">The theme's background transparency level. Intaken as a float.</param>
-        /// <param name="highlightTransparencyLevel">The theme's highlight transparency level. Intaken as a float.</param>
-        /// <param name="outlineTransparencyLevel">The theme's outline transparency level. Intaken as a float.</param>
-        /// <param name="fontHighlightTransparencyLevel">The theme's font highlight transparency level. Intaken as a float.</param>
-        /// <param name="selectionTransparencyLevel">The theme's selection transparency level. Intaken as a float.</param>
-        public UITheme(int id, string name, int orderNumber, SpriteFont font, Color? fontColor,
-                                                                              Color? backgroundColor,
-                                                                              Color? highlightColor,
-                                                                              Color? outlineColor,
-                                                                              Color? fontHighlightColor,
-                                                                              Color? selectionColor,
-                                                                              float fontTransparencyLevel = 1f,
-                                                                              float backgroundTransparencyLevel = 1f,
-                                                                              float highlightTransparencyLevel = 0.75f,
-                                                                              float outlineTransparencyLevel = 1f,
-                                                                              float fontHighlightTransparencyLevel = 0.75f,
-                                                                              float selectionTransparencyLevel = 0.75f)
+        /// <param name="id">The theme's id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">The theme's name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="font">The theme's font to use. Intaken as a <see cref="SpriteFont"/>.</param>
+        /// <param name="fontColor">The theme's font color to use. Intaken as a Color. Default is <see cref="Color.Black"/>.</param>
+        /// <param name="backgroundColor">The theme's background color to use. Intaken as a Color. Default is <see cref="Color.White"/>.</param>
+        /// <param name="highlightColor">The theme's highlight color to use. Intaken as a Color. Default is <see cref="Color.AliceBlue"/>.</param>
+        /// <param name="outlineColor">The theme's outline color to use. Intaken as a Color. Default is <see cref="Color.Black"/>.</param>
+        /// <param name="fontHighlightColor">The theme's font highlight color to use. Intaken as a Color. Default is <see cref="Color.LightGray"/>.</param>
+        /// <param name="selectionColor">The theme's selection color to use. Intaken as a Color. Default is <see cref="Color.CornflowerBlue"/>.</param>
+        /// <param name="fontTransparencyLevel">The theme's font transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="backgroundTransparencyLevel">The theme's background transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="highlightTransparencyLevel">The theme's highlight transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="outlineTransparencyLevel">The theme's outline transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="fontHighlightTransparencyLevel">The theme's font highlight transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="selectionTransparencyLevel">The theme's selection transparency level. Intaken as a <see cref="float"/>.</param>
+        public UITheme(int id, string name, SpriteFont font, Color? fontColor,
+                                                             Color? backgroundColor,
+                                                             Color? highlightColor,
+                                                             Color? outlineColor,
+                                                             Color? fontHighlightColor,
+                                                             Color? selectionColor,
+                                                             float backgroundTransparencyLevel = 1f,
+                                                             float highlightTransparencyLevel = 0.75f,
+                                                             float outlineTransparencyLevel = 1f,
+                                                             float fontTransparencyLevel = 1f,
+                                                             float fontHighlightTransparencyLevel = 0.75f,
+                                                             float selectionTransparencyLevel = 0.75f)
         {
             Id = id;
             Name = name;
             Font = font;
-            OrderNumber = orderNumber;
 
             Colors = new Dictionary<string, Color>(6)
             {
-                { "Font", fontColor ?? Color.Black },
                 { "Background", backgroundColor ?? Color.White },
                 { "Highlight", highlightColor ?? Color.AliceBlue },
                 { "Outline", outlineColor ?? Color.Black },
+                { "Font", fontColor ?? Color.Black },
                 { "FontHighlight", fontHighlightColor ?? Color.LightGray },
                 { "Selection", selectionColor ?? Color.CornflowerBlue }
             };
 
-            Transparencies = new Dictionary<string, float>(6)
+            Transparencies = new List<Transparency>(6)
             {
-                { "Font", fontTransparencyLevel },
-                { "Background", backgroundTransparencyLevel },
-                { "Highlight", highlightTransparencyLevel },
-                { "Outline", outlineTransparencyLevel },
-                { "FontHighlight", fontHighlightTransparencyLevel },
-                { "Selection", selectionTransparencyLevel }
+                new Transparency(1, "Background", backgroundTransparencyLevel),
+                new Transparency(2, "Highlight", highlightTransparencyLevel),
+                new Transparency(3, "Outline", outlineTransparencyLevel),
+                new Transparency(4, "Font", fontTransparencyLevel ),
+                new Transparency(5, "FontHighlight", fontHighlightTransparencyLevel),
+                new Transparency(6, "Selection", selectionTransparencyLevel)
             };
         }
 
@@ -116,7 +103,7 @@ namespace Softfire.MonoGame.UI.Themes
         /// </summary>
         /// <typeparam name="T">Type UIBase.</typeparam>
         /// <param name="uiBase">An object of Type UIBase.</param>
-        /// <returns>Returns a boolean indicating whether the theme was applied.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the theme was applied.</returns>
         public bool Apply<T>(T uiBase) where T: UIBase
         {
             ApplyBackgroundColor(uiBase);
@@ -141,7 +128,7 @@ namespace Softfire.MonoGame.UI.Themes
         /// Applies the theme's font.
         /// </summary>
         /// <typeparam name="T">Type UIBase.</typeparam>
-        /// <param name="uiBase">An object of Type UIBase.</param>
+        /// <param name="uiBase">An object of Type <see cref="UIBase"/>.</param>
         public void ApplyFont<T>(T uiBase) where T : UIBase
         {
             uiBase.Font = Font;
@@ -214,63 +201,78 @@ namespace Softfire.MonoGame.UI.Themes
         #region Transparencies
 
         /// <summary>
+        /// Gets a transparency, by id.
+        /// </summary>
+        /// <param name="transparencyId">The id of the transparency to retrieve. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns the transparency with the specified id, if present, otherwise null.</returns>
+        public Transparency GetTransparency(int transparencyId) => GetObject<Transparency, Transparency>(Transparencies, transparencyId);
+
+        /// <summary>
+        /// Gets a transparency, by name.
+        /// </summary>
+        /// <param name="transparencyName">The name of the transparency to retrieve. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns the transparency with the specified name, if present, otherwise null.</returns>
+        public Transparency GetTransparency(string transparencyName) => GetObject<Transparency, Transparency>(Transparencies, transparencyName);
+
+
+        /// <summary>
         /// Applies the theme's font transparency.
         /// </summary>
         /// <typeparam name="T">Type UIBase.</typeparam>
-        /// <param name="uiBase">An object of Type UIBase.</param>
+        /// <param name="uiBase">An object of Type <see cref="UIBase"/>.</param>
         public void ApplyFontTransparency<T>(T uiBase) where T : UIBase
         {
-            uiBase.Transparencies["Font"] = Transparencies["Font"];
+            uiBase.GetTransparency("Font").Level = GetTransparency("Font").Level;
         }
 
         /// <summary>
         /// Applies the theme's background transparency.
         /// </summary>
         /// <typeparam name="T">Type UIBase.</typeparam>
-        /// <param name="uiBase">An object of Type UIBase.</param>
+        /// <param name="uiBase">An object of Type <see cref="UIBase"/>.</param>
         public void ApplyBackgroundTransparency<T>(T uiBase) where T : UIBase
         {
-            uiBase.Transparencies["Background"] = Transparencies["Background"];
+            uiBase.GetTransparency("Background").Level = GetTransparency("Background").Level;
         }
 
         /// <summary>
         /// Applies the theme's highlight transparency.
         /// </summary>
         /// <typeparam name="T">Type UIBase.</typeparam>
-        /// <param name="uiBase">An object of Type UIBase.</param>
+        /// <param name="uiBase">An object of Type <see cref="UIBase"/>.</param>
         public void ApplyHighlightTransparency<T>(T uiBase) where T : UIBase
         {
-            uiBase.Transparencies["Highlight"] = Transparencies["Highlight"];
+            uiBase.GetTransparency("Highlight").Level = GetTransparency("Highlight").Level;
         }
 
         /// <summary>
         /// Applies the theme's outline transparency.
         /// </summary>
         /// <typeparam name="T">Type UIBase.</typeparam>
-        /// <param name="uiBase">An object of Type UIBase.</param>
+        /// <param name="uiBase">An object of Type <see cref="UIBase"/>.</param>
         public void ApplyOutlineTransparency<T>(T uiBase) where T : UIBase
         {
-            uiBase.Transparencies["Outline"] = Transparencies["Outline"];
+            uiBase.GetTransparency("Outline").Level = GetTransparency("Outline").Level;
         }
 
         /// <summary>
         /// Applies the theme's font highlight transparency.
         /// </summary>
         /// <typeparam name="T">Type UIBase.</typeparam>
-        /// <param name="uiBase">An object of Type UIBase.</param>
+        /// <param name="uiBase">An object of Type <see cref="UIBase"/>.</param>
         public void ApplyFontHighlightTransparency<T>(T uiBase) where T : UIBase
         {
-            uiBase.Transparencies["FontHighlight"] = Transparencies["FontHighlight"];
+            uiBase.GetTransparency("FontHighlight").Level = GetTransparency("FontHighlight").Level;
         }
 
         /// <summary>
         /// Applies the theme's selection transparency.
         /// </summary>
         /// <typeparam name="T">Type UIBase.</typeparam>
-        /// <param name="uiBase">An object of Type UIBase.</param>
+        /// <param name="uiBase">An object of Type <see cref="UIBase"/>.</param>
         public void ApplySelectionTransparency<T>(T uiBase) where T : UIBase
         {
-            uiBase.Transparencies["Selection"] = Transparencies["Selection"];
+            uiBase.GetTransparency("Selection").Level = GetTransparency("Selection").Level;
         }
 
         #endregion

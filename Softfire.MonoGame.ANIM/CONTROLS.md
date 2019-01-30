@@ -2,8 +2,8 @@
 
 # Softfire Animation 2D Library - Controls
 > Filename: Softfire.MonoGame.ANIM.dll  
-> Requires MonoGame 3.6+  
-> Source: [MonoGame](http://www.monogame.net)
+> Requires: .Net 4.7+, MonoGame 3.7+  
+> Sources: [.Net](https://www.microsoft.com/en-us/download/details.aspx?id=55170), [MonoGame](http://www.monogame.net)
 
 This section contains methods integrated into the library that can be used to move Animations.
 
@@ -100,4 +100,4 @@ Call ApplyVelocity() to finalize the operation and apply the calculations to Pos
 
 Version: `1.0`  
 Author: `Softfire`  
-Updated: `Sept. 5, 2017` 
+Updated: `Jan. 27, 2019` 

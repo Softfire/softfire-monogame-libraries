@@ -10,14 +10,14 @@ namespace Softfire.MonoGame.SM
         /// Load Transition.
         /// Adds the provided Transition to the State's Loaded Transitions Dictionary and modifying the Order Number to be equal to the number of current transitions, if Order Number is found to be 0.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to select the Transition to run. Intaken as a string.</param>
+        /// <param name="identifier">The unique identifier used to select the Transition to run. Intaken as a <see cref="string"/>.</param>
         /// <param name="transition">The Transition to be loaded.</param>
         /// <returns>Returns a bool indicating whether the Transition was added.</returns>
         public bool LoadTransition(string identifier, Transition transition)
         {
             var result = false;
 
-            if (CheckForLoadedTransition(identifier) == false)
+            if (!LoadedTransitionExists(identifier))
             {
                 if (transition.OrderNumber == 0)
                 {
@@ -34,13 +34,13 @@ namespace Softfire.MonoGame.SM
         /// <summary>
         /// Get Loaded Transition.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to select the Transition to retrieve. Intaken as a string.</param>
+        /// <param name="identifier">The unique identifier used to select the Transition to retrieve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a Transition, if found, otherwise null.</returns>
         public Transition GetLoadedTransition(string identifier)
         {
             Transition result = null;
 
-            if (CheckForLoadedTransition(identifier))
+            if (LoadedTransitionExists(identifier))
             {
                 result = LoadedTransitions[identifier];
             }
@@ -49,11 +49,11 @@ namespace Softfire.MonoGame.SM
         }
 
         /// <summary>
-        /// Check For Loaded Transition.
+        /// Determines whether the loaded transition exists, by name.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to search for the Transition. Intaken as a string.</param>
+        /// <param name="identifier">The unique identifier used to search for the Transition. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the Transition has been loaded.</returns>
-        public bool CheckForLoadedTransition(string identifier)
+        public bool LoadedTransitionExists(string identifier)
         {
             return LoadedTransitions.ContainsKey(identifier);
         }
@@ -62,13 +62,13 @@ namespace Softfire.MonoGame.SM
         /// Remove Transition.
         /// Removes the Transition from Loaded Transitions using the provided identifier.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to select the Transition to remove. Intaken as a string.</param>
+        /// <param name="identifier">The unique identifier used to select the Transition to remove. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the Transition was removed.</returns>
         private bool RemoveTransition(string identifier)
         {
             var result = false;
 
-            if (CheckForLoadedTransition(identifier))
+            if (LoadedTransitionExists(identifier))
             {
                 result = LoadedTransitions.Remove(identifier);
             }
@@ -80,13 +80,13 @@ namespace Softfire.MonoGame.SM
         /// Activate Transition.
         /// Called to activate a loaded Transition.
         /// </summary>
-        /// <param name="identifier">The unique identifier used to select the Transition to activate. Intaken as a string.</param>
+        /// <param name="identifier">The unique identifier used to select the Transition to activate. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the transition was activated.</returns>
         public bool ActivateLoadedTransition(string identifier)
         {
             var result = false;
 
-            if (CheckForLoadedTransition(identifier))
+            if (LoadedTransitionExists(identifier))
             {
                 ActiveTransitions.Add(LoadedTransitions[identifier]);
                 result = true;
@@ -99,7 +99,7 @@ namespace Softfire.MonoGame.SM
         /// Run Transitions.
         /// Called to run all loaded Transitions by ascending Order Number.
         /// </summary>
-        /// <param name="inSequentialOrder">Indicates whether the Transitions will run sequentially or all at once. Intaken as a bool. Default is true.</param>
+        /// <param name="inSequentialOrder">Indicates whether the Transitions will run sequentially or all at once. Intaken as a <see cref="bool"/>. Default is true.</param>
         /// <returns>Returns a bool indicating whether all of the loaded transitions completed.</returns>
         public async Task<bool> RunActiveTransitions(bool inSequentialOrder = true)
         {

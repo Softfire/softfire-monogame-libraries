@@ -3,6 +3,9 @@ using Microsoft.Xna.Framework;
 
 namespace Softfire.MonoGame.SM
 {
+    /// <summary>
+    /// A transition class for use between states.
+    /// </summary>
     public abstract class Transition
     {
         /// <summary>
@@ -60,8 +63,8 @@ namespace Softfire.MonoGame.SM
         /// Transition Constructor.
         /// </summary>
         /// <param name="state">The Parent State. Intakes a State.</param>
-        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a float. Default is 1.0f.</param>
-        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a float. Default is 0.0f.</param>
+        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a <see cref="float"/>. Default is 1.0f.</param>
+        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a <see cref="float"/>. Default is 0.0f.</param>
         /// <param name="orderNumber">Intakes the Transition's run Order Number as an int. Default is 0.</param>
         public Transition(State state, float durationInSeconds = 1.0f, float startDelayInSeconds = 0.0f, int orderNumber = 0)
         {
@@ -118,7 +121,7 @@ namespace Softfire.MonoGame.SM
         /// <summary>
         /// Convert Degrees To Radians.
         /// </summary>
-        /// <param name="angleInDegrees">The angle in Degrees. Intaken as a double.</param>
+        /// <param name="angleInDegrees">The angle in Degrees. Intaken as a <see cref="double"/>.</param>
         /// <returns>Returns the angle in Radians as a double.</returns>
         public double ConvertToRadians(double angleInDegrees)
         {
@@ -128,7 +131,7 @@ namespace Softfire.MonoGame.SM
         /// <summary>
         /// Convert Radians To Degrees.
         /// </summary>
-        /// <param name="angleInRadians">The angle in Radians. Intaken as a double.</param>
+        /// <param name="angleInRadians">The angle in Radians. Intaken as a <see cref="double"/>.</param>
         /// <returns>Returns the angle in Degrees as a double.</returns>
         public double ConvertToDegrees(double angleInRadians)
         {

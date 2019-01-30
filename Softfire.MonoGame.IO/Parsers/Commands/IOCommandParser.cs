@@ -28,7 +28,7 @@ namespace Softfire.MonoGame.IO.Parsers.Commands
         {
             var result = false;
 
-            if (Commands.ContainsKey(identifier) == false)
+            if (!Commands.ContainsKey(identifier))
             {
                 Commands.Add(identifier, new IOCommandCommand(identifier, description, syntax, numberOfRequiredVariables));
                 result = true;
@@ -41,8 +41,8 @@ namespace Softfire.MonoGame.IO.Parsers.Commands
         /// Add Command Variant.
         /// Adds a variant identifier for an already existing command.
         /// </summary>
-        /// <param name="identifier">The command's principal identifier. Intaken as a string.</param>
-        /// <param name="variantIdentifier">The command's variant identifier. Intaken as a string.</param>
+        /// <param name="identifier">The command's principal identifier. Intaken as a <see cref="string"/>.</param>
+        /// <param name="variantIdentifier">The command's variant identifier. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the variant was added successfully.</returns>
         public bool AddCommandVariant(string identifier, string variantIdentifier)
         {
@@ -97,15 +97,15 @@ namespace Softfire.MonoGame.IO.Parsers.Commands
         /// </summary>
         /// <param name="input">Input to parse.</param>
         /// <param name="isCaseSensitive">A bool indicating whether the input is case sensitive. Default is true.</param>
-        /// <param name="toLower">A bool indicating that if input is case insensitve then input will be converted to lowercase if set to true or to uppercase if set to false.</param>
-        /// <returns>Returns a bool indicating wthether the input string contained the required amount of variables for the command.</returns>
+        /// <param name="toLower">A bool indicating that if input is case insensitive then input will be converted to lowercase if set to true or to uppercase if set to false.</param>
+        /// <returns>Returns a bool indicating whether the input string contained the required amount of variables for the command.</returns>
         public void Parse(string input, bool isCaseSensitive = true, bool toLower = true)
         {
             // Clear previous command.
             CurrentCommand?.ClearValues();
             CurrentCommand = null;
 
-            if (string.IsNullOrWhiteSpace(input) == false)
+            if (!string.IsNullOrWhiteSpace(input))
             {
                 var result = IOCommandCommand.Parse(input);
 
@@ -114,17 +114,17 @@ namespace Softfire.MonoGame.IO.Parsers.Commands
                     var identifier = result.Groups["command"].Value;
                     var values = result.Groups["values"].Value.Split(' ');
 
-                    if (isCaseSensitive == false)
+                    if (!isCaseSensitive)
                     {
                         identifier = toLower ? identifier.ToLower() : identifier.ToUpper();
                     }
 
                     if ((CurrentCommand = GetCommand(identifier)) != null &
-                        IOCommandCommand.DisplayHelp == false)
+                        !IOCommandCommand.DisplayHelp)
                     {
                         foreach (var value in values)
                         {
-                            if (string.IsNullOrWhiteSpace(value) == false)
+                            if (!string.IsNullOrWhiteSpace(value))
                             {
                                 CurrentCommand.AddValue(value);
                             }

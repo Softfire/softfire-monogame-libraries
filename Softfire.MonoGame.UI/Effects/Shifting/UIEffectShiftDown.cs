@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Softfire.MonoGame.UI.Effects.Shifting
 {
@@ -19,17 +18,21 @@ namespace Softfire.MonoGame.UI.Effects.Shifting
         private Vector2 InitialPosition { get; set; }
 
         /// <summary>
+        /// The rate of change between calls.
+        /// </summary>
+        private double RateOfChange { get; set; }
+
+        /// <summary>
         /// An effect that shifts the UI down along the Y axis.
         /// </summary>
-        /// <param name="uiBase">The UIBase that will be affected. Intaken as a UIBase.</param>
-        /// <param name="id">A unique id. Intaken as an int.</param>
-        /// <param name="name">A unique name. Intaken as a string.</param>
-        /// <param name="shiftVector">The shift vector (Y) to offset the UI by over the duration of time provided. Intaken as a Vector2.</param>
-        /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a float. Default is 1f.</param>
-        /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a float. Default is 0f.</param>
-        /// <param name="orderNumber">The effect's run order number. Intaken as an int. Default is 0.</param>
-        public UIEffectShiftDown(UIBase uiBase, int id, string name, Vector2 shiftVector,
-                                 float durationInSeconds = 1f, float startDelayInSeconds = 0f, int orderNumber = 0) : base(uiBase, id, name, durationInSeconds, startDelayInSeconds, orderNumber)
+        /// <param name="parent">The UIBase that will be affected. Intaken as a UIBase.</param>
+        /// <param name="id">A unique id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">A unique name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="shiftVector">The shift vector (Y) to offset the UI by over the duration of time provided. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a <see cref="float"/>. Default is 1f.</param>
+        /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a <see cref="float"/>. Default is 0f.</param>
+        public UIEffectShiftDown(UIBase parent, int id, string name, Vector2 shiftVector,
+                                 float durationInSeconds = 1f, float startDelayInSeconds = 0f) : base(parent, id, name, durationInSeconds, startDelayInSeconds)
         {
             ShiftVector = shiftVector;
         }
@@ -40,11 +43,12 @@ namespace Softfire.MonoGame.UI.Effects.Shifting
         /// <returns>Returns a bool indicating whether the shift was completed.</returns>
         protected override bool Action()
         {
-            var position = ParentUIBase.Position;
+            var position = Parent.Transform.Position;
 
-            if (Math.Abs(ElapsedTime) <= DeltaTime)
+            if (IsFirstRun)
             {
                 InitialPosition = position;
+                IsFirstRun = false;
             }
 
             if (ElapsedTime >= StartDelayInSeconds)
@@ -59,9 +63,21 @@ namespace Softfire.MonoGame.UI.Effects.Shifting
                 position.Y = InitialPosition.Y + ShiftVector.Y;
             }
 
-            ParentUIBase.Position = position;
+            Parent.Transform.Position = position;
 
-            return ParentUIBase.Position.Y >= InitialPosition.Y + ShiftVector.Y;
+            return Parent.Transform.Position.Y >= InitialPosition.Y + ShiftVector.Y || ElapsedTime > DurationInSeconds + StartDelayInSeconds;
+        }
+
+        /// <summary>
+        /// Resets the effect so it can be run again.
+        /// </summary>
+        protected internal override void Reset()
+        {
+            // Additional properties to reset.
+            RateOfChange = 0;
+
+            // Reset base properties.
+            base.Reset();
         }
     }
 }

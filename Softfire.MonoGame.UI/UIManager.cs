@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Softfire.MonoGame.CORE;
 using Softfire.MonoGame.UI.Effects;
 using Softfire.MonoGame.UI.Themes;
+using System;
+using System.Collections.Generic;
+using Softfire.MonoGame.CORE.Graphics;
 
 namespace Softfire.MonoGame.UI
 {
     /// <summary>
-    /// UIManager.
+    /// A UI manager class. Provides UI groups, themes and fonts.
     /// </summary>
     public class UIManager
     {
@@ -20,14 +21,19 @@ namespace Softfire.MonoGame.UI
         private ContentManager Content { get; }
 
         /// <summary>
+        /// The UI manager's spritebatch.
+        /// </summary>
+        private SpriteBatch SpriteBatch { get; }
+        
+        /// <summary>
         /// The graphics device used by the UI manager.
         /// </summary>
         private GraphicsDevice GraphicsDevice { get; }
-
+        
         /// <summary>
         /// Loaded fonts availble for use.
         /// </summary>
-        public UIFonts Fonts { get; }
+        public UIFontManager Fonts { get; }
 
         /// <summary>
         /// The UI groups in use.
@@ -39,18 +45,19 @@ namespace Softfire.MonoGame.UI
         /// Add, get, remove, reorder and apply themes.
         /// </summary>
         public UIThemeManager Themes { get; } = new UIThemeManager();
-        
+
         /// <summary>
         /// The UI manager creates, maintains, updates and draws all UI and their contents.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device to use to display the UI. Intakes a GraphicsDevice.</param>
-        /// <param name="parentContentManager">The parent content manager used to generate an independant content manager for UI elements. Intakes a ContentManager.</param>
+        /// <param name="parentContentManager">The parent content manager used to generate an independent content manager for UI elements. Intakes a ContentManager.</param>
         public UIManager(GraphicsDevice graphicsDevice, ContentManager parentContentManager)
         {
             GraphicsDevice = graphicsDevice;
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
             UIBase.GraphicsDevice = GraphicsDevice;
             Content = new ContentManager(parentContentManager.ServiceProvider, "Content");
-            Fonts = new UIFonts(Content);
+            Fonts = new UIFontManager(Content);
         }
 
         #region Groups
@@ -58,20 +65,21 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// Adds a new UI group.
         /// </summary>
-        /// <param name="groupName">The group's name. Intaken as a string.</param>
+        /// <param name="name">The group's name. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns the group id, if added, otherwise zero.</returns>
-        /// <remarks>If a group already exists with the provided name then a zero is returned indicating failure to add the group.</remarks>
-        public int AddGroup(string groupName)
+        /// <remarks>If a group already exists with the provided name then a -1 is returned indicating failure to add the group.</remarks>
+        public int AddGroup(string name)
         {
-            var nextGroupId = 0;
+            var nextGroupId = -1;
 
-            if (CheckForGroup(groupName) == false)
+            if (!GroupExists(name))
             {
-                nextGroupId = UIBase.GetNextValidItemId(Groups);
+                nextGroupId = Identities.GetNextValidObjectId<UIGroup, UIGroup>(Groups);
 
-                if (CheckForGroup(nextGroupId) == false)
+                if (!GroupExists(nextGroupId))
                 {
-                    Groups.Add(new UIGroup(this, nextGroupId, groupName, nextGroupId));
+                    var newGroup = new UIGroup(this, nextGroupId, name);
+                    Groups.Add(newGroup);
                 }
             }
 
@@ -79,104 +87,48 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Checks for a group by id.
+        /// Determines whether a group exists, by id.
         /// </summary>
-        /// <param name="groupId">The id of the group to search. Intaken as an int.</param>
-        /// <returns>Returns a bool indicating whether the group is present.</returns>
-        public bool CheckForGroup(int groupId)
-        {
-            return UIBase.CheckItemById(Groups, groupId);
-        }
+        /// <param name="id">The id of the group to search. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the group exists.</returns>
+        /// <exception cref="ArgumentNullException">Throws an <see cref="ArgumentNullException"/> if the provided list is null.</exception>
+        public bool GroupExists(int id) => Identities.ObjectExists<UIGroup, UIGroup>(Groups, id);
 
         /// <summary>
-        /// Checks for a group by name.
+        /// Determines whether a group exists, by name.
         /// </summary>
-        /// <param name="groupName">The name of the group to search. Intaken as a string.</param>
-        /// <returns>Returns a bool indicating whether the group is present.</returns>
-        public bool CheckForGroup(string groupName)
-        {
-            return UIBase.CheckItemByName(Groups, groupName);
-        }
+        /// <param name="name">The name of the group to search. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the group exists.</returns>
+        /// <exception cref="ArgumentNullException">Throws an <see cref="ArgumentNullException"/> if the provided list is null.</exception>
+        public bool GroupExists(string name) => Identities.ObjectExists<UIGroup, UIGroup>(Groups, name);
 
         /// <summary>
-        /// Gets a group by id.
+        /// Retrieves a group by id.
         /// </summary>
-        /// <param name="groupId">The id of the group to retrieve. Intaken as an int.</param>
-        /// <returns>Returns the group with the specified id, if present, otherwise null.</returns>
-        public UIGroup GetGroup(int groupId)
-        {
-            return CheckForGroup(groupId) ? UIBase.GetItemById(Groups, groupId) : default(UIGroup);
-        }
+        /// <param name="id">The id of the requested group. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="UIGroup"/>, if found, otherwise null.</returns>
+        public UIGroup GetGroup(int id) => Identities.GetObject<UIGroup, UIGroup>(Groups, id);
 
         /// <summary>
-        /// Gets a group by name.
+        /// Retrieves a group by name.
         /// </summary>
-        /// <param name="groupName">The name of the group to retrieve. Intaken as a string.</param>
-        /// <returns>Returns the group with the specified name, if present, otherwise null.</returns>
-        public UIGroup GetGroup(string groupName)
-        {
-            return CheckForGroup(groupName) ? UIBase.GetItemByName(Groups, groupName) : default(UIGroup);
-        }
+        /// <param name="name">The name of the requested group. Intaken as an <see cref="string"/>.</param>
+        /// <returns>Returns a <see cref="UIGroup"/>, if found, otherwise null.</returns>
+        public UIGroup GetGroup(string name) => Identities.GetObject<UIGroup, UIGroup>(Groups, name);
 
         /// <summary>
         /// Removes a group by id.
         /// </summary>
-        /// <param name="groupId">The id of the group to remove. Intaken as an int.</param>
-        /// <returns>Returns a boolean indicating whether the group was removed.</returns>
-        public bool RemoveGroup(int groupId)
-        {
-            return UIBase.RemoveItemById(Groups, groupId);
-        }
+        /// <param name="id">The id of the requested group. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the group was removed.</returns>
+        public bool RemoveGroup(int id) => Identities.RemoveObject<UIGroup, UIGroup>(Groups, id);
 
         /// <summary>
         /// Removes a group by name.
         /// </summary>
-        /// <param name="groupName">The name of the group to remove. Intaken as a string.</param>
-        /// <returns>Returns a boolean indicating whether the group was removed.</returns>
-        public bool RemoveGroup(string groupName)
-        {
-            return UIBase.RemoveItemByName(Groups, groupName);
-        }
-
-        /// <summary>
-        /// Increases a groups order number by id.
-        /// </summary>
-        /// <param name="groupId">The id of the group to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a boolean indicating whether the group's order number was increased.</returns>
-        public bool IncreaseGroupOrderNumber(int groupId)
-        {
-            return UIBase.IncreaseItemOrderNumber(Groups, groupId);
-        }
-
-        /// <summary>
-        /// Increases a groups order number by name.
-        /// </summary>
-        /// <param name="groupName">The name of the group to retrieve. Intaken as a string.</param>
-        /// <returns>Returns a boolean indicating whether the group's order number was increased.</returns>
-        public bool IncreaseGroupOrderNumber(string groupName)
-        {
-            return UIBase.IncreaseItemOrderNumber(Groups, groupName);
-        }
-
-        /// <summary>
-        /// Decreases a groups order number by id.
-        /// </summary>
-        /// <param name="groupId">The id of the group to retrieve. Intaken as an int.</param>
-        /// <returns>Returns a boolean indicating whether the group's order number was decreased.</returns>
-        public bool DecreaseGroupOrderNumber(int groupId)
-        {
-            return UIBase.DecreaseItemOrderNumber(Groups, groupId);
-        }
-
-        /// <summary>
-        /// Decreases a groups order number by name.
-        /// </summary>
-        /// <param name="groupName">The name of the group to retrieve. Intaken as a string.</param>
-        /// <returns>Returns a boolean indicating whether the group's order number was decreased.</returns>
-        public bool DecreaseGroupOrderNumber(string groupName)
-        {
-            return UIBase.DecreaseItemOrderNumber(Groups, groupName);
-        }
+        /// <param name="name">The name of the requested group. Intaken as an <see cref="string"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the group was removed.</returns>
+        public bool RemoveGroup(string name) => Identities.RemoveObject<UIGroup, UIGroup>(Groups, name);
 
         #endregion
 
@@ -184,37 +136,38 @@ namespace Softfire.MonoGame.UI
         /// Gets the viewport's dimensions.
         /// </summary>
         /// <returns>Returns a Rectangle of the viewport's dimensions.</returns>
-        internal Rectangle GetViewportDimenions()
+        internal RectangleF GetViewportDimensions()
         {
-            return GraphicsDevice.Viewport.Bounds;
-        }
+            var position = new Vector2(GraphicsDevice.Viewport.X, GraphicsDevice.Viewport.Y);
+            var width = GraphicsDevice.Viewport.Width;
+            var height = GraphicsDevice.Viewport.Height;
 
+            return new RectangleF(position.X, position.Y, width, height);
+        }
+        
         /// <summary>
         /// Update Method.
         /// </summary>
         /// <param name="gameTime">Intakes MonoGame GameTime.</param>
-        public async Task Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             // UI Effects Delta Time.
             UIEffectBase.DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
 
-            // Update order is ascending.
-            foreach (var group in Groups.OrderBy(grp => grp.OrderNumber))
+            foreach (var group in Groups)
             {
-                await group.Update(gameTime).ConfigureAwait(false);
+                group.Update(gameTime);
             }
         }
 
         /// <summary>
         /// Draw Method.
         /// </summary>
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw()
         {
-            // Draw Order is Ascending.
-            // Drawing from lowest to highest.
-            foreach (var group in Groups.OrderBy(grp => grp.OrderNumber))
+            foreach (var group in Groups)
             {
-                group.Draw(spriteBatch);
+                group.Draw(SpriteBatch, Matrix.Identity);
             }
         }
     }

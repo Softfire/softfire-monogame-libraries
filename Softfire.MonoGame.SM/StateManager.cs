@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -7,12 +6,20 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Softfire.MonoGame.SM
 {
+    /// <summary>
+    /// A state manager for using states.
+    /// </summary>
     public class StateManager
     {
         /// <summary>
-        /// Current Game.
+        /// The current game.
         /// </summary>
-        private Game Game { get; }
+        private Game TheGame { get; }
+
+        /// <summary>
+        /// The state manager's graphics device.
+        /// </summary>
+        internal GraphicsDevice GraphicsDevice { get; }
 
         /// <summary>
         /// State Manager Sprite Batch.
@@ -20,7 +27,7 @@ namespace Softfire.MonoGame.SM
         private SpriteBatch StateBatch { get; }
 
         /// <summary>
-        /// State Maanger Content Manager.
+        /// State Manager Content Manager.
         /// </summary>
         private ContentManager ParentContentManager { get; }
 
@@ -38,17 +45,18 @@ namespace Softfire.MonoGame.SM
         /// <summary>
         /// State Manager Constructor.
         /// </summary>
-        /// <param name="game">The game instance the State Manager will manage. Intaken as Game.</param>
-        /// <param name="graphicsDevice">Intakes a GraphicsDevice.</param>
-        /// <param name="parentContentManager">Intakes the parent's ContentManager.</param>
+        /// <param name="game">The game instance the State Manager will manage. Intaken as <see cref="Game"/>.</param>
+        /// <param name="graphicsDevice">Intakes a <see cref="GraphicsDevice"/>.</param>
+        /// <param name="parentContentManager">Intakes the parent's <see cref="ContentManager"/>.</param>
         public StateManager(Game game, GraphicsDevice graphicsDevice, ContentManager parentContentManager)
         {
-            Game = game;
-            StateBatch = new SpriteBatch(graphicsDevice);
+            TheGame = game;
+            GraphicsDevice = graphicsDevice;
+            StateBatch = new SpriteBatch(GraphicsDevice);
             ParentContentManager = parentContentManager;
             ActiveStates = new Dictionary<string, State>();
 
-            BackgroundTexture = new Texture2D(StateBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            BackgroundTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             BackgroundTexture.SetData(new[] { Color.White });
         }
 
@@ -56,14 +64,14 @@ namespace Softfire.MonoGame.SM
         /// Add Available State.
         /// Add a new state that can be used by the StateManager.
         /// </summary>
-        /// <param name="identifier">The state's unique identifier. Intakan as a string.</param>
+        /// <param name="identifier">The state's unique identifier. Intaken as a <see cref="string"/>.</param>
         /// <param name="state">The state to be made available. Intakes a new State.</param>
         /// <returns>Returns a bool indicating whether the state was added.</returns>
         public bool AddState(string identifier, State state)
         {
             var result = false;
 
-            if (ActiveStates.ContainsKey(identifier) == false)
+            if (!ActiveStates.ContainsKey(identifier))
             {
                 state.ParentStateManager = this;
                 state.Content = new ContentManager(ParentContentManager.ServiceProvider, "Content");
@@ -77,9 +85,9 @@ namespace Softfire.MonoGame.SM
         }
 
         /// <summary>
-        /// Get Avaiable State.
+        /// Get Available State.
         /// </summary>
-        /// <param name="identifier">The state's unique identifier. Intakan as a string.</param>
+        /// <param name="identifier">The state's unique identifier. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns the requested State otherwise null.</returns>
         public T GetState<T>(string identifier) where T : State
         {
@@ -96,7 +104,7 @@ namespace Softfire.MonoGame.SM
         /// <summary>
         /// Remove Available State.
         /// </summary>
-        /// <param name="identifier">The state's unique identifier. Intakan as a string.</param>
+        /// <param name="identifier">The state's unique identifier. Intaken as a <see cref="string"/>.</param>
         public void RemoveState(string identifier)
         {
             if (ActiveStates.ContainsKey(identifier))
@@ -111,7 +119,7 @@ namespace Softfire.MonoGame.SM
         /// </summary>
         public void Quit()
         {
-            Game.Exit();
+            TheGame.Exit();
         }
 
         /// <summary>
@@ -124,7 +132,7 @@ namespace Softfire.MonoGame.SM
             Transition.DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
 
             // Update Active States.
-            foreach (var state in ActiveStates.OrderBy(st => st.Value.OrderNumber))
+            foreach (var state in ActiveStates)
             {
                 await state.Value.Update(gameTime).ConfigureAwait(false);
             }
@@ -135,7 +143,7 @@ namespace Softfire.MonoGame.SM
         /// </summary>
         public void Draw()
         {
-            foreach (var state in ActiveStates.OrderBy(st => st.Value.OrderNumber))
+            foreach (var state in ActiveStates)
             {
                 // Draw the State.
                 if (state.Value.IsVisible)

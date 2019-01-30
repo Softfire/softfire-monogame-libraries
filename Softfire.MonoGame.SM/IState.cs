@@ -9,7 +9,6 @@ namespace Softfire.MonoGame.SM
     public interface IState
     {
         /// <summary>
-        /// DeltaTime.
         /// Time since last update.
         /// </summary>
         double DeltaTime { get; }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading;
 
 namespace Softfire.MonoGame.NTWK
@@ -144,7 +143,7 @@ namespace Softfire.MonoGame.NTWK
         /// <summary>
         /// Net Peer Configuration Constructor.
         /// </summary>
-        /// <param name="identifier">A unique identifier. Intaken as a string.</param>
+        /// <param name="identifier">A unique identifier. Intaken as a <see cref="string"/>.</param>
         /// <param name="logFilePath">The path to store the NetPeer's log file.</param>
         /// <param name="peerType">The Type of Peer. Used in LogFilePath to store logs.</param>
         public NetPeerConfiguration(string identifier = "Softfire.MonoGame.NTWK", string logFilePath = @"Config\Logs\", PeerTypes peerType = PeerTypes.Peer)
@@ -208,12 +207,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Identifier.
         /// </summary>
         /// <param name="identifier">A unique identifier. Peers must have matching identifiers to communicate.</param>
-        /// <returns>Returns a boolean indicating whether the Identifier was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Identifier was set.</returns>
         public bool SetIdentifier(string identifier)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 Identifier = identifier;
                 result = true;
@@ -228,12 +227,12 @@ namespace Softfire.MonoGame.NTWK
         /// </summary>
         /// <param name="ipAddress">IPAddress to set to Local Address.</param>
         /// <param name="port">The port on which to listen.</param>
-        /// <returns>Returns a boolean indicating whether the Local Address and Port were set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Local Address and Port were set.</returns>
         public bool SetLocalAddressAndPort(IPAddress ipAddress, int port)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 LocalAddress = ipAddress;
                 Port = port;
@@ -249,12 +248,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Send Buffer Size.
         /// </summary>
         /// <param name="sendBufferSize">The receive buffer size.</param>
-        /// <returns>Returns a boolean indicating whether the Send Buffer was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Send Buffer was set.</returns>
         public bool SetSendBufferSize(int sendBufferSize)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 SendBufferSize = sendBufferSize;
                 result = true;
@@ -267,12 +266,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Receive Buffer Size.
         /// </summary>
         /// <param name="receiveBufferSize">The receive buffer size.</param>
-        /// <returns>Returns a boolean indicating whether the Receive Buffer was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Receive Buffer was set.</returns>
         public bool SetReceiveBufferSize(int receiveBufferSize)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 ReceiveBufferSize = receiveBufferSize;
                 result = true;
@@ -285,15 +284,14 @@ namespace Softfire.MonoGame.NTWK
         /// Set Thread.
         /// </summary>
         /// <param name="thread">Intakes the Thread used by the NetPeer.</param>
-        /// <returns>Returns a boolean indicating whether the Thread was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Thread was set.</returns>
         public bool SetThread(Thread thread)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 Thread = thread;
-
                 result = true;
             }
 
@@ -304,12 +302,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Maximum Connections.
         /// </summary>
         /// <param name="maximumConnections">The maximum connections allowed.</param>
-        /// <returns>Returns a boolean indicating whether the Maximum Connections were set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Maximum Connections were set.</returns>
         public bool SetMaximumConnections(int maximumConnections)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 MaximumConnections = maximumConnections;
                 result = true;
@@ -323,12 +321,12 @@ namespace Softfire.MonoGame.NTWK
         /// Maximum Transmission Unit.
         /// </summary>
         /// <param name="maximumMtu">The maximum MTU size.</param>
-        /// <returns>Returns a boolean indicating whether the Maximum MTU was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Maximum MTU was set.</returns>
         public bool SetMaximumMtu(int maximumMtu)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 MaximumMtu = maximumMtu;
                 result = true;
@@ -341,12 +339,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Ping Interval.
         /// </summary>
         /// <param name="pingInterval">The amount of time between latency calculations.</param>
-        /// <returns>Returns a boolean indicating whether the Pint Interval was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Pint Interval was set.</returns>
         public bool SetPingInterval(float pingInterval)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 PingInterval = pingInterval;
                 result = true;
@@ -358,13 +356,13 @@ namespace Softfire.MonoGame.NTWK
         /// <summary>
         /// Set Connection Time Out.
         /// </summary>
-        /// <param name="connectionTimeOut">The time out period in which to drop conenctions if unpingable.</param>
-        /// <returns>Returns a boolean indicating whether the Conenction Time Out was set.</returns>
+        /// <param name="connectionTimeOut">The time out period in which to drop connections if unreachable.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Connection Time Out was set.</returns>
         public bool SetConnectionTimeOut(int connectionTimeOut)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 ConnectionTimeOut = connectionTimeOut;
                 result = true;
@@ -377,12 +375,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Reconnection Interval.
         /// </summary>
         /// <param name="reconnectionInterval">The time period in which to try reconnecting to peers.</param>
-        /// <returns>Returns a boolean indicating whether the Reconnection Interval was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Reconnection Interval was set.</returns>
         public bool SetReconnectionInterval(float reconnectionInterval)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 ReconnectionInterval = reconnectionInterval;
                 result = true;
@@ -395,12 +393,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Maximum Reconnection Attempts
         /// </summary>
         /// <param name="maximumReconnectionAttempts">The maximum number of reconnection attempts when reconnecting to peers.</param>
-        /// <returns>Returns a boolean indicating whether the Maximum Reconnection Attempts were set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Maximum Reconnection Attempts were set.</returns>
         public bool SetMaximumReconnectionAttempts(int maximumReconnectionAttempts)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 MaximumReconnectionAttempts = maximumReconnectionAttempts;
                 result = true;
@@ -413,12 +411,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Accepting Connections.
         /// </summary>
         /// <param name="isAcceptingConnections">A boolean indicating whether the peer is accepting connections.</param>
-        /// <returns>Returns a boolean indicating whether the IsAcceptingConnections was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the IsAcceptingConnections was set.</returns>
         public bool SetAcceptingConnections(bool isAcceptingConnections)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 IsAcceptingConnections = isAcceptingConnections;
                 result = true;
@@ -431,12 +429,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set MTU Auto Expansion.
         /// </summary>
         /// <param name="isAutoExpandingMtu">A boolean indicating whether the MTU is auto expanding.</param>
-        /// <returns>Returns a boolean indicating whether the IsAutoExpandingMtu was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the IsAutoExpandingMtu was set.</returns>
         public bool SetMtuAutoExpansion(bool isAutoExpandingMtu)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 IsAutoExpandingMtu = isAutoExpandingMtu;
                 result = true;
@@ -449,12 +447,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Maximum MTU Expansion Attempts
         /// </summary>
         /// <param name="maximumMtuExpansionAttempts">The maximum number of mtu expansion attempts.</param>
-        /// <returns>Returns a boolean indicating whether the Maximum MTU Expansion Attempts were set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Maximum MTU Expansion Attempts were set.</returns>
         public bool SetMaximumMtuExpansionAttempts(int maximumMtuExpansionAttempts)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 MaximumMtuExpansionAttempts = maximumMtuExpansionAttempts;
                 result = true;
@@ -467,12 +465,12 @@ namespace Softfire.MonoGame.NTWK
         /// Set Mtu Expansion Interval.
         /// </summary>
         /// <param name="mtuExpansionInterval">The time period between MTU expansion attempts.</param>
-        /// <returns>Returns a boolean indicating whether the MTU Expansion Interval was set.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the MTU Expansion Interval was set.</returns>
         public bool SetMtuExpansionInterval(float mtuExpansionInterval)
         {
             var result = false;
 
-            if (IsLocked == false)
+            if (!IsLocked)
             {
                 MtuExpansionInterval = mtuExpansionInterval;
                 result = true;

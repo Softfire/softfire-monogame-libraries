@@ -1,396 +1,479 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Softfire.MonoGame.CORE.Input;
 
 namespace Softfire.MonoGame.IO
 {
-    public class IOGamepad
+    /// <summary>
+    /// A class for your gamepads.
+    /// </summary>
+    public partial class IOGamepad : IMonoGameInputComponent
     {
         /// <summary>
-        /// Delta Time.
-        /// Time between updates.
+        /// The time between updates.
         /// </summary>
         private double DeltaTime { get; set; }
 
         /// <summary>
-        /// Elapsed Time.
+        /// The elapsed time.
         /// </summary>
         private double ElapsedTime { get; set; }
 
         /// <summary>
-        /// GamePad Id.
+        /// The gamepad's id.
         /// </summary>
         public int Id { get; private set; }
 
         /// <summary>
-        /// Is Connected?
+        /// Determines whether the gamepad is connected.
         /// </summary>
         public bool IsConnected => GamePad.GetCapabilities(Id).IsConnected;
 
         /// <summary>
-        /// GamePad State.
+        /// The gamepad's current state.
         /// </summary>
-        private GamePadState GamePadState { get; set; }
+        private GamePadState GamepadState { get; set; }
 
         /// <summary>
-        /// Previous GamePad State.
+        /// The gamepad's previous state.
         /// </summary>
-        private GamePadState PreviousGamePadState { get; set; }
+        private GamePadState PreviousGamepadState { get; set; }
 
         /// <summary>
-        /// GamePad Type.
+        /// The gamepad's type.
         /// </summary>
-        public GamePadType GamePadType { get; }
+        public GamePadType GamepadType { get; }
 
         /// <summary>
-        /// GamePad Dead Zone.
+        /// The gamepad's dead zone. The amount of space offset from center that is will not trigger the analog sticks to engage.
         /// </summary>
-        public GamePadDeadZone GamePadDeadZone { get; }
+        public GamePadDeadZone GamepadDeadZone { get; }
 
         /// <summary>
-        /// Analog Stick Sensitivity Level.
+        /// The gamepad's internal analog sensitivity level value.
         /// </summary>
-        public float AnalogStickSensitivityLevel { get; private set; } = 0.01f;
+        private float _analogStickSensitivityLevel = 0.01f;
 
         /// <summary>
-        /// Trigger Sensitivity Level.
+        /// the gamepad's analog stick sensitivity level.
         /// </summary>
-        public float TriggerSensitivityLevel { get; private set; } = 0.01f;
-
-        /// <summary>
-        /// IO GamePad Constructor.
-        /// </summary>
-        /// <param name="gamePadIndex">The index of the gamepad.</param>
-        /// <param name="gamePadType">The type of gamepad. Default type is GamePadType.GamePad.</param>
-        /// <param name="gamePadDeadZone">The gamepad's dead zone to use for analog controls. Default zone is GamePadDeadZone.None.</param>
-        public IOGamepad(int gamePadIndex, GamePadType gamePadType = GamePadType.GamePad, GamePadDeadZone gamePadDeadZone = GamePadDeadZone.None)
+        public float AnalogStickSensitivityLevel
         {
-            Id = gamePadIndex;
-            GamePadType = gamePadType;
-            GamePadDeadZone = gamePadDeadZone;
+            get => _analogStickSensitivityLevel;
+            set => _analogStickSensitivityLevel = MathHelper.Clamp(value, 0, 1);
         }
 
         /// <summary>
-        /// Set Id.
+        /// The gamepad's internal trigger stick sensitivity level value.
         /// </summary>
-        /// <param name="id">The gamepad id to set. Intaken as an int. Must be no greater than what is set in GamePad.MaximumGamePadCount.</param>
+        private float _triggerSensitivityLevel = 0.01f;
+
+        /// <summary>
+        /// The gamepad's trigger sensitivity level.
+        /// </summary>
+        public float TriggerSensitivityLevel
+        {
+            get => _triggerSensitivityLevel;
+            set => _triggerSensitivityLevel = MathHelper.Clamp(value, 0, 1);
+        }
+        
+        /// <summary>
+        /// A gamepad. Used to play games.
+        /// </summary>
+        /// <param name="gamepadIndex">The index of the gamepad. Must be less than or equal to <see cref="GamePad.MaximumGamePadCount"/>.</param>
+        /// <param name="gamepadType">The type of gamepad. Default type is GamePadType.GamePad.</param>
+        /// <param name="gamepadDeadZone">The gamepad's dead zone to use for analog controls. Intaken as a <see cref="GamepadDeadZone"/>.</param>
+        public IOGamepad(int gamepadIndex, GamePadType gamepadType = GamePadType.GamePad, GamePadDeadZone gamepadDeadZone = GamePadDeadZone.None)
+        {
+            SetId(gamepadIndex);
+            GamepadType = gamepadType;
+            GamepadDeadZone = gamepadDeadZone;
+        }
+
+        /// <summary>
+        /// Sets the gamepad's id.
+        /// </summary>
+        /// <param name="id">The gamepad id to set. Must be less than or equal to <see cref="GamePad.MaximumGamePadCount"/>. Intaken as an <see cref="int"/>.</param>
         public void SetId(int id)
         {
             Id = MathHelper.Clamp(id, 1, GamePad.MaximumGamePadCount);
         }
+        
+        /// <summary>
+        /// Determines whether the button is in a pressed state.
+        /// </summary>
+        /// <param name="button">The button to check if it is in a pressed state. Intaken as a <see cref="Buttons"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a pressed state.</returns>
+        public bool ButtonPress(Buttons button) => GamepadState.IsButtonDown(button) && PreviousGamepadState.IsButtonUp(button);
 
         /// <summary>
-        /// Set Analog Stick Sensitivity Level.
+        /// Determines whether the button is in a released state.
         /// </summary>
-        /// <param name="sensitivityLevel">The sensitivity level chosen, between 0 and 1.</param>
-        public void SetAnalogStickSensitivityLevel(float sensitivityLevel)
-        {
-            AnalogStickSensitivityLevel = MathHelper.Clamp(sensitivityLevel, 0, 1);
-        }
+        /// <param name="button">The button to check if it is in a released state. Intaken as a <see cref="Buttons"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a released state.</returns>
+        public bool ButtonRelease(Buttons button) => GamepadState.IsButtonUp(button) && PreviousGamepadState.IsButtonDown(button);
 
         /// <summary>
-        /// Set Trigger Sensitivity Level.
+        /// Determines whether the button is in a held state.
         /// </summary>
-        /// <param name="sensitivityLevel">The sensitivity level chosen, between 0 and 1.</param>
-        public void SetTriggerSensitivityLevel(float sensitivityLevel)
-        {
-            TriggerSensitivityLevel = MathHelper.Clamp(sensitivityLevel, 0, 1);
-        }
+        /// <param name="button">The button to check if it is in a held state. Intaken as a <see cref="Buttons"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a held state.</returns>
+        public bool ButtonHeld(Buttons button) => GamepadState.IsButtonDown(button) && PreviousGamepadState.IsButtonDown(button);
 
         #region Buttons
 
         /// <summary>
-        /// Button Idle.
+        /// Determines whether the button is in a pressed state.
         /// </summary>
-        /// <param name="button">The button to check if it is idle.</param>
-        /// <returns>Returns a boolean indicating if the button is idle.</returns>
-        public bool ButtonIdle(Buttons button)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a pressed state.</returns>
+        public bool AButtonPress()
         {
-            return GamePadState.IsButtonUp(button) && PreviousGamePadState.IsButtonUp(button);
+            return ButtonPress(Buttons.A);
         }
 
         /// <summary>
-        /// Button Release.
+        /// Determines whether the button is in a released state.
         /// </summary>
-        /// <param name="button">The button to check if it has been released.</param>
-        /// <returns>Returns a boolean indicating if the button has been released.</returns>
-        public bool ButtonRelease(Buttons button)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a released state.</returns>
+        public bool AButtonRelease()
         {
-            return GamePadState.IsButtonUp(button) && PreviousGamePadState.IsButtonDown(button);
+            return ButtonRelease(Buttons.A);
         }
 
         /// <summary>
-        /// Button Press.
+        /// Determines whether the button is in a held state.
         /// </summary>
-        /// <param name="button">The button to check if it has been pressed.</param>
-        /// <returns>Returns a boolean indicating if the button has been pressed.</returns>
-        public bool ButtonPress(Buttons button)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a held state.</returns>
+        public bool AButtonHeld()
         {
-            return GamePadState.IsButtonDown(button) && PreviousGamePadState.IsButtonUp(button);
+            return ButtonHeld(Buttons.A);
         }
 
         /// <summary>
-        /// Button Held.
+        /// Determines whether the button is in a pressed state.
         /// </summary>
-        /// <param name="button">The button to check if it is being held down.</param>
-        /// <returns>Returns a boolean indicating if the button is being held down.</returns>
-        public bool ButtonHeld(Buttons button)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a pressed state.</returns>
+        public bool BButtonPress()
         {
-            return PreviousGamePadState.IsButtonDown(button) && GamePadState.IsButtonDown(button);
+            return ButtonPress(Buttons.B);
+        }
+
+        /// <summary>
+        /// Determines whether the button is in a released state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a released state.</returns>
+        public bool BButtonRelease()
+        {
+            return ButtonRelease(Buttons.B);
+        }
+
+        /// <summary>
+        /// Determines whether the button is in a held state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a held state.</returns>
+        public bool BButtonHeld()
+        {
+            return ButtonHeld(Buttons.B);
+        }
+
+        /// <summary>
+        /// Determines whether the button is in a pressed state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a pressed state.</returns>
+        public bool YButtonPress()
+        {
+            return ButtonPress(Buttons.Y);
+        }
+
+        /// <summary>
+        /// Determines whether the button is in a released state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a released state.</returns>
+        public bool YButtonRelease()
+        {
+            return ButtonRelease(Buttons.Y);
+        }
+
+        /// <summary>
+        /// Determines whether the button is in a held state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a held state.</returns>
+        public bool YButtonHeld()
+        {
+            return ButtonHeld(Buttons.Y);
+        }
+
+        /// <summary>
+        /// Determines whether the button is in a pressed state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a pressed state.</returns>
+        public bool XButtonPress()
+        {
+            return ButtonPress(Buttons.X);
+        }
+
+        /// <summary>
+        /// Determines whether the button is in a released state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a released state.</returns>
+        public bool XButtonRelease()
+        {
+            return ButtonRelease(Buttons.X);
+        }
+
+        /// <summary>
+        /// Determines whether the button is in a held state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the button is in a held state.</returns>
+        public bool XButtonHeld()
+        {
+            return ButtonHeld(Buttons.X);
         }
 
         #endregion
 
-        #region Triggers
+        #region Left Trigger
 
         /// <summary>
-        /// Trigger Idle.
+        /// Determines whether the trigger button is in a pressed state.
         /// </summary>
-        /// <param name="trigger">The trigger to check if it is idle.</param>
-        /// <returns>Returns a boolean indicating whether the trigger is idle.</returns>
-        public bool TriggerIdle(Buttons trigger)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger button is in a pressed state.</returns>
+        public bool TriggerLeftButtonPress()
         {
-            return ButtonIdle(trigger);
+            return ButtonPress(Buttons.LeftTrigger);
         }
 
         /// <summary>
-        /// Trigger Release.
+        /// Determines whether the trigger button is in a released state.
         /// </summary>
-        /// <param name="trigger">The trigger to check if it has been released.</param>
-        /// <returns>Returns a boolean indicating whether the trigger has been released.</returns>
-        public bool TriggerRelease(Buttons trigger)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger button is in a released state.</returns>
+        public bool TriggerLeftButtonRelease()
         {
-            return ButtonRelease(trigger);
+            return ButtonRelease(Buttons.LeftTrigger);
         }
 
         /// <summary>
-        /// Trigger Press.
+        /// Determines whether the trigger button is in a held state.
         /// </summary>
-        /// <param name="trigger">The trigger to check if it has been pressed.</param>
-        /// <returns>Returns a boolean indicating whether the trigger has been pressed.</returns>
-        public bool TriggerPress(Buttons trigger)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger button is in a held state.</returns>
+        public bool TriggerLeftButtonHeld()
         {
-            return ButtonPress(trigger);
+            return ButtonHeld(Buttons.LeftTrigger);
         }
 
         /// <summary>
-        /// Trigger Held.
+        /// Determines whether the trigger is in a pressed pressure state.
         /// </summary>
-        /// <param name="trigger">The trigger to check if it is being held down.</param>
-        /// <returns>Returns a boolean indicating whether the trigger is being held down.</returns>
-        public bool TriggerHeld(Buttons trigger)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the left trigger is in a pressed pressure state.</returns>
+        public bool TriggerLeftPressurePress()
         {
-            return ButtonHeld(trigger);
+            return GamepadState.Triggers.Left > TriggerSensitivityLevel && Math.Abs(PreviousGamepadState.Triggers.Left) < TriggerSensitivityLevel;
         }
 
         /// <summary>
-        /// Trigger Left Idle.
+        /// Determines whether the trigger is in a released pressure state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the left trigger is idle.</returns>
-        public bool TriggerLeftIdle()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger is in a released pressure state.</returns>
+        public bool TriggerLeftPressureRelease()
         {
-            return GamePadState.Triggers.Left < TriggerSensitivityLevel && Math.Abs(PreviousGamePadState.Triggers.Left) < TriggerSensitivityLevel;
+            return PreviousGamepadState.Triggers.Left > TriggerSensitivityLevel && Math.Abs(GamepadState.Triggers.Left) < TriggerSensitivityLevel;
         }
 
         /// <summary>
-        /// Trigger Left Release.
+        /// Determines whether the trigger is in a held pressure state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the left trigger was released.</returns>
-        public bool TriggerLeftRelease()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger is in a held pressure state.</returns>
+        public bool TriggerLeftPressureHeld()
         {
-            return PreviousGamePadState.Triggers.Left > TriggerSensitivityLevel && Math.Abs(GamePadState.Triggers.Left) < TriggerSensitivityLevel;
-        }
-
-        /// <summary>
-        /// Trigger Left Press.
-        /// </summary>
-        /// <returns>Returns a boolean indicating whether the left trigger was pressed.</returns>
-        public bool TriggerLeftPress()
-        {
-            return GamePadState.Triggers.Left > TriggerSensitivityLevel && Math.Abs(PreviousGamePadState.Triggers.Left) < TriggerSensitivityLevel;
-        }
-
-        /// <summary>
-        /// Trigger Left Held.
-        /// </summary>
-        /// <returns>Returns a boolean indicating whether the left trigger is being held.</returns>
-        public bool TriggerLeftHeld()
-        {
-            return PreviousGamePadState.Triggers.Left > TriggerSensitivityLevel && GamePadState.Triggers.Left > TriggerSensitivityLevel;
-        }
-
-        /// <summary>
-        /// Trigger Right Idle.
-        /// </summary>
-        /// <returns>Returns a boolean indicating whether the right trigger is idle.</returns>
-        public bool TriggerRightIdle()
-        {
-            return GamePadState.Triggers.Right < TriggerSensitivityLevel && Math.Abs(PreviousGamePadState.Triggers.Right) < TriggerSensitivityLevel;
-        }
-
-        /// <summary>
-        /// Trigger Right Release.
-        /// </summary>
-        /// <returns>Returns a boolean indicating whether the right trigger was released.</returns>
-        public bool TriggerRightRelease()
-        {
-            return PreviousGamePadState.Triggers.Right > TriggerSensitivityLevel && Math.Abs(GamePadState.Triggers.Right) < TriggerSensitivityLevel;
-        }
-
-        /// <summary>
-        /// Trigger Right Press.
-        /// </summary>
-        /// <returns>Returns a boolean indicating whether the right trigger was pressed.</returns>
-        public bool TriggerRightPress()
-        {
-            return GamePadState.Triggers.Right > TriggerSensitivityLevel && Math.Abs(PreviousGamePadState.Triggers.Right) < TriggerSensitivityLevel;
-        }
-
-        /// <summary>
-        /// Trigger Right Held.
-        /// </summary>
-        /// <returns>Returns a boolean indicating whether the right trigger is being held.</returns>
-        public bool TriggerRightHeld()
-        {
-            return PreviousGamePadState.Triggers.Right > TriggerSensitivityLevel && GamePadState.Triggers.Right > TriggerSensitivityLevel;
+            return PreviousGamepadState.Triggers.Left > TriggerSensitivityLevel && GamepadState.Triggers.Left > TriggerSensitivityLevel;
         }
 
         #endregion
 
-        #region Shoulders
+        #region Right Trigger
 
         /// <summary>
-        /// Shoulder Idle.
+        /// Determines whether the trigger button is in a pressed state.
         /// </summary>
-        /// <param name="shoulder">The shoulder to check if it is idle.</param>
-        /// <returns>Returns a boolean indicating whether the shoulder is idle.</returns>
-        public bool ShoulderIdle(Buttons shoulder)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger button is in a pressed state.</returns>
+        public bool TriggerRightButtonPress()
         {
-            return ButtonIdle(shoulder);
+            return ButtonPress(Buttons.RightTrigger);
         }
 
         /// <summary>
-        /// Shoulder Release.
+        /// Determines whether the trigger button is in a released state.
         /// </summary>
-        /// <param name="shoulder">The shoulder to check if it has been released.</param>
-        /// <returns>Returns a boolean indicating whether the shoulder has been released.</returns>
-        public bool ShoulderRelease(Buttons shoulder)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger button is in a released state.</returns>
+        public bool TriggerRightButtonRelease()
         {
-            return ButtonRelease(shoulder);
+            return ButtonRelease(Buttons.RightTrigger);
         }
 
         /// <summary>
-        /// Shoulder Press.
+        /// Determines whether the trigger button is in a held state.
         /// </summary>
-        /// <param name="shoulder">The shoulder to check if it has been pressed.</param>
-        /// <returns>Returns a boolean indicating whether the shoulder has been pressed.</returns>
-        public bool ShoulderPress(Buttons shoulder)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger button is in a held state.</returns>
+        public bool TriggerRightButtonHeld()
         {
-            return ButtonPress(shoulder);
+            return ButtonHeld(Buttons.RightTrigger);
         }
 
         /// <summary>
-        /// Shoulder Held.
+        /// Determines whether the trigger is in a pressed pressure state.
         /// </summary>
-        /// <param name="shoulder">The shoulder to check if it is being held down.</param>
-        /// <returns>Returns a boolean indicating whether the shoulder is being held down.</returns>
-        public bool ShoulderHeld(Buttons shoulder)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the left trigger is in a pressed pressure state.</returns>
+        public bool TriggerRightPressurePress()
         {
-            return ButtonHeld(shoulder);
+            return GamepadState.Triggers.Right > TriggerSensitivityLevel && Math.Abs(PreviousGamepadState.Triggers.Right) < TriggerSensitivityLevel;
+        }
+
+        /// <summary>
+        /// Determines whether the trigger is in a released pressure state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger is in a released pressure state.</returns>
+        public bool TriggerRightPressureRelease()
+        {
+            return PreviousGamepadState.Triggers.Right > TriggerSensitivityLevel && Math.Abs(GamepadState.Triggers.Right) < TriggerSensitivityLevel;
+        }
+
+        /// <summary>
+        /// Determines whether the trigger is in a held pressure state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the trigger is in a held pressure state.</returns>
+        public bool TriggerRightPressureHeld()
+        {
+            return PreviousGamepadState.Triggers.Right > TriggerSensitivityLevel && GamepadState.Triggers.Right > TriggerSensitivityLevel;
         }
 
         #endregion
 
-        #region Analog Sticks
+        #region Left Shoulder
 
         /// <summary>
-        /// Analog Stick Idle.
+        /// Determines whether the shoulder button is in a pressed state.
         /// </summary>
-        /// <param name="stick">The stick to check if it is idle.</param>
-        /// <returns>Returns a boolean indicating whether the stick is idle.</returns>
-        public bool AnalogStickIdle(Buttons stick)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the shoulder button is in a pressed state.</returns>
+        public bool ShoulderLeftButtonPress()
         {
-            return ButtonIdle(stick);
+            return ButtonPress(Buttons.LeftShoulder);
         }
 
         /// <summary>
-        /// Analog Stick Release.
+        /// Determines whether the shoulder button is in a released state.
         /// </summary>
-        /// <param name="stick">The stick to check if it has been released.</param>
-        /// <returns>Returns a boolean indicating whether the stick has been released.</returns>
-        public bool AnalogStickRelease(Buttons stick)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the shoulder button is in a released state.</returns>
+        public bool ShoulderLeftButtonRelease()
         {
-            return ButtonRelease(stick);
+            return ButtonRelease(Buttons.LeftShoulder);
         }
 
         /// <summary>
-        /// Analog Stick Press.
+        /// Determines whether the shoulder button is in a held state.
         /// </summary>
-        /// <param name="stick">The stick to check if it has been pressed.</param>
-        /// <returns>Returns a boolean indicating if the stick has been pressed.</returns>
-        public bool AnalogStickPress(Buttons stick)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the shoulder button is in a held state.</returns>
+        public bool ShoulderLeftButtonHeld()
         {
-            return ButtonPress(stick);
+            return ButtonHeld(Buttons.LeftShoulder);
+        }
+
+        #endregion
+
+        #region Right Shoulder
+
+        /// <summary>
+        /// Determines whether the shoulder button is in a pressed state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the shoulder button is in a pressed state.</returns>
+        public bool ShoulderRightButtonPress()
+        {
+            return ButtonPress(Buttons.RightShoulder);
         }
 
         /// <summary>
-        /// Analog Stick Held.
+        /// Determines whether the shoulder button is in a released state.
         /// </summary>
-        /// <param name="stick">The stick to check if it has been pressed.</param>
-        /// <returns>Returns a boolean indicating if the stick is being held down.</returns>
-        public bool AnalogStickHeld(Buttons stick)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the shoulder button is in a released state.</returns>
+        public bool ShoulderRightButtonRelease()
         {
-            return ButtonHeld(stick);
+            return ButtonRelease(Buttons.RightShoulder);
         }
 
+        /// <summary>
+        /// Determines whether the shoulder button is in a held state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the shoulder button is in a held state.</returns>
+        public bool ShoulderRightButtonHeld()
+        {
+            return ButtonHeld(Buttons.RightShoulder);
+        }
+
+        #endregion
+        
         #region Left Analog Stick
 
         /// <summary>
-        /// Analog Stick Left - Idle.
+        /// Determines whether the analog stick button is in a pressed state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the left analog stick is idle.</returns>
-        public bool AnalogStickLeftIdle()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick button is in a pressed state.</returns>
+        public bool AnalogStickLeftButtonPress()
         {
-            return !AnalogStickLeftUp() &&
-                   !AnalogStickLeftDown() &&
-                   !AnalogStickLeftLeft() &&
-                   !AnalogStickLeftRight();
+            return ButtonPress(Buttons.LeftStick);
         }
 
         /// <summary>
-        /// Analog Stick Left - Up.
+        /// Determines whether the analog stick button is in a released state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the left analog stick is pushed up.</returns>
-        public bool AnalogStickLeftUp()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick button is in a released state.</returns>
+        public bool AnalogStickLeftButtonRelease()
         {
-            return GamePadState.ThumbSticks.Left.Y > AnalogStickSensitivityLevel;
+            return ButtonRelease(Buttons.LeftStick);
         }
 
         /// <summary>
-        /// Analog Stick Left - Down.
+        /// Determines whether the analog stick button is in a held state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the left analog stick is pushed down.</returns>
-        public bool AnalogStickLeftDown()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick button is in a held state.</returns>
+        public bool AnalogStickLeftButtonHeld()
         {
-            return GamePadState.ThumbSticks.Left.Y < -AnalogStickSensitivityLevel;
+            return ButtonHeld(Buttons.LeftStick);
+        }
+        
+        /// <summary>
+        /// Determines whether the analog stick is in an upward state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick is in an upward state.</returns>
+        public bool AnalogStickLeftUpward()
+        {
+            return GamepadState.ThumbSticks.Left.Y > AnalogStickSensitivityLevel;
         }
 
         /// <summary>
-        /// Analog Stick Left - Left.
+        /// Determines whether the analog stick is in a downward state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the left analog stick is pushed to the left.</returns>
-        public bool AnalogStickLeftLeft()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick is in a downward state.</returns>
+        public bool AnalogStickLeftDownward()
         {
-            return GamePadState.ThumbSticks.Left.X < -AnalogStickSensitivityLevel;
+            return GamepadState.ThumbSticks.Left.Y < -AnalogStickSensitivityLevel;
         }
 
         /// <summary>
-        /// Analog Stick Left - Right.
+        /// Determines whether the analog stick is in a leftward state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the left analog stick is pushed to the right.</returns>
-        public bool AnalogStickLeftRight()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick is in a leftward state.</returns>
+        public bool AnalogStickLeftLeftward()
         {
-            return GamePadState.ThumbSticks.Left.X > AnalogStickSensitivityLevel;
+            return GamepadState.ThumbSticks.Left.X < -AnalogStickSensitivityLevel;
+        }
+
+        /// <summary>
+        /// Determines whether the analog stick is in a rightward state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick is in a rightward state.</returns>
+        public bool AnalogStickLeftRightward()
+        {
+            return GamepadState.ThumbSticks.Left.X > AnalogStickSensitivityLevel;
         }
 
         #endregion
@@ -398,114 +481,208 @@ namespace Softfire.MonoGame.IO
         #region Right Analog Stick
 
         /// <summary>
-        /// Analog Stick Right - Idle.
+        /// Determines whether the analog stick button is in a pressed state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the right analog stick is idle.</returns>
-        public bool AnalogStickRightIdle()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick button is in a pressed state.</returns>
+        public bool AnalogStickRightButtonPress()
         {
-            return !AnalogStickRightUp() &&
-                   !AnalogStickRightDown() &&
-                   !AnalogStickRightLeft() &&
-                   !AnalogStickRightRight();
+            return ButtonPress(Buttons.RightStick);
         }
 
         /// <summary>
-        /// Analog Stick Right - Up.
+        /// Determines whether the analog stick button is in a released state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the right analog stick is pushed up.</returns>
-        public bool AnalogStickRightUp()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick button is in a released state.</returns>
+        public bool AnalogStickRightButtonRelease()
         {
-            return GamePadState.ThumbSticks.Right.Y > AnalogStickSensitivityLevel;
+            return ButtonRelease(Buttons.RightStick);
         }
 
         /// <summary>
-        /// Analog Stick Right - Down.
+        /// Determines whether the analog stick button is in a held state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the right analog stick is pushed down.</returns>
-        public bool AnalogStickRightDown()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick button is in a held state.</returns>
+        public bool AnalogStickRightButtonHeld()
         {
-            return GamePadState.ThumbSticks.Right.Y < -AnalogStickSensitivityLevel;
+            return ButtonHeld(Buttons.RightStick);
         }
 
         /// <summary>
-        /// Analog Stick Right - Left.
+        /// Determines whether the analog stick is in an upward state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the right analog stick is pushed to the left.</returns>
-        public bool AnalogStickRightLeft()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick is in an upward state.</returns>
+        public bool AnalogStickRightUpward()
         {
-            return GamePadState.ThumbSticks.Right.X < -AnalogStickSensitivityLevel;
+            return GamepadState.ThumbSticks.Right.Y > AnalogStickSensitivityLevel;
         }
 
         /// <summary>
-        /// Analog Stick Right - Right.
+        /// Determines whether the analog stick is in a downward state.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the right analog stick is pushed to the right.</returns>
-        public bool AnalogStickRightRight()
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick is in a downward state.</returns>
+        public bool AnalogStickRightDownward()
         {
-            return GamePadState.ThumbSticks.Right.X > AnalogStickSensitivityLevel;
+            return GamepadState.ThumbSticks.Right.Y < -AnalogStickSensitivityLevel;
+        }
+
+        /// <summary>
+        /// Determines whether the analog stick is in a leftward state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick is in a leftward state.</returns>
+        public bool AnalogStickRightLeftward()
+        {
+            return GamepadState.ThumbSticks.Right.X < -AnalogStickSensitivityLevel;
+        }
+
+        /// <summary>
+        /// Determines whether the analog stick is in a rightward state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the analog stick is in a rightward state.</returns>
+        public bool AnalogStickRightRightward()
+        {
+            return GamepadState.ThumbSticks.Right.X > AnalogStickSensitivityLevel;
+        }
+
+        #endregion
+        
+        #region DPad Up
+
+        /// <summary>
+        /// Determines whether the d-pad's directional button is in a pressed state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a pressed state.</returns>
+        public bool DPadUpPress()
+        {
+            return ButtonPress(Buttons.DPadUp);
+        }
+
+        /// <summary>
+        /// Determines whether the d-pad's directional button is in a released state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a released state.</returns>
+        public bool DPadUpRelease()
+        {
+            return ButtonRelease(Buttons.DPadUp);
+        }
+
+        /// <summary>
+        /// Determines whether the d-pad's directional button is in a held state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a held state.</returns>
+        public bool DPadUpHeld()
+        {
+            return ButtonHeld(Buttons.DPadUp);
         }
 
         #endregion
 
-        #endregion
-
-        #region DPad
+        #region DPad Down
 
         /// <summary>
-        /// DPad Idle.
+        /// Determines whether the d-pad's directional button is in a pressed state.
         /// </summary>
-        /// <param name="dPadDirection">The DPad direction to check if it is idle.</param>
-        /// <returns>Returns a boolean indicating if the DPad direction is idle.</returns>
-        public bool DPadIdle(Buttons dPadDirection)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a pressed state.</returns>
+        public bool DPadDownPress()
         {
-            return ButtonIdle(dPadDirection);
+            return ButtonPress(Buttons.DPadDown);
         }
 
         /// <summary>
-        /// DPad Release.
+        /// Determines whether the d-pad's directional button is in a released state.
         /// </summary>
-        /// <param name="dPadDirection">The DPad direction to check if it has been released.</param>
-        /// <returns>Returns a boolean indicating if the DPad direction has been released.</returns>
-        public bool DPadRelease(Buttons dPadDirection)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a released state.</returns>
+        public bool DPadDownRelease()
         {
-            return ButtonRelease(dPadDirection);
+            return ButtonRelease(Buttons.DPadDown);
         }
 
         /// <summary>
-        /// DPad Press.
+        /// Determines whether the d-pad's directional button is in a held state.
         /// </summary>
-        /// <param name="dPadDirection">The DPad direction to check if it has been pressed.</param>
-        /// <returns>Returns a boolean indicating if the DPad direction has been pressed.</returns>
-        public bool DPadPress(Buttons dPadDirection)
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a held state.</returns>
+        public bool DPadDownHeld()
         {
-            return ButtonPress(dPadDirection);
-        }
-
-        /// <summary>
-        /// DPad Held.
-        /// </summary>
-        /// <param name="dPadDirection">The DPad direction to check if it is being held down.</param>
-        /// <returns>Returns a boolean indicating if the DPad direction is being held down.</returns>
-        public bool DPadHeld(Buttons dPadDirection)
-        {
-            return ButtonHeld(dPadDirection);
+            return ButtonHeld(Buttons.DPadDown);
         }
 
         #endregion
 
+        #region DPad Left
+
         /// <summary>
-        /// GamePad Update Method.
-        /// Update GamePad States.
+        /// Determines whether the d-pad's directional button is in a pressed state.
         /// </summary>
-        /// <param name="gameTime">Intakes a MonoGame GameTime instance.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a pressed state.</returns>
+        public bool DPadLeftPress()
+        {
+            return ButtonPress(Buttons.DPadLeft);
+        }
+
+        /// <summary>
+        /// Determines whether the d-pad's directional button is in a released state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a released state.</returns>
+        public bool DPadLeftRelease()
+        {
+            return ButtonRelease(Buttons.DPadLeft);
+        }
+
+        /// <summary>
+        /// Determines whether the d-pad's directional button is in a held state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a held state.</returns>
+        public bool DPadLeftHeld()
+        {
+            return ButtonHeld(Buttons.DPadLeft);
+        }
+
+        #endregion
+
+        #region DPad Right
+    
+        /// <summary>
+        /// Determines whether the d-pad's directional button is in a pressed state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a pressed state.</returns>
+        public bool DPadRightPress()
+        {
+            return ButtonPress(Buttons.DPadRight);
+        }
+
+        /// <summary>
+        /// Determines whether the d-pad's directional button is in a released state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a released state.</returns>
+        public bool DPadRightRelease()
+        {
+            return ButtonRelease(Buttons.DPadRight);
+        }
+
+        /// <summary>
+        /// Determines whether the d-pad's directional button is in a held state.
+        /// </summary>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the d-pad's directional button is in a held state.</returns>
+        public bool DPadRightHeld()
+        {
+            return ButtonHeld(Buttons.DPadRight);
+        }
+
+        #endregion
+        
+        /// <summary>
+        /// The gamepad's update method.
+        /// </summary>
+        /// <param name="gameTime">Intakes MonoGame <see cref="GameTime"/>.</param>
         public void Update(GameTime gameTime)
         {
+            // Updating elapsed time and delta time.
             ElapsedTime += DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
 
+            // Update gamepad if it is connected.
             if (IsConnected)
             {
-                PreviousGamePadState = GamePadState;
-                GamePadState = GamePad.GetState(Id, GamePadDeadZone);
+                PreviousGamepadState = GamepadState;
+                GamepadState = GamePad.GetState(Id, GamepadDeadZone);
             }
         }
     }

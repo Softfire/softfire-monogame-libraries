@@ -1,164 +1,168 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.IO;
 
 namespace Softfire.MonoGame.UI.Items
 {
+    /// <summary>
+    /// A UI button.
+    /// </summary>
     public class UIButton : UIBase
     {
         /// <summary>
-        /// Is Clickable?
-        /// Enable/Disable the activation on the AssignedAction. Defualt is true.
+        /// Button layers.
         /// </summary>
-        public bool IsClickable { get; set; } = true;
-        
-        /// <summary>
-        /// UIButton Hover Delay.
-        /// Default delay is 1.0 seconds.
-        /// </summary>
-        public double HoverDelay { get; set; } = 1.0D;
-
-        /// <summary>
-        /// On Hover.
-        /// </summary>
-        public bool OnHover { get; set; }
-        
-        /// <summary>
-        /// UIButton Text.
-        /// </summary>
-        private UIText Text { get; set; }
-
-        /// <summary>
-        /// Activate.
-        /// Activates assigned action.
-        /// </summary>
-        public bool Activate { get; set; }
-
-        /// <summary>
-        /// Assigned Action.
-        /// Sets an action to be performed upon a left click of the mouse.
-        /// </summary>
-        private Action AssignedAction { get; set; }
-
-        /// <summary>
-        /// Assign Action.
-        /// Assigns an action to the UIButton.
-        /// Use "() => Method()" to assign an action.
-        /// </summary>
-        /// <param name="action">The method to process. OnPress and OnRelease control execution.</param>
-        public void AssignAction(Action action)
+        private enum Layers
         {
-            AssignedAction = action;
+            /// <summary>
+            /// The base layer.
+            /// </summary>
+            Base,
+            /// <summary>
+            /// The text layer.
+            /// </summary>
+            Text,
+            /// <summary>
+            /// The overlay layer.
+            /// </summary>
+            Overlay
         }
 
         /// <summary>
-        /// UI Button.
+        /// A UI button element.
         /// </summary>
-        /// <param name="id">The button's id. Intaken as an int.</param>
-        /// <param name="name">The button's name. Intken as a string.</param>
-        /// <param name="position">Intakes the Button's position as a Vector2.</param>
-        /// <param name="width">Intakes the Button's width as a float.</param>
-        /// <param name="height">Intakes the Button's height as a float.</param>
-        /// <param name="orderNumber">Intakes an int that will be used to define the update/draw order. Update/Draw order is from lowest to highest.</param>
-        public UIButton(int id, string name, Vector2 position, int width, int height, int orderNumber) : base(id, name, position, width, height, orderNumber)
+        /// <param name="parent">The parent object of this button. Intaken as a <see cref="UIBase"/>.</param>
+        /// <param name="id">The button's id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">The button's name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="position">The button's position. Intaken as a Vector2.</param>
+        /// <param name="width">The button's width. Intaken as a float.</param>
+        /// <param name="height">The button's height. Intaken as a float.</param>
+        /// <param name="isVisible">The button's visibility. Intaken as a <see cref="bool"/>.</param>
+        public UIButton(UIBase parent, int id, string name, Vector2 position, int width, int height, bool isVisible = true) : base(parent, id, name, position, width, height, isVisible)
         {
-
+            Paddings.SetPadding(5);
         }
 
-        /// <summary>
-        /// Add Text.
-        /// Adds text to the button.
-        /// </summary>
-        /// <param name="font">The font to use for the button's text. Intaken as a SpriteFont.</param>
-        /// <param name="text">The button's text. Intaken as a string.</param>
-        public void AddText(SpriteFont font, string text)
-        {
-            Text = new UIText(0, "Text", font, text, 1);
-            Text.LoadContent();
-        }
+        #region Text
 
         /// <summary>
-        /// Get Text.
-        /// Retrieves the button's text.
+        /// Adds text.
         /// </summary>
-        /// <returns></returns>
-        public UIText GetText()
+        /// <param name="name">The text's name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="font">The text's font. Intaken as a <see cref="SpriteFont"/>.</param>
+        /// <param name="text">The text's text. Intaken as a <see cref="string"/>.</param>
+        /// <param name="isVisible">The button's visibility. Intaken as a <see cref="bool"/>.</param>
+        /// <returns>Returns the text id, if added, otherwise zero.</returns>
+        /// <remarks>If text already exists with the provided name then a zero is returned indicating failure to add the text.</remarks>
+        public int AddText(string name, SpriteFont font, string text, bool isVisible = true)
         {
-            UIText result = null;
+            var nextTextId = 0;
 
-            if (Text != null)
+            if (!TextExists(name))
             {
-                result = Text;
-            }
+                nextTextId = GetNextValidChildId<UIText>((int)Layers.Text);
 
-            return result;
-        }
-
-        /// <summary>
-        /// UIButton Update Method.
-        /// </summary>
-        /// <param name="gameTime">Intakes MonoGame GameTime.</param>
-        public override async Task Update(GameTime gameTime)
-        {
-            await base.Update(gameTime);
-
-            if (IsClickable)
-            {
-                if (Activate)
+                if (!TextExists(nextTextId))
                 {
-                    AssignedAction();
+                    var newText = new UIText(this, nextTextId, name, font, text, Vector2.Zero, isVisible)
+                    {
+                        Layer = (int)Layers.Text,
+                        IsSelectable = false,
+                        IsHoverable = false,
+                        IsBackgroundVisible = false,
+                        IsHighlightable = false
+                    };
+
+                    newText.SetOutlineVisibility(false);
+
+                    newText.Transform.Parent = Transform;
+                    newText.LoadContent();
+
+                    Children.Add(newText);
                 }
             }
 
-            if (Text != null)
-            {
-                Text.ParentPosition = ParentPosition + Position;
-
-                switch (Text.VerticalAlignment)
-                {
-                    case UIText.VerticalAlignments.Upper:
-                        Text.Position = new Vector2(0, -Height / 2f);
-                        break;
-                    case UIText.VerticalAlignments.Center:
-                        Text.Position = Vector2.Zero;
-                        break;
-                    case UIText.VerticalAlignments.Lower:
-                        Text.Position = new Vector2(0, Height / 2f);
-                        break;
-                }
-
-                switch (Text.HorizontalAlignment)
-                {
-                    case UIText.HorizontalAlignments.Left:
-                        Text.Position = new Vector2(-Width / 2f, 0);
-                        break;
-                    case UIText.HorizontalAlignments.Center:
-                        Text.Position = Vector2.Zero;
-                        break;
-                    case UIText.HorizontalAlignments.Right:
-                        Text.Position = new Vector2(Width / 2f, 0);
-                        break;
-                }
-
-                await Text.Update(gameTime);
-            }
+            return nextTextId;
         }
 
+        /// <summary>
+        /// Determines whether a text exists, by id.
+        /// </summary>
+        /// <param name="id">The id of the text to search. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a bool indicating whether the text exists.</returns>
+        public bool TextExists(int id) => ChildExists<UIText>((int)Layers.Text, id);
 
         /// <summary>
-        /// UIButton Draw Method.
+        /// Determines whether a text exists, by name.
         /// </summary>
-        /// <param name="spriteBatch">Intakes a SpriteBatch.</param>
-        public override void Draw(SpriteBatch spriteBatch)
+        /// <param name="name">The name of the text to search. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns a bool indicating whether the text exists.</returns>
+        public bool TextExists(string name) => ChildExists<UIText>((int)Layers.Text, name);
+
+        /// <summary>
+        /// Gets text, by id.
+        /// </summary>
+        /// <param name="id">The id of the text to retrieve. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a text with the requested id, if present, otherwise null.</returns>
+        public UIText GetText(int id) => GetChild<UIText>((int)Layers.Text, id);
+
+        /// <summary>
+        /// Gets text, by name.
+        /// </summary>
+        /// <param name="name">The name of the text to retrieve. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns a text with the requested name, if present, otherwise null.</returns>
+        public UIText GetText(string name) => GetChild<UIText>((int)Layers.Text, name);
+
+        /// <summary>
+        /// Removes text, by id.
+        /// </summary>
+        /// <param name="id">The id of the text to be removed. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the text was removed.</returns>
+        public bool RemoveText(int id) => RemoveChild<UIText>((int)Layers.Text, id);
+
+        /// <summary>
+        /// Removes text, by name.
+        /// </summary>
+        /// <param name="name">The name of the text to be removed. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the text was removed.</returns>
+        public bool RemoveText(string name) => RemoveChild<UIText>((int)Layers.Text, name);
+
+        #endregion
+
+        /// <summary>
+        /// The button's update method.
+        /// </summary>
+        /// <param name="gameTime">Intakes MonoGame <see cref="GameTime"/>.</param>
+        public override void Update(GameTime gameTime)
         {
+            foreach (var component in Children)
+            {
+                if (component.Layer == (int)Layers.Text)
+                {
+                    Size.Width = component.Size.Width;
+                    Size.Height = component.Size.Height;
+                }
+
+                component.Update(gameTime);
+            }
+
+            base.Update(gameTime);
+        }
+
+        /// <summary>
+        /// The button's draw method.
+        /// </summary>
+        /// <param name="spriteBatch">Intakes a MonoGame <see cref="SpriteBatch"/>.</param>
+        /// <param name="transform">Intakes a <see cref="Matrix"/>.</param>
+        public override void Draw(SpriteBatch spriteBatch, Matrix transform = default)
+        {
+            base.Draw(spriteBatch, transform);
+
             if (IsVisible)
             {
-                base.Draw(spriteBatch);
-
-                Text?.Draw(spriteBatch);
+                foreach (var component in Children)
+                {
+                    component.Draw(spriteBatch, transform);
+                }
             }
         }
     }

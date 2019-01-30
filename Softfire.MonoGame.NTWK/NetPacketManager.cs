@@ -36,7 +36,7 @@ namespace Softfire.MonoGame.NTWK
         /// <exception cref="ArgumentException"></exception>
         public void Register<T>() where T : NetPacket, new()
         {
-            if (PacketPools.ContainsKey(typeof(T)) == false)
+            if (!PacketPools.ContainsKey(typeof(T)))
             {
                 PacketPools.Add(typeof(T), new NetPacketPool<T>(() => new T()));
             }
@@ -52,8 +52,8 @@ namespace Softfire.MonoGame.NTWK
         /// <exception cref="ArgumentException"></exception>
         public void Register<T>(int id) where T : NetPacket, new()
         {
-            if (Packets.ContainsKey(id) == false &&
-                PacketPools.ContainsKey(typeof(T)) == false)
+            if (!Packets.ContainsKey(id) &&
+                !PacketPools.ContainsKey(typeof(T)))
             {
                 Packets.Add(id, typeof(T));
                 PacketPools.Add(typeof(T), new NetPacketPool<T>(() => new T()));
@@ -71,8 +71,8 @@ namespace Softfire.MonoGame.NTWK
         /// <exception cref="ArgumentException"></exception>
         public void Register<T>(int id, int poolSize) where T : NetPacket, new()
         {
-            if (Packets.ContainsKey(id) == false &&
-                PacketPools.ContainsKey(typeof(T)) == false)
+            if (!Packets.ContainsKey(id) &&
+                !PacketPools.ContainsKey(typeof(T)))
             {
                 Packets.Add(id, typeof(T));
                 PacketPools.Add(typeof(T), new NetPacketPool<T>(() => new T()));
@@ -102,7 +102,7 @@ namespace Softfire.MonoGame.NTWK
         /// <returns>Returns a packet of Type T.</returns>
         public T GetPacket<T>() where T : NetPacket, new()
         {
-            if (PacketPools.ContainsKey(typeof(T)) == false)
+            if (!PacketPools.ContainsKey(typeof(T)))
             {
                 Register<T>();
             }
@@ -120,7 +120,7 @@ namespace Softfire.MonoGame.NTWK
         /// <returns>Returns a packet of Type T.</returns>
         public T GetPacket<T>(int id) where T : NetPacket, new()
         {
-            if (PacketPools.ContainsKey(typeof(T)) == false)
+            if (!PacketPools.ContainsKey(typeof(T)))
             {
                 Register<T>(id);
             }

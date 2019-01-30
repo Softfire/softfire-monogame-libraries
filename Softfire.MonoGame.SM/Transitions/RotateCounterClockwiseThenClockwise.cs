@@ -41,14 +41,14 @@
         /// Rotate Clockwise Then Counter Clockwise Transition.
         /// </summary>
         /// <param name="state">The Parent State. Intakes a State.</param>
-        /// <param name="counterClockwiseRotationStartAngleInDegrees">Counter clockwise rotation start angle in Degrees. Intaken as a double.</param>
-        /// <param name="counterClockwiseRotationTargetAngleInDegrees">Counter clockwise rotation target angle in Degrees. Intaken as a double.</param>
-        /// <param name="counterClockwiseRotationDurationInSeconds">Counter clockwise rotation transition duration in seconds. Intaken as a float.</param>
-        /// <param name="counterClockwiseRotationStartDelayInSeconds">Counter clockwise rotation transition start delay in seconds. Intaken as a float.</param>
-        /// <param name="clockwiseRotationStartAngleInDegrees">Clockwise rotation start angle in Degrees. Intaken as a double.</param>
-        /// <param name="clockwiseRotationTargetAngleInDegrees">Clockwise rotation target angle in Degrees. Intaken as a double.</param>
-        /// <param name="clockwiseRotationDurationInSeconds">Clockwise rotation transition duration in seconds. Intaken as a float.</param>
-        /// <param name="clockwiseRotationStartDelayInSeconds">Clockwise rotation transition start delay in seconds. Intaken as a float.</param>
+        /// <param name="counterClockwiseRotationStartAngleInDegrees">Counter clockwise rotation start angle in Degrees. Intaken as a <see cref="double"/>.</param>
+        /// <param name="counterClockwiseRotationTargetAngleInDegrees">Counter clockwise rotation target angle in Degrees. Intaken as a <see cref="double"/>.</param>
+        /// <param name="counterClockwiseRotationDurationInSeconds">Counter clockwise rotation transition duration in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="counterClockwiseRotationStartDelayInSeconds">Counter clockwise rotation transition start delay in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="clockwiseRotationStartAngleInDegrees">Clockwise rotation start angle in Degrees. Intaken as a <see cref="double"/>.</param>
+        /// <param name="clockwiseRotationTargetAngleInDegrees">Clockwise rotation target angle in Degrees. Intaken as a <see cref="double"/>.</param>
+        /// <param name="clockwiseRotationDurationInSeconds">Clockwise rotation transition duration in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="clockwiseRotationStartDelayInSeconds">Clockwise rotation transition start delay in seconds. Intaken as a <see cref="float"/>.</param>
         /// <param name="orderNumber">Intakes the Transition's run Order Number as an int.</param>
         public RotateCounterClockwiseThenClockwise(State state, double counterClockwiseRotationStartAngleInDegrees,
                                                                 double counterClockwiseRotationTargetAngleInDegrees,
@@ -83,7 +83,7 @@
         {
             var result = false;
 
-            if (IsCounterClockwiseRotationComplete == false)
+            if (!IsCounterClockwiseRotationComplete)
             {
                 IsCounterClockwiseRotationComplete = RotateCounterClockwise.Run().Result;
 

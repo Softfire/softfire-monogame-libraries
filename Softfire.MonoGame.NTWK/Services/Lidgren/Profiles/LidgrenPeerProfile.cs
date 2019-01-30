@@ -66,8 +66,8 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren.Profiles
         /// <param name="id">A unique identifier. Intaken as a Guid.</param>
         /// <param name="name">The Peer's name. intaken as a string.</param>
         /// <param name="ipAddress">The Peer's IP Address.</param>
-        /// <param name="port">The Peer's listening port. Intaken as an int.</param>
-        /// <param name="version">The Peer's underlying version. Intaken as a double.</param>
+        /// <param name="port">The Peer's listening port. Intaken as an <see cref="int"/>.</param>
+        /// <param name="version">The Peer's underlying version. Intaken as a <see cref="double"/>.</param>
         protected LidgrenPeerProfile(Guid id, string name, IPAddress ipAddress, int port, double version)
         {
             Id = id;

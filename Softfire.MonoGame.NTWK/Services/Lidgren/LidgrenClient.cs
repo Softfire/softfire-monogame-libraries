@@ -102,7 +102,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// 5. Client Version as a double.
         /// </summary>
         /// <param name="outgoingMessageTypes">A byte array of a message types. This array should be associated to a defined enum indicating the order and data to expect.</param>
-        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a string.</param>
+        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a <see cref="string"/>.</param>
         /// <param name="recipientHostName">The ipV4 address or hostname to connect to.</param>
         /// <param name="recipientPort">The port number used to communicate with the host.</param>
         /// <returns>Returns an enum of SendSecureConnectionRequestResults.</returns>
@@ -157,7 +157,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// 5. Client Version as a double.
         /// </summary>
         /// <param name="outgoingMessageTypes">A byte array of a message types. This array should be associated to a defined enum indicating the order and data to expect.</param>
-        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a string.</param>
+        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a <see cref="string"/>.</param>
         /// <param name="recipientIpEndPoint">Recipient IPEndPoint to connect to.</param>
         /// <returns>Returns an enum of SendSecureConnectionRequestResults.</returns>
         public SendSecureConnectionRequestResults SendSecureConnectionRequest(byte[] outgoingMessageTypes, string rsaContainerIdentifier, IPEndPoint recipientIpEndPoint)
@@ -195,7 +195,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check Port validity.
-                if (NetCommon.CheckPortValidity(recipientIpEndPoint.Port) == false)
+                if (!NetCommon.IsPortValid(recipientIpEndPoint.Port))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Sending of secure connection request failed.{Environment.NewLine}" +
@@ -394,7 +394,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check if Peer is already connected.
-                if (PeerServerProfiles.ContainsKey(peerId) == false)
+                if (!PeerServerProfiles.ContainsKey(peerId))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Receiving of data failed.{Environment.NewLine}" +
@@ -425,7 +425,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check Port validity.
-                if (NetCommon.CheckPortValidity(recipientIpEndPoint.Port) == false)
+                if (!NetCommon.IsPortValid(recipientIpEndPoint.Port))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Receiving of user data failed.{Environment.NewLine}" +
@@ -616,7 +616,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check if peer is already connected.
-                if (PeerServerProfiles.ContainsKey(peerId) == false)
+                if (!PeerServerProfiles.ContainsKey(peerId))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Processing of data failed.{Environment.NewLine}" +
@@ -661,7 +661,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check Port validity.
-                if (NetCommon.CheckPortValidity(senderIpEndPoint.Port) == false)
+                if (!NetCommon.IsPortValid(senderIpEndPoint.Port))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Processing of data failed.{Environment.NewLine}" +

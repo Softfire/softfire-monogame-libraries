@@ -2,7 +2,7 @@
 
 # Softfire Animation 2D Library
 > Filename: Softfire.MonoGame.ANIM.dll  
-> Requires: .Net 4.7+, MonoGame 3.6+  
+> Requires: .Net 4.7+, MonoGame 3.7+  
 > Sources: [.Net](https://www.microsoft.com/en-us/download/details.aspx?id=55170), [MonoGame](http://www.monogame.net)
 
 This library contains C# classes that can be used to animate 2D spritesheets.  
@@ -107,4 +107,4 @@ To name a few:
 
 Version: `1.0`  
 Author: `Softfire`  
-Updated: `Sept. 5, 2017` 
+Updated: `Jan. 27, 2019` 

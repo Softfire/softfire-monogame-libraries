@@ -19,10 +19,10 @@ namespace Softfire.MonoGame.SM.Transitions
         /// Moves the state up(-) on the Y axis.
         /// </summary>
         /// <param name="state">The Parent State. Intakes a State.</param>
-        /// <param name="startPosition">Transition start position. Intaken as a Vector2.</param>
-        /// <param name="targetPosition">Transition target position. Intaken as a Vector2.</param>
-        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a float.</param>
+        /// <param name="startPosition">Transition start position. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="targetPosition">Transition target position. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a <see cref="float"/>.</param>
         /// <param name="orderNumber">Intakes the Transition's run Order Number as an int.</param>
         public MoveUp(State state, Vector2 startPosition, Vector2 targetPosition, float durationInSeconds, float startDelayInSeconds, int orderNumber) : base(state, durationInSeconds, startDelayInSeconds, orderNumber)
         {

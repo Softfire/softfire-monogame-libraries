@@ -37,16 +37,14 @@ namespace Softfire.MonoGame.IO
         /// Key: Value
         /// </summary>
         /// <param name="fileSystem">The file system in use.</param>
-        /// <param name="filePath">The file's path. Leave off trailing slash. Intaken as a string.</param>
-        /// <param name="fileName">The file's name. Intaken as a string.</param>
+        /// <param name="filePath">The file's path. Leave off trailing slash. Intaken as a <see cref="string"/>.</param>
+        /// <param name="fileName">The file's name. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a Dictionary{string, string}. Key/Value pairs.</returns>
         public static Dictionary<string, string> LoadTextFile(FileSystems fileSystem, string filePath, string fileName)
         {
             FileSystem = fileSystem;
             FilePath = filePath;
             FileName = fileName;
-
-            string[] keyValueArray;
 
             var result = new Dictionary<string, string>();
 
@@ -55,9 +53,9 @@ namespace Softfire.MonoGame.IO
                 case FileSystems.Windows:
                     foreach (var line in File.ReadLines($@"{filePath}\{fileName}"))
                     {
-                        if (string.IsNullOrWhiteSpace(line) == false)
+                        if (!string.IsNullOrWhiteSpace(line))
                         {
-                            keyValueArray = line.Split(':');
+                            var keyValueArray = line.Split(':');
                             result.Add(keyValueArray[0], keyValueArray[1]);
                         }
                     }

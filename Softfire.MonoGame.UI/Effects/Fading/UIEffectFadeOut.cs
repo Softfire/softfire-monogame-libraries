@@ -18,17 +18,22 @@ namespace Softfire.MonoGame.UI.Effects.Fading
         private float TargetTransparencyLevel { get; }
 
         /// <summary>
+        /// The rate of change between calls.
+        /// </summary>
+        private double RateOfChange { get; set; }
+
+        /// <summary>
         /// UI Effect Fade Out.
         /// </summary>
-        /// <param name="uiBase">The UIBase that will be affected. Intaken as a UIBase.</param>
-        /// <param name="id">A unique id. Intaken as an int.</param>
-        /// <param name="name">A unique name. Intaken as a string.</param>
-        /// <param name="startingTransparencyLevel">The effect's starting transparency level. Intaken as a float.</param>
-        /// <param name="targetTransparencyLevel">The effect's target transparency level. Intaken as a float.</param>
-        /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a float. Default is 1f.</param>
-        /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a float. Default is 0f.</param>
-        /// <param name="orderNumber">The effect's run order number. Intaken as an int. Default is 0.</param>
-        public UIEffectFadeOut(UIBase uiBase, int id, string name, float startingTransparencyLevel = 1f, float targetTransparencyLevel = 0f, float durationInSeconds = 1f, float startDelayInSeconds = 0f, int orderNumber = 0) : base(uiBase, id, name, durationInSeconds, startDelayInSeconds, orderNumber)
+        /// <param name="parent">The UIBase that will be affected. Intaken as a UIBase.</param>
+        /// <param name="id">A unique id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">A unique name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="startingTransparencyLevel">The effect's starting transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="targetTransparencyLevel">The effect's target transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a <see cref="float"/>. Default is 1f.</param>
+        /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a <see cref="float"/>. Default is 0f.</param>
+        public UIEffectFadeOut(UIBase parent, int id, string name, float startingTransparencyLevel = 1f, float targetTransparencyLevel = 0f,
+                                                                   float durationInSeconds = 1f, float startDelayInSeconds = 0f) : base(parent, id, name, durationInSeconds, startDelayInSeconds)
         {
             StartingTransparencyLevel = MathHelper.Clamp(startingTransparencyLevel, 0f, 1f);
             TargetTransparencyLevel = MathHelper.Clamp(targetTransparencyLevel, 0f, 1f);
@@ -43,16 +48,28 @@ namespace Softfire.MonoGame.UI.Effects.Fading
             if (ElapsedTime >= StartDelayInSeconds)
             {
                 RateOfChange = (StartingTransparencyLevel - TargetTransparencyLevel) / DurationInSeconds;
-                ParentUIBase.Transparencies["Background"] -= (float)RateOfChange * (float)DeltaTime;
+                Parent.GetTransparency("Background").Level -= (float)RateOfChange * (float)DeltaTime;
             }
 
             // Correction for float calculations.
-            if (ParentUIBase.Transparencies["Background"] <= TargetTransparencyLevel)
+            if (Parent.GetTransparency("Background").Level <= TargetTransparencyLevel)
             {
-                ParentUIBase.Transparencies["Background"] = TargetTransparencyLevel;
+                Parent.GetTransparency("Background").Level = TargetTransparencyLevel;
             }
 
-            return ParentUIBase.Transparencies["Background"] <= TargetTransparencyLevel;
+            return Parent.GetTransparency("Background").Level <= TargetTransparencyLevel || ElapsedTime > DurationInSeconds + StartDelayInSeconds;
+        }
+
+        /// <summary>
+        /// Resets the effect so it can be run again.
+        /// </summary>
+        protected internal override void Reset()
+        {
+            // Additional properties to reset.
+            RateOfChange = 0;
+
+            // Reset base properties.
+            base.Reset();
         }
     }
 }

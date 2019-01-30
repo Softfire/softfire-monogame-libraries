@@ -16,10 +16,10 @@
         /// Rotate Clockkwise.
         /// </summary>
         /// <param name="state">The Parent State. Intakes a State.</param>
-        /// <param name="startRotationAngleInDegrees">Start angle in Degrees. Intaken as a double.</param>
-        /// <param name="targetRotationAngleInDegrees">Target angle in Degrees. Intaken as a double.</param>
-        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a float.</param>
+        /// <param name="startRotationAngleInDegrees">Start angle in Degrees. Intaken as a <see cref="double"/>.</param>
+        /// <param name="targetRotationAngleInDegrees">Target angle in Degrees. Intaken as a <see cref="double"/>.</param>
+        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a <see cref="float"/>.</param>
         /// <param name="orderNumber">Intakes the Transition's run Order Number as an int.</param>
         public RotateClockwise(State state, double startRotationAngleInDegrees, double targetRotationAngleInDegrees, float durationInSeconds, float startDelayInSeconds, int orderNumber) : base(state, durationInSeconds, startDelayInSeconds, orderNumber)
         {

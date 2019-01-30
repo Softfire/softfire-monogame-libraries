@@ -115,7 +115,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// 5. Client Version as a double.
         /// </summary>
         /// <param name="outgoingMessageTypes">A byte array of a message types. This array should be associated to a defined enum indicating the order and data to expect.</param>
-        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a string.</param>
+        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a <see cref="string"/>.</param>
         /// <param name="recipientHostName">The ipV4 address or hostname to cconnect to.</param>
         /// <param name="recipientPort">The port number used to communicate with the host.</param>
         /// <returns>Returns an enum of SendSecureConnectionRequestResults.</returns>
@@ -171,7 +171,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// 5. Client Version as a double.
         /// </summary>
         /// <param name="outgoingMessageTypes">A byte array of a message types. This array should be associated to a defined enum indicating the order and data to expect.</param>
-        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a string.</param>
+        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a <see cref="string"/>.</param>
         /// <param name="recipientIpEndPoint">Recipient IPEndPoint to connect to.</param>
         /// <returns>Returns an enum of SendSecureConnectionRequestResults.</returns>
         public SendSecureConnectionRequestResults SendSecureConnectionRequest(byte[] outgoingMessageTypes, string rsaContainerIdentifier, IPEndPoint recipientIpEndPoint)
@@ -224,7 +224,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check Port validity.
-                if (NetCommon.CheckPortValidity(recipientIpEndPoint.Port) == false)
+                if (!NetCommon.IsPortValid(recipientIpEndPoint.Port))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Sending of secure connection request failed.{Environment.NewLine}" +
@@ -340,7 +340,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// <param name="outgoingMessageType">A byte of a message type. This byte should be associated to a defined enum indicating what data to expect.</param>
         /// <param name="senderHostName">The sender's host name or IPv4 address as a string.</param>
         /// <param name="senderPort">The sender's port as an int.</param>
-        /// <param name="peerVersion">Peer's version. Intaken as a double</param>
+        /// <param name="peerVersion">Peer's version. Intaken as a <see cref="double"/></param>
         /// <returns>Returns an enum of ReceiveSecureConnectionResults.</returns>
         public async Task<ReceiveSecureConnectionRequestResults> ReceiveSecureConnectionRequest(Guid peerId, byte[] peerPublicKeyModulus, byte[] peerPublicKeyExponent, byte outgoingMessageType, string senderHostName, int senderPort, double peerVersion)
         {
@@ -390,7 +390,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// <param name="peerPublicKeyExponent">Peer's Asymmetric Encryption Public Key Exponent. Intaken as a byte[]</param>
         /// <param name="outgoingMessageType">A byte of a message type. This byte should be associated to a defined enum indicating what data to expect.</param>
         /// <param name="senderIpEndPoint">Sender's IPEndPoint.</param>
-        /// <param name="peerVersion">Peer's version. Intaken as a double</param>
+        /// <param name="peerVersion">Peer's version. Intaken as a <see cref="double"/></param>
         /// <returns>Returns an enum of ReceiveSecureConnectionResults.</returns>
         public async Task<ReceiveSecureConnectionRequestResults> ReceiveSecureConnectionRequest(Guid peerId, byte[] peerPublicKeyModulus, byte[] peerPublicKeyExponent, byte outgoingMessageType, IPEndPoint senderIpEndPoint, double peerVersion)
         {
@@ -594,8 +594,8 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// <param name="id">Recipient's id. Intaken as a Guid.</param>
         /// <param name="outgoingMessageTypes">A byte array of a message types. This array should be associated to a defined enum indicating the order and data to expect.</param>
         /// <param name="orderedPlainTextData">Data. Intaken as an IList{string}.</param>
-        /// <param name="recipientHostName">Recipient's a host name. Intaken as a string.</param>
-        /// <param name="recipientPort">Recipient's port. Intaken as an int.</param>
+        /// <param name="recipientHostName">Recipient's a host name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="recipientPort">Recipient's port. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a result from SendEncryptedDataResults enum indicating whether the request was sent or an error occured.</returns>
         public async Task<SendEncryptedDataResults> SendEncryptedData(Guid id, byte[] outgoingMessageTypes, IList<string> orderedPlainTextData, string recipientHostName, int recipientPort)
         {
@@ -695,7 +695,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check if Peer is already connected.
-                if (PeerClientProfiles.ContainsKey(id) == false)
+                if (!PeerClientProfiles.ContainsKey(id))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Receiving of data failed.{Environment.NewLine}" +
@@ -726,7 +726,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check Port validity.
-                if (NetCommon.CheckPortValidity(recipientIpEndPoint.Port) == false)
+                if (!NetCommon.IsPortValid(recipientIpEndPoint.Port))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Receiving of user data failed.{Environment.NewLine}" +
@@ -963,7 +963,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check if peer is already connected.
-                if (PeerClientProfiles.ContainsKey(peerId) == false)
+                if (!PeerClientProfiles.ContainsKey(peerId))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Processing of data failed.{Environment.NewLine}" +
@@ -994,7 +994,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check Port validity.
-                if (NetCommon.CheckPortValidity(senderIpEndPoint.Port) == false)
+                if (!NetCommon.IsPortValid(senderIpEndPoint.Port))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Processing of data failed.{Environment.NewLine}" +
@@ -1095,7 +1095,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// Add IP Address Ban.
         /// </summary>
         /// <param name="ipAddress">The ip address to ban.</param>
-        /// <param name="reason">The reason for the ban. Intaken as a string.</param>
+        /// <param name="reason">The reason for the ban. Intaken as a <see cref="string"/>.</param>
         /// <param name="dateTime">The date/time of the ban. Intaken as DateTime.</param>
         /// <param name="expiryDateTime">The expiry date/time of the ban. Intaken as DateTime.</param>
         /// <returns>Returns a bool indicating whether the ip was added.</returns>
@@ -1215,14 +1215,14 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// <summary>
         /// Remove IP Address Ban.
         /// </summary>
-        /// <param name="ipAddress">The IPAddress to unban.</param>
+        /// <param name="ipAddress">The IPAddress to be unbanned.</param>
         /// <returns>Returns a bool indicating whether the ip was removed.</returns>
         public bool RemoveIpAddressBan(IPAddress ipAddress)
         {
             try
             {
                 // Check IPAddress for ban.
-                if (CheckForIpAddressBan(ipAddress) == false)
+                if (!CheckForIpAddressBan(ipAddress))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"IP Address ban removal failed.{Environment.NewLine}" +
@@ -1281,8 +1281,8 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// Write To Logs.
         /// Writes to Session Log and Logger.
         /// </summary>
-        /// <param name="logType">Type of log. Info, Error, Warning. Intaken as a string.</param>
-        /// <param name="line">The line to log. Intaken as a string.</param>
+        /// <param name="logType">Type of log. Info, Error, Warning. Intaken as a <see cref="string"/>.</param>
+        /// <param name="line">The line to log. Intaken as a <see cref="string"/>.</param>
         /// <param name="fileName">Intakes a file name as a string. Leave off extension. Default name is LOG and extension is .log.</param>
         /// <param name="useInlineLayout">Logger Only: Write to log in line.</param>
         public void WriteToLogs(LogTypes logType, string line, string fileName = "LOG", bool useInlineLayout = true)
@@ -1295,7 +1295,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// Write To Logs.
         /// Writes to Session Log and Logger.
         /// </summary>
-        /// <param name="logType">Type of log. Info, Error, Warning. Intaken as a string.</param>
+        /// <param name="logType">Type of log. Info, Error, Warning. Intaken as a <see cref="string"/>.</param>
         /// <param name="lines">The lines to log. Intaken as an array of strings.</param>
         /// <param name="fileName">Intakes a file name as a string. Leave off extension. Default name is LOG and extension is .log.</param>
         /// <param name="useInlineLayout">Logger Only: Write to log in line.</param>

@@ -18,10 +18,10 @@ namespace Softfire.MonoGame.SM.Transitions
         /// Fade In Constructor.
         /// </summary>
         /// <param name="state">The Parent State. Intakes a State.</param>
-        /// <param name="startingTransparencyLevel">Starting transparency level. Intaken as a float.</param>
-        /// <param name="targetTransparencyLevel">Target transparency level. Intaken as a float.</param>
-        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a float.</param>
-        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a float.</param>
+        /// <param name="startingTransparencyLevel">Starting transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="targetTransparencyLevel">Target transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="durationInSeconds">Transition duration in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="startDelayInSeconds">Transition start delay in seconds. Intaken as a <see cref="float"/>.</param>
         /// <param name="orderNumber">Intakes the Transition's run Order Number as an int.</param>
         public FadeOut(State state, float startingTransparencyLevel = 1f, float targetTransparencyLevel = 0f, float durationInSeconds = 1f, float startDelayInSeconds = 0f, int orderNumber = 0) : base(state, durationInSeconds, startDelayInSeconds, orderNumber)
         {

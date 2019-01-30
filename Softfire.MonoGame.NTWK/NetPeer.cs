@@ -66,7 +66,7 @@ namespace Softfire.MonoGame.NTWK
         /// <summary>
         /// Net Peer Constructor.
         /// </summary>
-        /// <param name="identifier">A unique identifier. Intaken as a string.</param>
+        /// <param name="identifier">A unique identifier. Intaken as a <see cref="string"/>.</param>
         /// <param name="ipAddress">The Ip Address to listen with.</param>
         /// <param name="port">The Port to listen on.</param>
         /// <param name="logFilePath">The path to store the NetPeer's log file.</param>

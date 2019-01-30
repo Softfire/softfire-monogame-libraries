@@ -183,7 +183,7 @@ namespace Softfire.MonoGame.LOG.ConsoleColorProfiles
         /// <param name="printNewLine">A bool indicating whether to print text and follow with a new line (\n) or not.</param>
         public static void PrintToConsole(LogTypes logType, string text, bool printNewLine = true)
         {
-            if (string.IsNullOrWhiteSpace(text) == false)
+            if (!string.IsNullOrWhiteSpace(text))
             {
                 var originalForegroundColor = Console.ForegroundColor;
                 var originalBackgroundColor = Console.BackgroundColor;

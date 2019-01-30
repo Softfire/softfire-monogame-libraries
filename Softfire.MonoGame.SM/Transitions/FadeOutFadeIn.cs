@@ -41,14 +41,14 @@
         /// Fade Out Fade In Constructor.
         /// </summary>
         /// <param name="state">The Parent State. Intakes a State.</param>
-        /// <param name="fadeOutStartingTransparencyLevel">Fade out starting transparency level. Intaken as a float.</param>
-        /// <param name="fadeOutTargetTransparencyLevel">Fade out target transparency level. Intaken as a float.</param>
-        /// <param name="fadeOutDurationInSeconds">Fade out transition duration in seconds. Intaken as a float.</param>
-        /// <param name="fadeOutStartDelayInSeconds">Fade out transition start delay in seconds. Intaken as a float.</param>
-        /// <param name="fadeInStartingTransparencyLevel">Fade in starting transparency level. Intaken as a float.</param>
-        /// <param name="fadeInTargetTransparencyLevel">Fade in target transparency level. Intaken as a float.</param>
-        /// <param name="fadeInDurationInSeconds">Fade in transition duration in seconds. Intaken as a float.</param>
-        /// <param name="fadeInStartDelayInSeconds">Fade in transition start delay in seconds. Intaken as a float.</param>
+        /// <param name="fadeOutStartingTransparencyLevel">Fade out starting transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="fadeOutTargetTransparencyLevel">Fade out target transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="fadeOutDurationInSeconds">Fade out transition duration in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="fadeOutStartDelayInSeconds">Fade out transition start delay in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="fadeInStartingTransparencyLevel">Fade in starting transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="fadeInTargetTransparencyLevel">Fade in target transparency level. Intaken as a <see cref="float"/>.</param>
+        /// <param name="fadeInDurationInSeconds">Fade in transition duration in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="fadeInStartDelayInSeconds">Fade in transition start delay in seconds. Intaken as a <see cref="float"/>.</param>
         /// <param name="orderNumber">Intakes the Transition's run Order Number as an int.</param>
         public FadeOutFadeIn(State state, float fadeOutStartingTransparencyLevel,
                                           float fadeOutTargetTransparencyLevel,
@@ -79,7 +79,7 @@
         {
             var result = false;
 
-            if (IsFadeOutComplete == false)
+            if (!IsFadeOutComplete)
             {
                 IsFadeOutComplete = FadeOut.Run().Result;
 

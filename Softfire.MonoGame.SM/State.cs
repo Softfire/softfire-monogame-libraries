@@ -161,11 +161,11 @@ namespace Softfire.MonoGame.SM
         /// <summary>
         /// State Constructor.
         /// </summary>
-        /// <param name="name">State's unique name. Intaken as a string.</param>
-        /// <param name="position">State's Position. Intaken as a Vector2.</param>
-        /// <param name="width">State's width. Intaken as an int.</param>
-        /// <param name="height">State's height. Intaken as an int.</param>
-        /// <param name="orderNumber">State's Order number. Intaken as an int.</param>
+        /// <param name="name">State's unique name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="position">State's Position. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="width">State's width. Intaken as an <see cref="int"/>.</param>
+        /// <param name="height">State's height. Intaken as an <see cref="int"/>.</param>
+        /// <param name="orderNumber">State's Order number. Intaken as an <see cref="int"/>.</param>
         protected State(string name, Vector2 position, int width, int height, int orderNumber)
         {
             Name = name;
@@ -174,7 +174,7 @@ namespace Softfire.MonoGame.SM
             Height = height;
             OrderNumber = orderNumber;
 
-            Camera = new IOCamera2D(new Rectangle((int)Position.X, (int)Position.Y, Width, Height));
+            Camera = new IOCamera2D(ParentStateManager.GraphicsDevice, Width, Height);
             LoadedTransitions = new Dictionary<string, Transition>();
             ActiveTransitions = new List<Transition>();
             
@@ -234,7 +234,7 @@ namespace Softfire.MonoGame.SM
         /// <returns>Returns a Threading Task.</returns>
         public virtual async Task<bool> Sleep()
         {
-            if (IsSleeping == false)
+            if (!IsSleeping)
             {
                 LoadTransition("Sleep", new FadeOut(this, 1f, 0f, 1f, 0f, 1));
                 ActivateLoadedTransition("Sleep");
@@ -286,7 +286,7 @@ namespace Softfire.MonoGame.SM
         /// <returns>Returns a Threading Task.</returns>
         public virtual async Task<bool> Wake()
         {
-            if (IsWaking == false)
+            if (!IsWaking)
             {
                 LoadTransition("Wake", new FadeIn(this, 0f, 1f, 1f, 0f, 1));
                 ActivateLoadedTransition("Wake");
@@ -357,7 +357,7 @@ namespace Softfire.MonoGame.SM
         /// Call SpriteBatch.Begin() and SpriteBatch.End().
         /// </summary>
         /// <param name="spriteBatch">Intakes MonoGame SpriteBatch.</param>
-        /// <remarks>Using Vector2(Width, Height) as Scale for drawing Brackground Texture due to Background Texture being a 1x1 pixel. Origin is Center of Background Texture.</remarks>
+        /// <remarks>Using Vector2(Width, Height) as Scale for drawing Background Texture due to Background Texture being a 1x1 pixel. Origin is Center of Background Texture.</remarks>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(BackgroundTexture, Position, null, BackgroundColor * Transparency, (float)RotationAngle, Origin, new Vector2(Width, Height), SpriteEffects.None, 1f);

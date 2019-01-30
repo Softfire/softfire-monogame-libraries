@@ -112,7 +112,7 @@ namespace Softfire.MonoGame.DB
         /// <summary>
         /// Open Connection.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the connaction was opened.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the connaction was opened.</returns>
         public bool OpenConnection()
         {
             var result = false;
@@ -141,7 +141,7 @@ namespace Softfire.MonoGame.DB
         /// <summary>
         /// Close Connection.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the connaction was cloased.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the connaction was cloased.</returns>
         public bool CloseConnection()
         {
             var result = false;

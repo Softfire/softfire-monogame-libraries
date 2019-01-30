@@ -27,10 +27,10 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren.Profiles
         /// <param name="id">A unique identifier. Intaken as a byte array.</param>
         /// <param name="name">The server's name. intaken as a string.</param>
         /// <param name="ipAddress">The server's IP Address.</param>
-        /// <param name="port">The server's listening port. Intaken as an int.</param>
-        /// <param name="version">The server's underlying version. Intaken as a double.</param>
-        /// <param name="numberOfConnectedPeers">The number of connected peers for the server. Intaken as an int.</param>
-        /// <param name="maxNumberOfConnectedPeers">The max number of connected peers for the server. Intaken as an int.</param>
+        /// <param name="port">The server's listening port. Intaken as an <see cref="int"/>.</param>
+        /// <param name="version">The server's underlying version. Intaken as a <see cref="double"/>.</param>
+        /// <param name="numberOfConnectedPeers">The number of connected peers for the server. Intaken as an <see cref="int"/>.</param>
+        /// <param name="maxNumberOfConnectedPeers">The max number of connected peers for the server. Intaken as an <see cref="int"/>.</param>
         /// <param name="isPrivate">A bool indicting whether the server is private.</param>
         public LidgrenPeerServerProfile(Guid id, string name, IPAddress ipAddress, int port, double version, int numberOfConnectedPeers = 0, int maxNumberOfConnectedPeers = 32, bool isPrivate = false) : base(id, name, ipAddress, port, version)
         {

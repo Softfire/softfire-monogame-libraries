@@ -90,7 +90,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// 5. Client Version as a double.
         /// </summary>
         /// <param name="outgoingMessageTypes">A byte array of a message types. This array should be associated to a defined enum indicating the order and data to expect.</param>
-        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a string.</param>
+        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a <see cref="string"/>.</param>
         /// <param name="recipientHostName">The ipV4 address or hostname to connect to.</param>
         /// <param name="recipientPort">The port number used to communicate with the host.</param>
         /// <returns>Returns an enum of SecureConnectionRequestResults.</returns>
@@ -107,7 +107,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
         /// 5. Client Version as a double.
         /// </summary>
         /// <param name="outgoingMessageTypes">A byte array of a message types. This array should be associated to a defined enum indicating the order and data to expect.</param>
-        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a string.</param>
+        /// <param name="rsaContainerIdentifier">The RSA Container Name. This is a unique identifier used to call the RSA Container. Intaken as a <see cref="string"/>.</param>
         /// <param name="recipientIpEndPoint">Recipient IPEndPoint to connect to.</param>
         /// <returns>Returns an enum of SecureConnectionRequestResults.</returns>
         SendSecureConnectionRequestResults SendSecureConnectionRequest(byte[] outgoingMessageTypes, string rsaContainerIdentifier, IPEndPoint recipientIpEndPoint);

@@ -32,14 +32,14 @@ namespace Softfire.MonoGame.IO.Encryption
         /// Adds a public key, usually one received from another source, to the active public keys dictionary.
         /// Uses a string as the identifying key.
         /// </summary>
-        /// <param name="identifier">The identifer for the public key. Intaken as a string.</param>
+        /// <param name="identifier">The identifier for the public key. Intaken as a <see cref="string"/>.</param>
         /// <param name="publicKey">The public key to store. Intaken as an array of bytes.</param>
         /// <returns>Returns a bool indicating whether the public key was added successfully.</returns>
         public static bool AddActivePublicKey(string identifier, RSAParameters publicKey)
         {
             var result = false;
 
-            if (string.IsNullOrWhiteSpace(identifier) == false)
+            if (!string.IsNullOrWhiteSpace(identifier))
             {
                 ActivePuclicKeys.Add(identifier, publicKey);
                 result = true;
@@ -51,7 +51,7 @@ namespace Softfire.MonoGame.IO.Encryption
         /// <summary>
         /// Get Active Public Key.
         /// </summary>
-        /// <param name="identifier">The identifer for the public key. Intaken as a string.</param>
+        /// <param name="identifier">The identifier for the public key. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a the requested public key, otherwise null.</returns>
         public static RSAParameters GetActivePublicKey(string identifier)
         {
@@ -68,7 +68,7 @@ namespace Softfire.MonoGame.IO.Encryption
         /// <summary>
         /// Remove Active Public Key.
         /// </summary>
-        /// <param name="identifier">The identifer for the public key. Intaken as a string.</param>
+        /// <param name="identifier">The identifer for the public key. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the public key was removed successfully.</returns>
         public static bool RemoveActivePublicKey(string identifier)
         {

@@ -38,13 +38,13 @@ namespace Softfire.MonoGame.DB
         /// <summary>
         /// Open Connection.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the connaction was opened.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the connaction was opened.</returns>
         bool OpenConnection();
 
         /// <summary>
         /// Close Connection.
         /// </summary>
-        /// <returns>Returns a boolean indicating whether the connaction was cloased.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the connaction was cloased.</returns>
         bool CloseConnection();
     }
 }

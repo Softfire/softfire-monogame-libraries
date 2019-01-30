@@ -47,7 +47,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         public string FirstName
         {
             get => _firstName;
-            set => _firstName = string.IsNullOrWhiteSpace(value) == false ? value : "INVALID_FIRST_NAME";
+            set => _firstName = !string.IsNullOrWhiteSpace(value) ? value : "INVALID_FIRST_NAME";
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         public string LastName
         {
             get => _lastName;
-            set => _lastName = string.IsNullOrWhiteSpace(value) == false ? value : "INVALID_LAST_NAME";
+            set => _lastName = !string.IsNullOrWhiteSpace(value) ? value : "INVALID_LAST_NAME";
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         public string EmailAddress
         {
             get => _emailAddress;
-            set => _emailAddress = string.IsNullOrWhiteSpace(value) == false ? value : "INVALID_EMAIL_ADDRESS";
+            set => _emailAddress = !string.IsNullOrWhiteSpace(value) ? value : "INVALID_EMAIL_ADDRESS";
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         public string UserName
         {
             get => _userName;
-            set => _userName = string.IsNullOrWhiteSpace(value) == false ? value : "INVALID_USERNAME";
+            set => _userName = !string.IsNullOrWhiteSpace(value) ? value : "INVALID_USERNAME";
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         public string ScreenName
         {
             get => _screenName;
-            set => _screenName = string.IsNullOrWhiteSpace(value) == false ? value : UserName;
+            set => _screenName = !string.IsNullOrWhiteSpace(value) ? value : UserName;
         }
 
         /// <summary>
@@ -461,7 +461,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check if user is on list.
-                if (FriendsList.Contains(user) == false)
+                if (!FriendsList.Contains(user))
                 {
                     // Add to action log.
                     ActionLog.Add(new Tuple<DateTime, LogType, ActionType, string>(DateTime.Now, LogType.Warning, ActionType.RemoveFriend, $"({user.ScreenName}) is not on your friends list."));
@@ -626,7 +626,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// </summary>
         /// <typeparam name="T">An object of Type LobbyUser.</typeparam>
         /// <param name="user">The user to receiving the reducton in karma.</param>
-        /// <param name="reason">The reason for the reduction in karma. Intaken as a string.</param>
+        /// <param name="reason">The reason for the reduction in karma. Intaken as a <see cref="string"/>.</param>
         /// <param name="amount">The amount in which to reduce the user's karma by.</param>
         /// <returns>Returns an enum of LobbyUserRemoveKarmaResults.</returns>
         public LobbyUserRemoveKarmaResults RemoveKarma<T>(T user, string reason, double amount = 1) where T : LobbyUser
@@ -957,7 +957,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// </summary>
         /// <typeparam name="T">An object of Type LobbyUser.</typeparam>
         /// <param name="user">The user to receive a reduction in coin.</param>
-        /// <param name="reason">The reason for the reduction in coin. Intaken as a string.</param>
+        /// <param name="reason">The reason for the reduction in coin. Intaken as a <see cref="string"/>.</param>
         /// <param name="amount">The amount in which to decrease the user's coin by.</param>
         /// <returns>Returns an enum of LobbyUserRemoveCoinResults.</returns>
         public LobbyUserRemoveCoinResults RemoveCoin<T>(T user, string reason, double amount = 1) where T : LobbyUser
@@ -1073,7 +1073,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// </summary>
         /// <typeparam name="T">An object of Type LobbyUser.</typeparam>
         /// <param name="user">The user to receive a strike.</param>
-        /// <param name="reason">The reason for the strike. Intaken as a string.</param>
+        /// <param name="reason">The reason for the strike. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns an enum of LobbyUserAddStrikeResults.</returns>
         public LobbyUserAddStrikeResults AddStrike<T>(T user, string reason) where T : LobbyUser
         {
@@ -1173,7 +1173,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// </summary>
         /// <typeparam name="T">An object of Type LobbyUser.</typeparam>
         /// <param name="user">The user to receive a reduction in strikes.</param>
-        /// <param name="reason">The reason for the reduction in strikes. Intaken as a string.</param>
+        /// <param name="reason">The reason for the reduction in strikes. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns an enum of LobbyUserRemoveStrikeResults.</returns>
         public LobbyUserRemoveStrikeResults RemoveStrike<T>(T user, string reason) where T : LobbyUser
         {
@@ -1274,7 +1274,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// <typeparam name="T">An object of Type LobbyUser.</typeparam>
         /// <param name="user">The user to receive a banning.</param>
         /// <param name="endDateTime">The end date/time of the ban.</param>
-        /// <param name="reason">The reason for the banning. Intaken as a string.</param>
+        /// <param name="reason">The reason for the banning. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns an enum of LobbyUserAddBanResults.</returns>
         public LobbyUserAddBanResults AddBan<T>(T user, DateTime endDateTime, string reason) where T : LobbyUser
         {
@@ -1391,7 +1391,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// </summary>
         /// <typeparam name="T">An object of Type LobbyUser.</typeparam>
         /// <param name="user">The user to receive an unbanning.</param>
-        /// <param name="reason">The reason for the unbannig. Intaken as a string.</param>
+        /// <param name="reason">The reason for the unbannig. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns an enum of LobbyUserRemoveBanResults.</returns>
         public LobbyUserRemoveBanResults RemoveBan<T>(T user, string reason) where T : LobbyUser
         {

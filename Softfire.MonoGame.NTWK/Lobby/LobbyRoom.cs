@@ -218,10 +218,10 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// Lidgren Lobby Room Constructor.
         /// </summary>
         /// <param name="id">Server generated unique id.</param>
-        /// <param name="roomName">The room name. Intaken as a string.</param>
+        /// <param name="roomName">The room name. Intaken as a <see cref="string"/>.</param>
         /// <param name="user">The requesting user. User becomes the Room Owner.</param>
-        /// <param name="adminPassword">The admin password to modify the room once created. Intaken as a string.</param>
-        /// <param name="accessPassword">The access password. Used by users to access the room. Intaken as a string.</param>
+        /// <param name="adminPassword">The admin password to modify the room once created. Intaken as a <see cref="string"/>.</param>
+        /// <param name="accessPassword">The access password. Used by users to access the room. Intaken as a <see cref="string"/>.</param>
         /// <param name="logFilePath">Intakes a file path for logs relative to the calling application.</param>
         public LobbyRoom(Guid id, string roomName, T user, string adminPassword, string accessPassword = null, string logFilePath = @"Config\Logs\Lobby\Rooms")
         {
@@ -241,7 +241,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
             VisibilityLevels = new List<Visibilities>(7);
 
             // Privatize room if AccessPassword is not null or whitespace.
-            if (string.IsNullOrWhiteSpace(AccessPassword) == false)
+            if (!string.IsNullOrWhiteSpace(AccessPassword))
             {
                 VisibilityLevels.Add(Visibilities.Private);
             }
@@ -298,7 +298,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                     RoomOwner = userToSetAsOwner;
 
                     // Set admin password.
-                    if (AuthenticateAdminCredentials(adminPassword) == false)
+                    if (!AuthenticateAdminCredentials(adminPassword))
                     {
                         AdminPassword = adminPassword;
                     }
@@ -329,7 +329,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Authenticate password.
-                if (AuthenticateAdminCredentials(adminPassword) == false)
+                if (!AuthenticateAdminCredentials(adminPassword))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Setting room owner failed.{Environment.NewLine}" +
@@ -460,7 +460,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Authenticate password.
-                if (AdminPassword.Equals(adminPassword) == false)
+                if (!AdminPassword.Equals(adminPassword))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Setting room owner failed.{Environment.NewLine}" +
@@ -590,7 +590,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Authenticate password.
-                if (AuthenticateAdminCredentials(adminPassword) == false)
+                if (!AuthenticateAdminCredentials(adminPassword))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Setting room access password failed.{Environment.NewLine}" +
@@ -720,7 +720,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Authenticate password.
-                if (AuthenticateAdminCredentials(currentAdminPassword) == false)
+                if (!AuthenticateAdminCredentials(currentAdminPassword))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Setting room access password failed.{Environment.NewLine}" +
@@ -874,7 +874,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                     }
 
                     // Authenticate access password.
-                    if (AuthenticateAccessPassword(accessPassword) == false)
+                    if (!AuthenticateAccessPassword(accessPassword))
                     {
                         // Write to log.
                         Logger.Write(LogTypes.Warning, $"Login failed.{Environment.NewLine}" +
@@ -1150,7 +1150,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check if room owner.
-                if (RoomOwner.Equals(requestingUser) == false)
+                if (!RoomOwner.Equals(requestingUser))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Adding user to list failed.{Environment.NewLine}" +
@@ -1243,10 +1243,10 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check if user is on list.
-                if (list.ContainsKey(user) == false)
+                if (!list.ContainsKey(user))
                 {
                     // Write to log.
-                    Logger.Write(LogTypes.Info, $"User check succesful. User not found.{Environment.NewLine}" +
+                    Logger.Write(LogTypes.Info, $"User check successful. User not found.{Environment.NewLine}" +
                                                 $"Source: {nameof(CheckListForUser)}{Environment.NewLine}" +
                                                 $"Variables: {nameof(user)}:{user.UserName}{Environment.NewLine}" +
                                                 $"Variables: {nameof(LobbyRoom<T>)}:{Name}{Environment.NewLine}",
@@ -1406,7 +1406,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check if room owner.
-                if (RoomOwner.Equals(requestingUser) == false)
+                if (!RoomOwner.Equals(requestingUser))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Removing user from list failed.{Environment.NewLine}" +
@@ -1475,7 +1475,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// <summary>
         /// Authenticate Admin Credentials.
         /// </summary>
-        /// <param name="adminPassword">Admin password to check. Intaken as a string.</param>
+        /// <param name="adminPassword">Admin password to check. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the passwords matched.</returns>
         public bool AuthenticateAdminCredentials(string adminPassword)
         {
@@ -1485,7 +1485,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// <summary>
         /// Authenticate Access Credentials.
         /// </summary>
-        /// <param name="accessPassword">Access password to check. Intaken as a string.</param>
+        /// <param name="accessPassword">Access password to check. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the passwords matched.</returns>
         public bool AuthenticateAccessPassword(string accessPassword)
         {

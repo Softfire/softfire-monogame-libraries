@@ -248,7 +248,7 @@ namespace Softfire.MonoGame.NTWK
         /// Resolve Host Name To IpV4.
         /// Resolves the host name to the associated IPAddresses.
         /// </summary>
-        /// <param name="hostname">The host name to resolve. Intaken as a string.</param>
+        /// <param name="hostname">The host name to resolve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns an IEnumerable{IPAddress} of found addresses or null if hostname was unable to be resolved.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -263,7 +263,7 @@ namespace Softfire.MonoGame.NTWK
         /// Resolve Host Name To IpV6.
         /// Resolves the host name to the associated IPAddresses.
         /// </summary>
-        /// <param name="hostname">The host name to resolve. Intaken as a string.</param>
+        /// <param name="hostname">The host name to resolve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns an IEnumerable{IPAddress} of found addresses or null if hostname was unable to be resolved.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -275,12 +275,11 @@ namespace Softfire.MonoGame.NTWK
         }
 
         /// <summary>
-        /// Check Port Validity.
-        /// Checks to see if the port falls within the range of greater than 1024 and less than or equal to 65535.
+        /// Determines whether the port falls within the range of greater than 1024 and less than or equal to 65535.
         /// </summary>
         /// <param name="port">Intakes a port number as an int.</param>
         /// <returns>Returns a bool indicating whether the port is within range.</returns>
-        public static bool CheckPortValidity(int port)
+        public static bool IsPortValid(int port)
         {
             return port > 1024 && port <= 65535;
         }

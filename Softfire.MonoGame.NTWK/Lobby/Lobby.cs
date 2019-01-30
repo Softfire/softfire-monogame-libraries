@@ -171,8 +171,8 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// <summary>
         /// Lobby Constructor.
         /// </summary>
-        /// <param name="isHeadless">Indicates wether the lobby requires a graphics device and MonoGame. Intaken as a bool. Use Update() if true otherwise use Update(GameTime gametime).</param>
-        /// <param name="name">The lobby name. Intaken as a string.</param>
+        /// <param name="isHeadless">Indicates wether the lobby requires a graphics device and MonoGame. Intaken as a <see cref="bool"/>. Use Update() if true otherwise use Update(GameTime gametime).</param>
+        /// <param name="name">The lobby name. Intaken as a <see cref="string"/>.</param>
         /// <param name="logFilePath">Intakes a file path for logs relative to the calling application.</param>
         public Lobby(bool isHeadless, string name, string logFilePath = @"Config\Logs\Lobby")
         {
@@ -218,7 +218,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// Lobby User Registration.
         /// </summary>
         /// <param name="user">A new user of Type T1.</param>
-        /// <param name="password">New user's password.  Intaken as a string.</param>
+        /// <param name="password">New user's password.  Intaken as a <see cref="string"/>.</param>
         /// <param name="ipEndPoint">IPEndpoint of registering user.</param>
         /// <returns>Returns an enum of LobbyUserRegistrationResults indicating the result.</returns>
         public LobbyUserRegistrationResults LobbyUserRegistration(T user, string password, IPEndPoint ipEndPoint)
@@ -450,7 +450,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 #region Check For Banned Text
 
                 // Check First Name text for ban.
-                if (CheckForTextBan(user.FirstName))
+                if (TextBanExists(user.FirstName))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"User registration request denied.{Environment.NewLine}" +
@@ -464,7 +464,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check Last Name text for ban.
-                if (CheckForTextBan(user.LastName))
+                if (TextBanExists(user.LastName))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"User registration request denied.{Environment.NewLine}" +
@@ -478,7 +478,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check User Name text for ban.
-                if (CheckForTextBan(user.UserName))
+                if (TextBanExists(user.UserName))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"User registration request denied.{Environment.NewLine}" +
@@ -494,7 +494,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 #endregion
                 
                 // Duplicate Username Check
-                if (CheckForDuplicateLobbyUserByUsername(user.UserName))
+                if (LobbyUserExistsByUserName(user.UserName))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"User registration request denied.{Environment.NewLine}" +
@@ -508,7 +508,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Duplicate Email Address Check
-                if (CheckForDuplicateLobbyUserByEmail(user.EmailAddress))
+                if (LobbyUserExistsByEmail(user.EmailAddress))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"User registration request denied.{Environment.NewLine}" +
@@ -689,7 +689,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 #region Check For Banned Text
 
                 // Check First Name text for ban.
-                if (CheckForTextBan(user.FirstName))
+                if (TextBanExists(user.FirstName))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Lobby user creation failed.{Environment.NewLine}" +
@@ -703,7 +703,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check Last Name text for ban.
-                if (CheckForTextBan(user.LastName))
+                if (TextBanExists(user.LastName))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Lobby user creation failed.{Environment.NewLine}" +
@@ -717,7 +717,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check User Name text for ban.
-                if (CheckForTextBan(user.UserName) == false)
+                if (!TextBanExists(user.UserName))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Lobby user creation failed.{Environment.NewLine}" +
@@ -835,9 +835,9 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// Create Room.
         /// </summary>
         /// <param name="user">The requesting user. intaken as a LobbyUser.</param>
-        /// <param name="roomName">the room name. Displayed in the Lobby. Checked against the Banned Text List. Intaken as a string.</param>
-        /// <param name="adminPassword">The admin password. Used to modify the room settings. Checked against the Banned Text List. Intaken as a string.</param>
-        /// <param name="accessPassword">The access password. Used to access to room from the Lobby. Checked against the Banned Text List. Intaken as a string.</param>
+        /// <param name="roomName">the room name. Displayed in the Lobby. Checked against the Banned Text List. Intaken as a <see cref="string"/>.</param>
+        /// <param name="adminPassword">The admin password. Used to modify the room settings. Checked against the Banned Text List. Intaken as a <see cref="string"/>.</param>
+        /// <param name="accessPassword">The access password. Used to access to room from the Lobby. Checked against the Banned Text List. Intaken as a <see cref="string"/>.</param>
         /// <returns></returns>
         public LobbyRoomCreationResults CreateRoom(T user, string roomName, string adminPassword, string accessPassword = null)
         {
@@ -894,11 +894,11 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 #endregion
                 
                 // Check Room Name for banned text.
-                if (CheckForTextBan(roomName))
+                if (TextBanExists(roomName))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Lobby room creation failed.{Environment.NewLine}" +
-                                                          $"Source: {nameof(CreateRoom)} - {nameof(CheckForTextBan)}{Environment.NewLine}" +
+                                                          $"Source: {nameof(CreateRoom)} - {nameof(TextBanExists)}{Environment.NewLine}" +
                                                           $"Variables: {nameof(roomName)}{Environment.NewLine}" +
                                                           $"Message: Room Name ({roomName}) contained banned text.{Environment.NewLine}",
                                                           useInlineLayout: false);
@@ -998,7 +998,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 #endregion
 
                 // Check Permission Levels.
-                if (user.Equals(room.RoomOwner) == false ||
+                if (!user.Equals(room.RoomOwner) ||
                     user.MembershipStatus < LobbyUser.Memberships.Staff)
                 {
                     // Write to log.
@@ -1014,7 +1014,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 }
 
                 // Check for Room.
-                if (Rooms.ContainsKey(room.Id) == false)
+                if (!Rooms.ContainsKey(room.Id))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Lobby room removal failed.{Environment.NewLine}" +
@@ -1078,8 +1078,8 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// <summary>
         /// Add Text Ban.
         /// </summary>
-        /// <param name="text">The text to ban. Intaken as a string.</param>
-        /// <param name="reason">The reason for the ban. Intaken as a string.</param>
+        /// <param name="text">The text to ban. Intaken as a <see cref="string"/>.</param>
+        /// <param name="reason">The reason for the ban. Intaken as a <see cref="string"/>.</param>
         /// <param name="dateTime">The date/time of the ban. Intaken as DateTime.</param>
         /// <param name="expiryDateTime">The expiry date/time of the ban. Intaken as DateTime.</param>
         /// <returns>Returns a bool indicating whether the text was added.</returns>
@@ -1120,7 +1120,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 #endregion
 
                 // Check Text for banned text.
-                if (CheckForTextBan(text))
+                if (TextBanExists(text))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Text ban failed.{Environment.NewLine}" +
@@ -1174,11 +1174,11 @@ namespace Softfire.MonoGame.NTWK.Lobby
         }
 
         /// <summary>
-        /// Check For Text Ban.
+        /// Determines whether a text ban exists.
         /// </summary>
-        /// <param name="text">The text to check. Intaken as a string.</param>
+        /// <param name="text">The text to check. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the text is banned.</returns>
-        public bool CheckForTextBan(string text)
+        public bool TextBanExists(string text)
         {
             try
             {
@@ -1191,7 +1191,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Error, $"Error in received data.{Environment.NewLine}" +
-                                                        $"Source: {nameof(CheckForTextBan)}{Environment.NewLine}" +
+                                                        $"Source: {nameof(TextBanExists)}{Environment.NewLine}" +
                                                         $"Message: {ex}{Environment.NewLine}",
                                                         useInlineLayout: false);
 
@@ -1202,7 +1202,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
 
             // Write to log.
             Logger.Write(LogTypes.Error, $"Error! Something went wrong.{Environment.NewLine}" +
-                                                $"Source: {nameof(CheckForTextBan)}{Environment.NewLine}",
+                                                $"Source: {nameof(TextBanExists)}{Environment.NewLine}",
                                                 useInlineLayout: false);
 
             // Return failure code.
@@ -1212,14 +1212,14 @@ namespace Softfire.MonoGame.NTWK.Lobby
         /// <summary>
         /// Remove Text Ban.
         /// </summary>
-        /// <param name="text">The text to unban. Intaken as a string.</param>
+        /// <param name="text">The text to be unbanned. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the text was removed.</returns>
         public bool RemoveTextBan(string text)
         {
             try
             {
                 // Check Text for ban.
-                if (CheckForTextBan(text) == false)
+                if (!TextBanExists(text))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Text ban removal failed.{Environment.NewLine}" +
@@ -1276,53 +1276,53 @@ namespace Softfire.MonoGame.NTWK.Lobby
         #region Database Commands
 
         /// <summary>
-        /// Check For Duplicate Lobby User By ID.
+        /// Determines whether the lobby user exists, by id.
         /// </summary>
         /// <param name="id">Guid to check for in the database.</param>
         /// <returns>Returns a bool indicating whether the Guid exists in an account already.</returns>
-        public bool CheckForDuplicateLobbyUserById(Guid id)
+        public bool LobbyUserExists(Guid id)
         {
             using (MySqlDBConnect.Connection)
             {
-                using (var checkForDuplicateId = MySqlDBConnect.Connection.CreateCommand())
+                using (var command = MySqlDBConnect.Connection.CreateCommand())
                 {
-                    checkForDuplicateId.CommandText = "SELECT Count(*) FROM Users WHERE id=?id";
-                    checkForDuplicateId.Parameters.AddWithValue("?id", id);
+                    command.CommandText = "SELECT Count(*) FROM Users WHERE id=?id";
+                    command.Parameters.AddWithValue("?id", id);
 
                     MySqlDBConnect.OpenConnection();
 
-                    return Convert.ToInt32(checkForDuplicateId.ExecuteScalar()) > 0;
+                    return Convert.ToInt32(command.ExecuteScalar()) > 0;
                 }
             }
         }
 
         /// <summary>
-        /// Check For Duplicate Lobby User By Username.
+        /// Determines whether the lobby user exists, by user name.
         /// </summary>
-        /// <param name="userName">User name to check for in the database. Intaken as a string.</param>
+        /// <param name="userName">User name to check for in the database. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the user name exists in an account already.</returns>
-        public bool CheckForDuplicateLobbyUserByUsername(string userName)
+        public bool LobbyUserExistsByUserName(string userName)
         {
             using (MySqlDBConnect.Connection)
             {
-                using (var checkForDuplicateUsername = MySqlDBConnect.Connection.CreateCommand())
+                using (var command = MySqlDBConnect.Connection.CreateCommand())
                 {
-                    checkForDuplicateUsername.CommandText = "SELECT Count(*) FROM Users WHERE user_name=?user_name";
-                    checkForDuplicateUsername.Parameters.AddWithValue("?user_name", userName);
+                    command.CommandText = "SELECT Count(*) FROM Users WHERE user_name=?user_name";
+                    command.Parameters.AddWithValue("?user_name", userName);
 
                     MySqlDBConnect.OpenConnection();
 
-                    return Convert.ToInt32(checkForDuplicateUsername.ExecuteScalar()) > 0;
+                    return Convert.ToInt32(command.ExecuteScalar()) > 0;
                 }
             }
         }
 
         /// <summary>
-        /// Check For Duplicate Lobby User By Email.
+        /// Determines whether the lobby user exists, by email.
         /// </summary>
-        /// <param name="emailAddress">Email address to check for in the database. Intaken as a string.</param>
+        /// <param name="emailAddress">Email address to check for in the database. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the email address exists in an account already.</returns>
-        public bool CheckForDuplicateLobbyUserByEmail(string emailAddress)
+        public bool LobbyUserExistsByEmail(string emailAddress)
         {
             using (MySqlDBConnect.Connection)
             {
@@ -1352,7 +1352,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         {
             using (MySqlDBConnect.Connection)
             {
-                if (CheckForDuplicateLobbyUserById(id) == false)
+                if (!LobbyUserExists(id))
                 {
                     using (var command = MySqlDBConnect.Connection.CreateCommand())
                     {
@@ -1387,7 +1387,7 @@ namespace Softfire.MonoGame.NTWK.Lobby
         {
             using (MySqlDBConnect.Connection)
             {
-                if (CheckForDuplicateLobbyUserById(id) == false)
+                if (!LobbyUserExists(id))
                 {
                     using (var command = MySqlDBConnect.Connection.CreateCommand())
                     {

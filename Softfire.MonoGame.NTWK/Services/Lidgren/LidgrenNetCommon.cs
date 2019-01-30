@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Softfire.MonoGame.LOG;
@@ -38,7 +37,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 #region Checks
 
                 // Check for null of whitespace.
-                if (string.IsNullOrWhiteSpace(applicationIdentifier) == false)
+                if (!string.IsNullOrWhiteSpace(applicationIdentifier))
                 {
                     // Write to log.
                     Logger.Write(@"Config\Logs\PeerConfiguration", LogTypes.Error, $"NetPeerConfiguration was not set.{Environment.NewLine}" +
@@ -66,7 +65,7 @@ namespace Softfire.MonoGame.NTWK.Services.Lidgren
                 }
 
                 // Check if in range.
-                if (NetCommon.CheckPortValidity(port) == false)
+                if (!NetCommon.IsPortValid(port))
                 {
                     // Write to log.
                     Logger.Write(@"Config\Logs\PeerConfiguration", LogTypes.Error, $"NetPeerConfiguration was not set.{Environment.NewLine}" +

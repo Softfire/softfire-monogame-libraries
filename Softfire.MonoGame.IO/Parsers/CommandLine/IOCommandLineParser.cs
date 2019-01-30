@@ -42,7 +42,7 @@ namespace Softfire.MonoGame.IO.Parsers.CommandLine
         {
             var result = false;
 
-            if (Arguments.ContainsKey(identifier) == false)
+            if (!Arguments.ContainsKey(identifier))
             {
                 Arguments.Add(identifier, new IOCommandLineArgument(identifier, description, syntax, isRequired));
                 result = true;
@@ -55,8 +55,8 @@ namespace Softfire.MonoGame.IO.Parsers.CommandLine
         /// Add Argument Variant.
         /// Adds a variant identifier for an already existing argument.
         /// </summary>
-        /// <param name="identifier">The argument's principal identifier. Intaken as a string.</param>
-        /// <param name="variantIdentifier">The argument's variant identifier. Intaken as a string.</param>
+        /// <param name="identifier">The argument's principal identifier. Intaken as a <see cref="string"/>.</param>
+        /// <param name="variantIdentifier">The argument's variant identifier. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the variant was added successfully.</returns>
         public bool AddArgumentVariant(string identifier, string variantIdentifier)
         {
@@ -141,7 +141,7 @@ namespace Softfire.MonoGame.IO.Parsers.CommandLine
         {
             var result = false;
 
-            if (Flags.ContainsKey(identifier) == false)
+            if (!Flags.ContainsKey(identifier))
             {
                 Flags.Add(identifier, new IOCommandLineFlag(identifier, description, syntax, isRequired));
                 result = true;
@@ -154,8 +154,8 @@ namespace Softfire.MonoGame.IO.Parsers.CommandLine
         /// Add Flag Variant.
         /// Adds a variant identifier for an already existing flag.
         /// </summary>
-        /// <param name="identifier">The flag's principal identifier. Intaken as a string.</param>
-        /// <param name="variantIdentifier">The flag's variant identifier. Intaken as a string.</param>
+        /// <param name="identifier">The flag's principal identifier. Intaken as a <see cref="string"/>.</param>
+        /// <param name="variantIdentifier">The flag's variant identifier. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the variant was added successfully.</returns>
         public bool AddFlagVariant(string identifier, string variantIdentifier)
         {
@@ -238,7 +238,7 @@ namespace Softfire.MonoGame.IO.Parsers.CommandLine
         {
             var result = false;
 
-            if (Options.ContainsKey(identifier) == false)
+            if (!Options.ContainsKey(identifier))
             {
                 Options.Add(identifier, new IOCommandLineOption(identifier, description, syntax));
                 result = true;
@@ -251,8 +251,8 @@ namespace Softfire.MonoGame.IO.Parsers.CommandLine
         /// Add Option Variant.
         /// Adds a variant identifier for an already existing option.
         /// </summary>
-        /// <param name="identifier">The option's principal identifier. Intaken as a string.</param>
-        /// <param name="variantIdentifier">The option's variant identifier. Intaken as a string.</param>
+        /// <param name="identifier">The option's principal identifier. Intaken as a <see cref="string"/>.</param>
+        /// <param name="variantIdentifier">The option's variant identifier. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the variant was added successfully.</returns>
         public bool AddOptionVariant(string identifier, string variantIdentifier)
         {

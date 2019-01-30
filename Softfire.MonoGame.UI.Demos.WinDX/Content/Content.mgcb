@@ -5,7 +5,7 @@
 /intermediateDir:obj/$(Platform)
 /platform:Windows
 /config:
-/profile:Reach
+/profile:HiDef
 /compress:False
 
 #-------------------------------- References --------------------------------#
@@ -13,121 +13,236 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Fonts/Files/UncialAntiqua-Regular.ttf
-/copy:Fonts/Files/UncialAntiqua-Regular.ttf
-
 #begin Fonts/Legal/Uncial Antiqua.txt
 /copy:Fonts/Legal/Uncial Antiqua.txt
 
-#begin Fonts/UncialAntiqua08.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua08.spritefont
+#begin Fonts/UncialAntiqua/UncialAntiqua.otf
+/copy:Fonts/UncialAntiqua/UncialAntiqua.otf
 
-#begin Fonts/UncialAntiqua10.spritefont
+#begin Fonts/UncialAntiqua/Size08.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua10.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size08.spritefont
 
-#begin Fonts/UncialAntiqua11.spritefont
+#begin Fonts/UncialAntiqua/Size10.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua11.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size10.spritefont
 
-#begin Fonts/UncialAntiqua12.spritefont
+#begin Fonts/UncialAntiqua/Size12.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua12.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size12.spritefont
 
-#begin Fonts/UncialAntiqua14.spritefont
+#begin Fonts/UncialAntiqua/Size11.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua14.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size11.spritefont
 
-#begin Fonts/UncialAntiqua16.spritefont
+#begin Fonts/UncialAntiqua/Size14.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua16.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size14.spritefont
 
-#begin Fonts/UncialAntiqua18.spritefont
+#begin Fonts/UncialAntiqua/Size16.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua18.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size16.spritefont
 
-#begin Fonts/UncialAntiqua20.spritefont
+#begin Fonts/UncialAntiqua/Size18.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua20.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size18.spritefont
 
-#begin Fonts/UncialAntiqua21.spritefont
+#begin Fonts/UncialAntiqua/Size20.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua21.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size20.spritefont
 
-#begin Fonts/UncialAntiqua22.spritefont
+#begin Fonts/UncialAntiqua/Size21.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua22.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size21.spritefont
 
-#begin Fonts/UncialAntiqua24.spritefont
+#begin Fonts/UncialAntiqua/Size22.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua24.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size22.spritefont
 
-#begin Fonts/UncialAntiqua26.spritefont
+#begin Fonts/UncialAntiqua/Size24.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua26.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size24.spritefont
 
-#begin Fonts/UncialAntiqua28.spritefont
+#begin Fonts/UncialAntiqua/Size26.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua28.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size26.spritefont
 
-#begin Fonts/UncialAntiqua36.spritefont
+#begin Fonts/UncialAntiqua/Size28.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua36.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size28.spritefont
 
-#begin Fonts/UncialAntiqua48.spritefont
+#begin Fonts/UncialAntiqua/Size36.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua48.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size36.spritefont
 
-#begin Fonts/UncialAntiqua72.spritefont
+#begin Fonts/UncialAntiqua/Size48.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/UncialAntiqua72.spritefont
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size48.spritefont
+
+#begin Fonts/UncialAntiqua/Size72.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/UncialAntiqua/Size72.spritefont
+
+#begin Fonts/FrizQuadrata/FrizQuadrata.ttf
+/copy:Fonts/FrizQuadrata/FrizQuadrata.ttf
+
+#begin Fonts/FrizQuadrata/Size12.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size12.spritefont
+
+#begin Fonts/FrizQuadrata/Size11.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size11.spritefont
+
+#begin Fonts/FrizQuadrata/Size14.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size14.spritefont
+
+#begin Fonts/FrizQuadrata/Size16.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size16.spritefont
+
+#begin Fonts/FrizQuadrata/Size18.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size18.spritefont
+
+#begin Fonts/FrizQuadrata/Size20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size20.spritefont
+
+#begin Fonts/FrizQuadrata/Size21.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size21.spritefont
+
+#begin Fonts/FrizQuadrata/Size22.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size22.spritefont
+
+#begin Fonts/FrizQuadrata/Size24.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size24.spritefont
+
+#begin Fonts/FrizQuadrata/Size26.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size26.spritefont
+
+#begin Fonts/FrizQuadrata/Size28.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size28.spritefont
+
+#begin Fonts/FrizQuadrata/Size36.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size36.spritefont
+
+#begin Fonts/FrizQuadrata/Size48.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size48.spritefont
+
+#begin Fonts/FrizQuadrata/Size72.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size72.spritefont
+
+#begin Fonts/FrizQuadrata/Size08.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size08.spritefont
+
+#begin Fonts/FrizQuadrata/Size10.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=NoChange
+/build:Fonts/FrizQuadrata/Size10.spritefont
 

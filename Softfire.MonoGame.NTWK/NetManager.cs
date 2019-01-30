@@ -165,7 +165,7 @@ namespace Softfire.MonoGame.NTWK
         /// <summary>
         /// Add Server.
         /// </summary>
-        /// <param name="identifier">A unique identifier. Used to Get, Start and Shutdown the server. Intaken as a string.</param>
+        /// <param name="identifier">A unique identifier. Used to Get, Start and Shutdown the server. Intaken as a <see cref="string"/>.</param>
         /// <param name="applicationIdentifier">Intakes a uniques string to identify the application. Used by clients and servers to connect.</param>
         /// <param name="ipAddress">Intakes an IPAddress that the client will bind to and listen to client responses.</param>
         /// <param name="port">Intakes a port number, as an int, to bind to.</param>
@@ -266,7 +266,7 @@ namespace Softfire.MonoGame.NTWK
                 }
 
                 // Check if server exists.
-                if (Servers.ContainsKey(identifier) == false)
+                if (!Servers.ContainsKey(identifier))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Retrieval of server failed.{Environment.NewLine}" +
@@ -314,7 +314,7 @@ namespace Softfire.MonoGame.NTWK
         /// Start Server.
         /// </summary>
         /// <param name="identifier">Intakes a unique identifier used to find the requested ser of Type T2.</param>
-        /// <param name="startMessage">The start message. Intaken as a string.</param>
+        /// <param name="startMessage">The start message. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns an enum of StartServerResults.</returns>
         public async Task<StartServerResults> StartServer(string identifier, string startMessage = "Starting server.")
         {
@@ -337,7 +337,7 @@ namespace Softfire.MonoGame.NTWK
                 }
 
                 // Check if server exists.
-                if (Servers.ContainsKey(identifier) == false)
+                if (!Servers.ContainsKey(identifier))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Starting of server failed.{Environment.NewLine}" +
@@ -418,7 +418,7 @@ namespace Softfire.MonoGame.NTWK
                 }
 
                 // Check if server exists.
-                if (Servers.ContainsKey(identifier) == false)
+                if (!Servers.ContainsKey(identifier))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Shutting down of server failed.{Environment.NewLine}" +
@@ -498,7 +498,7 @@ namespace Softfire.MonoGame.NTWK
                 }
 
                 // Check if server exists.
-                if (Servers.ContainsKey(identifier) == false)
+                if (!Servers.ContainsKey(identifier))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Removal of server failed.{Environment.NewLine}" +
@@ -559,7 +559,7 @@ namespace Softfire.MonoGame.NTWK
         /// <summary>
         /// Add Client.
         /// </summary>
-        /// <param name="identifier">A unique identifier. Used to Get, Start and Shutdown the client. Intaken as a string.</param>
+        /// <param name="identifier">A unique identifier. Used to Get, Start and Shutdown the client. Intaken as a <see cref="string"/>.</param>
         /// <param name="applicationIdentifier">Intakes a uniques string to identify the application. Used by clients and servers to connect.</param>
         /// <param name="ipAddress">Intakes an IPAddress that the client will bind to and listen to client responses.</param>
         /// <param name="port">Intakes a port number, as an int, to bind to.</param>
@@ -660,7 +660,7 @@ namespace Softfire.MonoGame.NTWK
                 }
 
                 // Check if client exists.
-                if (Clients.ContainsKey(identifier) == false)
+                if (!Clients.ContainsKey(identifier))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Retrieval of client failed.{Environment.NewLine}" +
@@ -708,7 +708,7 @@ namespace Softfire.MonoGame.NTWK
         /// Start Client.
         /// </summary>
         /// <param name="identifier">Intakes a unique identifier used to find the requested ser of Type T1.</param>
-        /// <param name="startMessage">The start message. Intaken as a string.</param>
+        /// <param name="startMessage">The start message. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns an enum of StartClientResults.</returns>
         public async Task<StartClientResults> StartClient(string identifier, string startMessage = "Starting client.")
         {
@@ -731,7 +731,7 @@ namespace Softfire.MonoGame.NTWK
                 }
 
                 // Check if client exists.
-                if (Servers.ContainsKey(identifier) == false)
+                if (!Servers.ContainsKey(identifier))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Retrieval of client failed.{Environment.NewLine}" +
@@ -812,7 +812,7 @@ namespace Softfire.MonoGame.NTWK
                 }
 
                 // Check if client exists.
-                if (Clients.ContainsKey(identifier) == false)
+                if (!Clients.ContainsKey(identifier))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Shutting down of client failed.{Environment.NewLine}" +
@@ -892,7 +892,7 @@ namespace Softfire.MonoGame.NTWK
                 }
 
                 // Check if client exists.
-                if (Clients.ContainsKey(identifier) == false)
+                if (!Clients.ContainsKey(identifier))
                 {
                     // Write to log.
                     Logger.Write(LogTypes.Warning, $"Removal of client failed.{Environment.NewLine}" +

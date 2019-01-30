@@ -18,19 +18,23 @@ namespace Softfire.MonoGame.UI.Effects.Scaling
         private Vector2 InitialScale { get; }
 
         /// <summary>
+        /// The rate of change between calls.
+        /// </summary>
+        private double RateOfChange { get; set; }
+
+        /// <summary>
         /// An effect that scales the UI to the left along the X axis.
         /// </summary>
-        /// <param name="uiBase">The UIBase that will be affected. Intaken as a UIBase.</param>
-        /// <param name="id">A unique id. Intaken as an int.</param>
-        /// <param name="name">A unique name. Intaken as a string.</param>
-        /// <param name="targetScale">The target scale (X) to scale the UI by over the duration of time provided. Intaken as a Vector2.</param>
-        /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a float. Default is 1f.</param>
-        /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a float. Default is 0f.</param>
-        /// <param name="orderNumber">The effect's run order number. Intaken as an int. Default is 0.</param>
-        public UIEffectScaleLeft(UIBase uiBase, int id, string name, Vector2 targetScale,
-                                 float durationInSeconds = 1f, float startDelayInSeconds = 0f, int orderNumber = 0) : base(uiBase, id, name, durationInSeconds, startDelayInSeconds, orderNumber)
+        /// <param name="parent">The UIBase that will be affected. Intaken as a UIBase.</param>
+        /// <param name="id">A unique id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">A unique name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="targetScale">The target scale (X) to scale the UI by over the duration of time provided. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="durationInSeconds">The effect's duration in seconds. Intaken as a <see cref="float"/>. Default is 1f.</param>
+        /// <param name="startDelayInSeconds">The effect's start delay in seconds. Intaken as a <see cref="float"/>. Default is 0f.</param>
+        public UIEffectScaleLeft(UIBase parent, int id, string name, Vector2 targetScale,
+                                 float durationInSeconds = 1f, float startDelayInSeconds = 0f) : base(parent, id, name, durationInSeconds, startDelayInSeconds)
         {
-            InitialScale = ParentUIBase.Scale;
+            InitialScale = Parent.Transform.Scale;
             TargetScale = targetScale;
         }
 
@@ -40,7 +44,7 @@ namespace Softfire.MonoGame.UI.Effects.Scaling
         /// <returns>Returns a bool indicating whether the scaling was completed.</returns>
         protected override bool Action()
         {
-            var scale = ParentUIBase.Scale;
+            var scale = Parent.Transform.Scale;
 
             if (ElapsedTime >= StartDelayInSeconds)
             {
@@ -54,9 +58,21 @@ namespace Softfire.MonoGame.UI.Effects.Scaling
                 scale.X = InitialScale.X - TargetScale.X;
             }
 
-            ParentUIBase.Scale = scale;
+            Parent.Transform.Scale = scale;
 
-            return ParentUIBase.Scale.X <= InitialScale.X - TargetScale.X;
+            return Parent.Transform.Scale.X <= InitialScale.X - TargetScale.X || ElapsedTime > DurationInSeconds + StartDelayInSeconds;
+        }
+
+        /// <summary>
+        /// Resets the effect so it can be run again.
+        /// </summary>
+        protected internal override void Reset()
+        {
+            // Additional properties to reset.
+            RateOfChange = 0;
+
+            // Reset base properties.
+            base.Reset();
         }
     }
 }

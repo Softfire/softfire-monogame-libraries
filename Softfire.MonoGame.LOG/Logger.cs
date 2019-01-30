@@ -55,7 +55,7 @@ namespace Softfire.MonoGame.LOG
         /// <param name="useInlineLayout">Intakes a bool indicating whether to use inline or formatted output in the log. Default is true.</param>
         public void Record(LogTypes logType, string text, bool useInlineLayout = true)
         {
-            if (string.IsNullOrWhiteSpace(text) == false)
+            if (!string.IsNullOrWhiteSpace(text))
             {
                 RecordLog.Add(new Tuple<DateTime, LogTypes, string, bool>(DateTime.Now, logType, text, useInlineLayout));
             }
@@ -335,12 +335,12 @@ namespace Softfire.MonoGame.LOG
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(filePath) == false)
+                if (!string.IsNullOrWhiteSpace(filePath))
                 {
                     var fi = new FileInfo(filePath);
 
                     if (fi.Directory != null &&
-                        fi.Directory.Exists == false &&
+                        !fi.Directory.Exists &&
                         fi.DirectoryName != null)
                     {
                         Directory.CreateDirectory(fi.DirectoryName);

@@ -4,72 +4,74 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Softfire.MonoGame.UI
 {
+    /// <summary>
+    /// A UI Utility class of tools.
+    /// </summary>
     public static class UIUtility
     {
         /// <summary>
-        /// Frame Rate Counter.
+        /// A frame rate counter.
         /// </summary>
         public sealed class FrameRateCounter
         {
             /// <summary>
-            /// Text.
+            /// The counter's display text..
             /// </summary>
             private string Text { get; }
 
             /// <summary>
-            /// Text Position.
+            /// The counter's text position.
             /// </summary>
             private Vector2 TextPosition { get; }
 
             /// <summary>
-            /// Text Shade Position.
+            /// The counter's text shade position.
             /// </summary>
             private Vector2 TextShadePosition { get; }
 
             /// <summary>
-            /// Text SpriteFont.
+            /// The counter's font.
             /// </summary>
             private SpriteFont Font { get; }
 
             /// <summary>
-            /// Text Color.
+            /// The counter's text color.
             /// </summary>
             private Color TextColor { get; }
 
             /// <summary>
-            /// Text Shade Color.
+            /// The counter's shade color.
             /// </summary>
             private Color ShadeColor { get; }
 
             /// <summary>
-            /// Text Alert Color.
+            /// The counter's alert color.
             /// </summary>
             private Color AlertColor { get; }
 
             /// <summary>
-            /// Text Frame Rate.
+            /// The counter's frame rate.
             /// </summary>
             private int FrameRate { get; set; }
 
             /// <summary>
-            /// Text Frame Counter.
+            /// The counter's frame Counter.
             /// </summary>
             private int FrameCounter { get; set; }
 
             /// <summary>
-            /// Elapsed Time.
+            /// The counter's elapsed time.
             /// </summary>
             private TimeSpan ElapsedTime { get; set; }
 
             /// <summary>
-            /// Frame Rate Counter.
-            /// Use to keep track of your current FPS.
+            /// Keeps track of your current FPS.
             /// </summary>
             /// <param name="textPosition">Intakes a Vector2 to define where to draw the Counter.</param>
             /// <param name="textFont">Intakes a SpriteFont defining the Font to use.</param>
-            /// <param name="customText">Intakes a string to be used in place of the default text. Default is "FPS: ##".</param>
+            /// <param name="customText">Intakes a string to be used in place of the default text.</param>
             /// <param name="textColor">Intakes a Color to use for the text.</param>
-            public FrameRateCounter(Vector2 textPosition, SpriteFont textFont, string customText = null, Color? textColor = null)
+            public FrameRateCounter(Vector2 textPosition, SpriteFont textFont, string customText, Color? textColor = null)
             {
                 FrameRate = 0;
                 FrameCounter = 0;
@@ -77,7 +79,7 @@ namespace Softfire.MonoGame.UI
 
                 TextPosition = textPosition;
                 Font = textFont;
-                Text = customText ?? "FPS: ";
+                Text = string.IsNullOrWhiteSpace(customText) ? "FPS: " : customText;
 
                 TextPosition = textPosition;
                 TextShadePosition = new Vector2(TextPosition.X + 1, TextPosition.Y + 1);
@@ -111,10 +113,8 @@ namespace Softfire.MonoGame.UI
             {
                 FrameCounter++;
 
-                spriteBatch.Begin();
                 spriteBatch.DrawString(Font, Text + FrameRate, TextShadePosition, ShadeColor);
                 spriteBatch.DrawString(Font, Text + FrameRate, TextPosition, FrameRate > 15 ? TextColor : AlertColor);
-                spriteBatch.End();
             }
         }
     }

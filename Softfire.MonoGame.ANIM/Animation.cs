@@ -1,460 +1,200 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Softfire.MonoGame.ANIM.Actions;
+using Softfire.MonoGame.CORE.Common;
+using Softfire.MonoGame.CORE.Graphics;
 
 namespace Softfire.MonoGame.ANIM
 {
     /// <summary>
-    /// The Animation Class.
+    /// A 2D animation class.
     /// </summary>
-    public class Animation
+    public abstract class Animation : MonoGameObject
     {
+        #region Fields
+        
         /// <summary>
-        /// Animation Content Manager.
+        /// The animation's internal transparency value.
         /// </summary>
-        public static ContentManager Content { private get; set; }
+        private float _transparency = 1.0f;
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
-        /// Delta Time.
-        /// The time between updates in Seconds.
+        /// The animation's texture path. Relative to the Content path.
         /// </summary>
-        private double DeltaTime { get; set; }
+        /// <example>"Assets/Sprites/Player"</example>
+        /// <remarks>File extension is left out. Example file is Player.png.</remarks>
+        private string TexturePath { get; }
 
         /// <summary>
-        /// Animation's Color Data.
-        /// Used for collision detection by comparing pixels in the CD DLL.
+        /// The animation's sprite sheet used for animation.
+        /// </summary>
+        public Texture2D Texture { get; private set; }
+
+        /// <summary>
+        /// The animation's color data can be used for collision detection.
         /// </summary>
         public Color[] ColorData { get; private set; }
 
         /// <summary>
-        /// Animation's Texture.
-        /// Texture used for animation.
-        /// </summary>
-        public RenderTarget2D Texture { get; private set; }
-
-        /// <summary>
-        /// Animtaion's Texture Path.
-        /// Path to the texture relative to folder strucure in Content Folder of Main project.
-        /// Ex. "Assets/Sprites/Player"
-        /// File extension is left out. Example file is Player.png.
-        /// </summary>
-        private string TexturePath { get; }
-
-        /// <summary>
-        /// Animation's Rectangle.
-        /// Rectangle used for collision detection, draw area and boundaries.
-        /// </summary>
-        public Rectangle Rectangle { get; private set; }
-
-        /// <summary>
-        /// Animation's Origin.
-        /// Center of Animation Texture.
-        /// Used for positioning the animation relative to it's center.
-        /// </summary>
-        public Vector2 Origin { get; set; }
-
-        /// <summary>
-        /// Animation's Rotation Angle.
-        /// Rotation Angle is used to rotate the Animation and is in Radians.
-        /// Point of rotation is based on the Origin.
-        /// </summary>
-        public float RotationAngle { get; set; }
-
-        /// <summary>
-        /// Animation's Internal Transparnecy Value.
-        /// Default is 1.0f.
-        /// </summary>
-        private float _transparency;
-
-        /// <summary>
-        /// Animation's Transparency.
-        /// Transparency can be added to the Texture by passing a float between 0.0f and 1.0f.
-        /// 1.0f is zero transparency and 0.0f is full transparency.
-        /// Default is 1.0f.
+        /// The animation's transparency level.
         /// </summary>
         public float Transparency
         {
             get => _transparency;
-            set => _transparency = MathHelper.Clamp(value, 0.0f, 1.0f);
+            set => _transparency = value >= 0f && value <= 1f ? value : _transparency;
         }
 
         /// <summary>
-        /// Animation's Draw Depth.
-        /// Used to draw the animation at certain depths to allow it to be drawn in front or behind other objects at varying depths.
-        /// Float values will differ depending on the SpriteBatch settings in effect.
-        /// Default is 1.0f.
+        /// The animation's stored actions.
         /// </summary>
-        public float Depth { get; set; }
+        private List<AnimationAction> StoredActions { get; }
+
+        #endregion
 
         /// <summary>
-        /// Animation's Internal Scale Value as a Vector2.
-        /// Default X and Y are 1.0f.
+        /// A 2D animation.
         /// </summary>
-        private Vector2 _scale;
-
-        /// <summary>
-        /// Animation's Texture Scale.
-        /// Scale is used to enlarge or shrink the Texture size.
-        /// Default is 1.0f.
-        /// </summary>
-        public Vector2 Scale
-        {
-            get => _scale;
-            set
-            {
-                if (value.X > 0 &&
-                    value.Y > 0)
-                {
-                    _scale = value;
-                }
-            }
-        }
-        
-        /// <summary>
-        /// Animation's Position.
-        /// Vector based positioning.
-        /// Uses Origin in calculations.
-        /// </summary>
-        public Vector2 Position { get; set; }
-
-        /// <summary>
-        /// Animation Velocity.
-        /// The Animation's speed in a given direction.
-        /// </summary>
-        public Vector2 Velocity { get; set; }
-
-        /// <summary>
-        /// Animation Movement Speed.
-        /// The rate at which the Animation covers distance.
-        /// </summary>
-        public double Acceleration { get; set; }
-
-        /// <summary>
-        /// Animation Actions.
-        /// </summary>
-        private Dictionary<string, AnimationAction> Actions { get; }
-
-        /// <summary>
-        /// Current Action.
-        /// </summary>
-        private AnimationAction CurrentAction { get; set; }
-        
-        /// <summary>
-        /// Animation's Constructor.
-        /// </summary>
-        /// <param name="texturePath">Intakes a string used to define where the texture should be loaded from. Relative path used in Content.</param>
-        public Animation(string texturePath)
+        /// <param name="parent">The animation's parent. Intaken as a <see cref="Animation"/></param>
+        /// <param name="id">The animation's id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">The animation's name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="texturePath">The animation's texture path. Relative to the Content folder location. Intaken as a <see cref="string"/>.</param>
+        /// <param name="position">The animation's initial position. Intaken as a <see cref="Vector2"/>.</param>
+        protected Animation(Animation parent, int id, string name, string texturePath, Vector2 position) : base(parent, id, name, position)
         {
             TexturePath = texturePath;
-            Depth = 1.0f;
-            Transparency = 1.0f;
-            Scale = Vector2.One;
-            
-            Actions = new Dictionary<string, AnimationAction>();
-
-            LoadContent();
+            StoredActions = new List<AnimationAction>();
         }
 
-        /// <summary>
-        /// Add Action.
-        /// </summary>
-        /// <param name="identifier">The action's unique identifier. Intaken as a string.</param>
-        /// <param name="action">The action to add.</param>
-        /// <returns></returns>
-        public bool AddAction(string identifier, AnimationAction action)
-        {
-            var result = false;
+        #region Stored Actions
 
-            if (Actions.ContainsKey(identifier) == false)
+        /// <summary>
+        /// Defines a new action for the animation to perform and stores it in memory.
+        /// </summary>
+        /// <param name="actionName">The action's name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="sourcePosition">The action's source position within the sprite sheet. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="frameWidth">The action's frame width. Intaken as an <see cref="int"/>.</param>
+        /// <param name="frameHeight">The action's frame height. Intaken as an <see cref="int"/>.</param>
+        /// <param name="frameCount">The action's frame count. Intaken as an <see cref="int"/>.</param>
+        /// <param name="frameSpeedInSeconds">The action's frame speed in seconds. Intaken as an <see cref="int"/>.</param>
+        /// <param name="loopStyle">The action's loop style. Intaken as a <see cref="AnimationAction.LoopStyles"/>.</param>
+        /// <param name="loopLength">The action's loop length. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns the action's id as an int.</returns>
+        public int AddAction(string actionName, Vector2 sourcePosition, int frameWidth, int frameHeight, int frameCount, int frameSpeedInSeconds,
+                             AnimationAction.LoopStyles loopStyle = AnimationAction.LoopStyles.Forward, int loopLength = (int)AnimationAction.LoopLengths.Infinite)
+        {
+            var nextActionId = 0;
+
+            if (!Identities.ObjectExists<AnimationAction, AnimationAction>(StoredActions, actionName))
             {
-                Actions.Add(identifier, action);
-                result = true;
+                nextActionId = Identities.GetNextValidObjectId<AnimationAction, AnimationAction>(StoredActions);
+
+                if (!Identities.ObjectExists<AnimationAction, AnimationAction>(StoredActions, nextActionId))
+                {
+                    StoredActions.Add(new AnimationAction(nextActionId, actionName, sourcePosition, frameWidth, frameHeight, frameCount,
+                                                          frameSpeedInSeconds, loopStyle, loopLength));
+                }
             }
 
-            return result;
+            return nextActionId;
         }
 
         /// <summary>
-        /// Get Action.
+        /// Starts an action, by id.
         /// </summary>
-        /// <param name="identifier">The action's unique identifier. Intaken as a string.</param>
-        /// <returns>Returns the requested AnimationAction, if found, ortherwise null.</returns>
-        public AnimationAction GetAction(string identifier)
-        {
-            AnimationAction result = null;
-
-            if (Actions.ContainsKey(identifier))
-            {
-                result = Actions[identifier];
-            }
-
-            return result;
-        }
+        /// <param name="actionId">The id of the action to retrieve. Intaken as an <see cref="int"/>.</param>
+        public void StartAction(int actionId) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, actionId).IsActive = true;
 
         /// <summary>
-        /// Set Action.
+        /// Starts an action, by name.
         /// </summary>
-        /// <param name="identifier">The action's unique identifier. Intaken as a string.</param>
-        public void SetAction(string identifier)
-        {
-            AnimationAction action;
-
-            if ((action = GetAction(identifier)) != null)
-            {
-                CurrentAction = action;
-            }
-        }
+        /// <param name="actionName">The name of the action to retrieve. Intaken as a <see cref="string"/>.</param>
+        public void StartAction(string actionName) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, actionName).IsActive = true;
 
         /// <summary>
-        /// Remove Action.
+        /// Stops an action, by id.
         /// </summary>
-        /// <param name="identifier">The action's unique identifier. Intaken as a string.</param>
-        /// <returns>Returns a bool indicating whether the AnimationAction was removed.</returns>
-        public bool RemoveAction(string identifier)
-        {
-            var result = false;
-
-            if (Actions.ContainsKey(identifier))
-            {
-                Actions.Remove(identifier);
-                result = true;
-            }
-
-            return result;
-        }
+        /// <param name="actionId">The id of the action to retrieve. Intaken as an <see cref="int"/>.</param>
+        public void StopAction(int actionId) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, actionId).IsActive = false;
 
         /// <summary>
-        /// Animation Acceleration.
-        /// Acceleration is the increase in rate at which an object changes its velocity.
+        /// Stops an action, by name.
         /// </summary>
-        /// <param name="increment">Intakes a positive double.</param>
-        public void Accelerate(double increment)
-        {
-            Acceleration += increment;
-        }
+        /// <param name="actionName">The name of the action to retrieve. Intaken as a <see cref="string"/>.</param>
+        public void StopAction(string actionName) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, actionName).IsActive = false;
 
         /// <summary>
-        /// Animation Acceleration with limit.
-        /// Acceleration is the increase in rate at which an object changes its velocity.
+        /// Removes an action, by id.
         /// </summary>
-        /// <param name="increment">Intakes a positive double.</param>
-        /// <param name="limit">Intakes a positive double defining the speed limit.</param>
-        public void Accelerate(double increment, double limit)
-        {
-            if (Acceleration + increment <= limit)
-            {
-                Acceleration += increment * DeltaTime;
-            }
-        }
+        /// <param name="actionId">The id of the action to be removed. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the action was removed.</returns>
+        public bool RemoveAction(int actionId) => Identities.RemoveObject<AnimationAction, AnimationAction>(StoredActions, actionId);
 
         /// <summary>
-        /// Animation Deceleration.
-        /// Deceleration is the decrease in rate at which an object changes its velocity.
+        /// Removes an action, by name.
         /// </summary>
-        /// <param name="decrement">Intakes a positive double.</param>
-        public void Decelerate(double decrement)
-        {
-            Acceleration -= decrement;
-        }
+        /// <param name="actionName">The name of the action to be removed. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the action was removed.</returns>
+        public bool RemoveAction(string actionName) => Identities.RemoveObject<AnimationAction, AnimationAction>(StoredActions, actionName);
+
+        #endregion
 
         /// <summary>
-        /// Animation Deceleration with limit.
-        /// Deceleration is the decrease in rate at which an object changes its velocity.
+        /// Loads the animation's texture and color data.
         /// </summary>
-        /// <param name="decrement">Intakes a positive double.</param>
-        /// <param name="limit">Intakes a positive double defining the speed limit.</param>
-        public void Decelerate(double decrement, double limit)
+        /// <param name="content">The <see cref="ContentManager"/> for the animation.</param>
+        public override void LoadContent(ContentManager content)
         {
-            if (Acceleration - decrement >= -limit)
-            {
-                Acceleration -= decrement * DeltaTime;
-            }
-        }
-
-        /// <summary>
-        /// Calculate Velocity.
-        /// Calculates velocity based on RotationAngle and Acceleration.
-        /// Use ApplyVelocity once calculated.
-        /// </summary>
-        public void CalculateVelocity()
-        {
-            Velocity = new Vector2((float)Math.Sin(RotationAngle) * (float)Acceleration, -(float)Math.Cos(RotationAngle) * (float)Acceleration);
-        }
-
-        /// <summary>
-        /// Calculate Velocity.
-        /// Calculates velocity based on rotation angle provided and Acceleration.
-        /// Use ApplyVelocity once calculated.
-        /// </summary>
-        /// <param name="angle">Intakes a rotation angle, in Degrees, as a double.</param>
-        public void CalculateVelocity(double angle)
-        {
-            angle = Math.PI / 180 * angle;
-
-            Velocity = new Vector2((float)Math.Sin(angle) * (float)Acceleration, -(float)Math.Cos(angle) * (float)Acceleration);
-        }
-
-        /// <summary>
-        /// Apply Velocity.
-        /// Can be used with CalculateVelocity() to apply Velocity to Position.
-        /// </summary>
-        public void ApplyVelocity()
-        {
-            Position += Velocity;
-        }
-
-        /// <summary>
-        /// Rotate Towards.
-        /// Calculates and applies the rotation angle required, in Radians, to rotate the Animation towards the position given.
-        /// </summary>
-        /// <param name="targetVector">Intakes a target object's position.</param>
-        public void RotateTowards(Vector2 targetVector)
-        {
-            RotationAngle = -(float)Math.Atan2(Position.X - targetVector.X, Position.Y - targetVector.Y);
-        }
-
-        /// <summary>
-        /// Rotate Away.
-        /// Calculates and applies the rotation angle required, in Radians, to rotate the Animation away from the position given.
-        /// </summary>
-        /// <param name="targetVector">Intakes a target object's position.</param>
-        public void RotateAway(Vector2 targetVector)
-        {
-            RotationAngle = -(float)Math.Atan2(targetVector.X - Position.X, targetVector.Y - Position.Y);
-        }
-
-        /// <summary>
-        /// Rotate With.
-        /// Applies the rotation angle required, in Radians, to rotate the Animation at the angle given.
-        /// </summary>
-        /// <param name="parentRotationAngle">Intakes a rotation angle in Radians as a float.</param>
-        public void RotateWith(float parentRotationAngle)
-        {
-            RotationAngle = parentRotationAngle;
-        }
-
-        /// <summary>
-        /// Rotate Around.
-        /// Calculates and rotates the Animation around another object by modifying the Animation's Position.
-        /// </summary>
-        /// <param name="rotationPoint">The parent position to rotate around.</param>
-        /// <param name="parentRotationAngle">The parent's rotation angle in Radians.</param>
-        /// <param name="positionalOffset">Relative positional offset from parent's center.</param>
-        public void RotateAround(Vector2 rotationPoint, double parentRotationAngle, Vector2 positionalOffset = new Vector2())
-        {
-            var cosTheta = Math.Cos(parentRotationAngle);
-            var sinTheta = Math.Sin(parentRotationAngle);
-
-            Position = new Vector2
-            {
-                X =
-                    (int)
-                    (cosTheta * (Position.X + positionalOffset.X - rotationPoint.X) -
-                     sinTheta * (Position.Y + positionalOffset.Y - rotationPoint.Y) + rotationPoint.X),
-                Y =
-                    (int)
-                    (sinTheta * (Position.X + positionalOffset.X - rotationPoint.X) +
-                     cosTheta * (Position.Y + positionalOffset.Y - rotationPoint.Y) + rotationPoint.Y)
-            };
-        }
-
-        /// <summary>
-        /// Rotates the Animation Clockwise by the angle given.
-        /// </summary>
-        /// <param name="angle">Intakes an angle, in Degrees, as a double.</param>
-        public void RotateClockwise(double angle)
-        {
-            RotationAngle += (float)(Math.PI / 180 * angle);
-        }
-
-        /// <summary>
-        /// Rotates the Animation Counter Clockwise by the angle given.
-        /// </summary>
-        /// <param name="angle">Intakes an angle, in Degrees, as a double.</param>
-        public void RotateCounterClockwise(double angle)
-        {
-            RotationAngle -= (float)(Math.PI / 180 * angle);
-        }
-
-        /// <summary>
-        /// Confine Within Boundaries.
-        /// Confines the Animation within the Rectangle provided by modifying the Position.
-        /// If Velocity is used it will set the correct Velocity axis to zero.
-        /// </summary>
-        /// <param name="worldRectangle"></param>
-        public void ConfineWithinBoundaries(Rectangle worldRectangle)
-        {
-            // Top
-            if (Position.Y < worldRectangle.Y + Origin.Y)
-            {
-                Velocity = new Vector2(Velocity.X, 0);
-                Position = new Vector2(Position.X, worldRectangle.Y + Origin.Y);
-            }
-
-            // Right
-            if (Position.X > worldRectangle.Width - Origin.X)
-            {
-                Velocity = new Vector2(0, Velocity.Y);
-                Position = new Vector2(worldRectangle.Width - Origin.X, Position.Y);
-            }
-
-            // Bottom
-            if (Position.Y > worldRectangle.Height - Origin.Y)
-            {
-                Velocity = new Vector2(Velocity.X, 0);
-                Position = new Vector2(Position.X, worldRectangle.Height - Origin.Y);
-            }
-
-            // Left
-            if (Position.X < worldRectangle.X + Origin.X)
-            {
-                Velocity = new Vector2(0, Velocity.Y);
-                Position = new Vector2(worldRectangle.X + Origin.X, Position.Y);
-            }
-        }
-
-        /// <summary>
-        /// Load Content Method.
-        /// Used to load the Animation's Texture and determine the FrameWidth, FrameHeight, ColorData and retrieve the ColorData from the Texture.
-        /// </summary>
-        public void LoadContent()
-        {
-            Texture = Content.Load<RenderTarget2D>(TexturePath);
+            Texture = content.Load<Texture2D>(TexturePath);
             
             ColorData = new Color[Texture.Width * Texture.Height];
             Texture.GetData(ColorData);
         }
 
         /// <summary>
-        /// Update Method.
-        /// Used to update the Animation's attributes.
+        /// The action's update method.
         /// </summary>
-        /// <param name="gameTime">Intakes MonoGame's GameTime.</param>
-        public void Update(GameTime gameTime)
+        /// <param name="gameTime">Intakes MonoGame's <see cref="GameTime"/>.</param>
+        public override void Update(GameTime gameTime)
         {
-            DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (CurrentAction != null)
+            if (IsActive)
             {
-                Origin = new Vector2((CurrentAction.FrameWidth * Scale.X) / 2f, (CurrentAction.FrameHeight * Scale.Y) / 2f);
-                Rectangle = new Rectangle((int)(Position.X - Origin.X), (int)(Position.Y - Origin.Y), (int)(CurrentAction.FrameWidth * Scale.X), (int)(CurrentAction.FrameHeight * Scale.Y));
+                foreach (var action in StoredActions.Where(action => action.IsActive))
+                {
+                    //Origin = new Vector2((action.FrameWidth * Transform.WorldScale().X) / 2f, (action.FrameHeight * Transform.WorldScale().Y) / 2f);
+                    //Rectangle = new RectangleF(Transform.WorldPosition().X - Origin.X,
+                    //                           Transform.WorldPosition().Y - Origin.Y,
+                    //                           action.FrameWidth * Transform.WorldScale().X,
+                    //                           action.FrameHeight * Transform.WorldScale().Y);
 
-                CurrentAction.Update(gameTime);
+                    //ExtendedRectangle.Join(Rectangle);
+
+                    action.Update(gameTime);
+                }
+
+                base.Update(gameTime);
             }
         }
 
         /// <summary>
-        /// Draw Method.
-        /// Used to draw the Animation's Texture.
+        /// The animation's draw method.
         /// </summary>
-        /// <param name="spriteBatch">Intakes MonoGame SpriteBatch.</param>
-        public void Draw(SpriteBatch spriteBatch)
+        /// <param name="spriteBatch">Intakes a MonoGame <see cref="SpriteBatch"/>.</param>
+        /// <param name="transform">Intakes a <see cref="Matrix"/>.</param>
+        public override void Draw(SpriteBatch spriteBatch, Matrix transform = default)
         {
-            if (CurrentAction != null)
+            if (IsActive)
             {
-                spriteBatch.Draw(Texture, Position, CurrentAction.SourceRectangle, Color.White, RotationAngle, Origin, Scale, SpriteEffects.None, Depth);
+                foreach (var action in StoredActions.Where(action => action.IsActive))
+                {
+                    spriteBatch.Draw(Texture, Vector2.Transform(new Vector2(ExtendedRectangle.X, ExtendedRectangle.Y), transform), action.SourceRectangle, Color.White * Transparency, Transform.Rotation, Origin, Transform.Scale, SpriteEffects.None, 1);
+                }
             }
         }
     }

@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +45,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\x64\Debug\Softfire.MonoGame.IO.xml</DocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -53,6 +56,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\x64\Release\Softfire.MonoGame.IO.xml</DocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -84,7 +88,14 @@
     <Compile Include="Encryption\IOAsymmetricEncryption.cs" />
     <Compile Include="IOCamera2D.cs" />
     <Compile Include="Encryption\IOSymmetricEncryption.cs" />
+    <Compile Include="IOCamera2D.Features.cs" />
+    <Compile Include="IOGamepad.Features.cs" />
+    <Compile Include="IOKeyboard.Features.cs" />
     <Compile Include="IOManager.cs" />
+    <Compile Include="IOManager.Gamepad.cs" />
+    <Compile Include="IOManager.Keyboard.cs" />
+    <Compile Include="IOManager.Mouse.cs" />
+    <Compile Include="IOMouse.Features.cs" />
     <Compile Include="Parsers\CommandLine\IOCommandLineArgument.cs" />
     <Compile Include="Parsers\CommandLine\IOCommandLineFlag.cs" />
     <Compile Include="Parsers\CommandLine\IOCommandLineOption.cs" />
@@ -98,9 +109,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Softfire.MonoGame.ANIM\Softfire.MonoGame.ANIM.csproj">
-      <Project>{E05C489F-7628-4F22-99CC-0CB0A1DC9891}</Project>
-      <Name>Softfire.MonoGame.ANIM</Name>
+    <ProjectReference Include="..\Softfire.MonoGame.CORE\Softfire.MonoGame.CORE.csproj">
+      <Project>{7513E8BC-F38E-454A-9899-22025E1C172A}</Project>
+      <Name>Softfire.MonoGame.CORE</Name>
     </ProjectReference>
     <ProjectReference Include="..\Softfire.MonoGame.LOG\Softfire.MonoGame.LOG.csproj">
       <Project>{d37bc69e-3c06-4b1d-8ab5-b856c51490aa}</Project>
