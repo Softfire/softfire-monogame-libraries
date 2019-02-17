@@ -39,9 +39,9 @@ namespace Softfire.MonoGame.ANIM.Demos.WinDX
         /// </summary>
         protected override void LoadContent()
         {
-            AnimationManager.LoadAnimation(new Ship(null, 1, "Cutler", @"Sprites\Ships\SS_Cutler", new Vector2(100)));
-            AnimationManager.GetAnimation<Ship>(1).AddAction("Idle", new Vector2(0, 0), 32, 32,8, 20);
-            AnimationManager.GetAnimation<Ship>(1).AddAction("Up", new Vector2(0, 32), 32, 32, 8, 20);
+            AnimationManager.LoadAnimation(new Ship(null, 1, "Cutler", @"Sprites\Ships\SS_Cutler", Vector2.Zero));
+            AnimationManager.GetAnimation<Ship>(1).AddAction("Idle", new Vector2(0, 0), 64, 64,8, .06f);
+            AnimationManager.GetAnimation<Ship>(1).AddAction("Up", new Vector2(0, 32), 64, 64, 8, 1f);
             AnimationManager.GetAnimation<Ship>(1).StartAction("Idle");
 
             // Create a new SpriteBatch, which can be used to draw textures.

@@ -77,27 +77,27 @@ namespace Softfire.MonoGame.ANIM
         /// <summary>
         /// Defines a new action for the animation to perform and stores it in memory.
         /// </summary>
-        /// <param name="actionName">The action's name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="name">The action's name. Intaken as a <see cref="string"/>.</param>
         /// <param name="sourcePosition">The action's source position within the sprite sheet. Intaken as a <see cref="Vector2"/>.</param>
         /// <param name="frameWidth">The action's frame width. Intaken as an <see cref="int"/>.</param>
         /// <param name="frameHeight">The action's frame height. Intaken as an <see cref="int"/>.</param>
         /// <param name="frameCount">The action's frame count. Intaken as an <see cref="int"/>.</param>
-        /// <param name="frameSpeedInSeconds">The action's frame speed in seconds. Intaken as an <see cref="int"/>.</param>
+        /// <param name="frameSpeedInSeconds">The action's frame speed in seconds. Intaken as a <see cref="float"/>.</param>
         /// <param name="loopStyle">The action's loop style. Intaken as a <see cref="AnimationAction.LoopStyles"/>.</param>
         /// <param name="loopLength">The action's loop length. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the action's id as an int.</returns>
-        public int AddAction(string actionName, Vector2 sourcePosition, int frameWidth, int frameHeight, int frameCount, int frameSpeedInSeconds,
+        public int AddAction(string name, Vector2 sourcePosition, int frameWidth, int frameHeight, int frameCount, float frameSpeedInSeconds,
                              AnimationAction.LoopStyles loopStyle = AnimationAction.LoopStyles.Forward, int loopLength = (int)AnimationAction.LoopLengths.Infinite)
         {
             var nextActionId = 0;
 
-            if (!Identities.ObjectExists<AnimationAction, AnimationAction>(StoredActions, actionName))
+            if (!Identities.ObjectExists<AnimationAction, AnimationAction>(StoredActions, name))
             {
                 nextActionId = Identities.GetNextValidObjectId<AnimationAction, AnimationAction>(StoredActions);
 
                 if (!Identities.ObjectExists<AnimationAction, AnimationAction>(StoredActions, nextActionId))
                 {
-                    StoredActions.Add(new AnimationAction(nextActionId, actionName, sourcePosition, frameWidth, frameHeight, frameCount,
+                    StoredActions.Add(new AnimationAction(nextActionId, name, sourcePosition, frameWidth, frameHeight, frameCount,
                                                           frameSpeedInSeconds, loopStyle, loopLength));
                 }
             }
@@ -108,40 +108,40 @@ namespace Softfire.MonoGame.ANIM
         /// <summary>
         /// Starts an action, by id.
         /// </summary>
-        /// <param name="actionId">The id of the action to retrieve. Intaken as an <see cref="int"/>.</param>
-        public void StartAction(int actionId) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, actionId).IsActive = true;
+        /// <param name="id">The id of the action to retrieve. Intaken as an <see cref="int"/>.</param>
+        public void StartAction(int id) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, id).IsActive = true;
 
         /// <summary>
         /// Starts an action, by name.
         /// </summary>
-        /// <param name="actionName">The name of the action to retrieve. Intaken as a <see cref="string"/>.</param>
-        public void StartAction(string actionName) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, actionName).IsActive = true;
+        /// <param name="name">The name of the action to retrieve. Intaken as a <see cref="string"/>.</param>
+        public void StartAction(string name) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, name).IsActive = true;
 
         /// <summary>
         /// Stops an action, by id.
         /// </summary>
-        /// <param name="actionId">The id of the action to retrieve. Intaken as an <see cref="int"/>.</param>
-        public void StopAction(int actionId) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, actionId).IsActive = false;
+        /// <param name="id">The id of the action to retrieve. Intaken as an <see cref="int"/>.</param>
+        public void StopAction(int id) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, id).IsActive = false;
 
         /// <summary>
         /// Stops an action, by name.
         /// </summary>
-        /// <param name="actionName">The name of the action to retrieve. Intaken as a <see cref="string"/>.</param>
-        public void StopAction(string actionName) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, actionName).IsActive = false;
+        /// <param name="name">The name of the action to retrieve. Intaken as a <see cref="string"/>.</param>
+        public void StopAction(string name) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, name).IsActive = false;
 
         /// <summary>
         /// Removes an action, by id.
         /// </summary>
-        /// <param name="actionId">The id of the action to be removed. Intaken as an <see cref="int"/>.</param>
+        /// <param name="id">The id of the action to be removed. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the action was removed.</returns>
-        public bool RemoveAction(int actionId) => Identities.RemoveObject<AnimationAction, AnimationAction>(StoredActions, actionId);
+        public bool RemoveAction(int id) => Identities.RemoveObject<AnimationAction, AnimationAction>(StoredActions, id);
 
         /// <summary>
         /// Removes an action, by name.
         /// </summary>
-        /// <param name="actionName">The name of the action to be removed. Intaken as a <see cref="string"/>.</param>
+        /// <param name="name">The name of the action to be removed. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the action was removed.</returns>
-        public bool RemoveAction(string actionName) => Identities.RemoveObject<AnimationAction, AnimationAction>(StoredActions, actionName);
+        public bool RemoveAction(string name) => Identities.RemoveObject<AnimationAction, AnimationAction>(StoredActions, name);
 
         #endregion
 
@@ -158,7 +158,7 @@ namespace Softfire.MonoGame.ANIM
         }
 
         /// <summary>
-        /// The action's update method.
+        /// The <see cref="Animation"/>'s update method.
         /// </summary>
         /// <param name="gameTime">Intakes MonoGame's <see cref="GameTime"/>.</param>
         public override void Update(GameTime gameTime)
@@ -183,7 +183,7 @@ namespace Softfire.MonoGame.ANIM
         }
 
         /// <summary>
-        /// The animation's draw method.
+        /// The <see cref="Animation"/>'s draw method.
         /// </summary>
         /// <param name="spriteBatch">Intakes a MonoGame <see cref="SpriteBatch"/>.</param>
         /// <param name="transform">Intakes a <see cref="Matrix"/>.</param>
@@ -193,7 +193,7 @@ namespace Softfire.MonoGame.ANIM
             {
                 foreach (var action in StoredActions.Where(action => action.IsActive))
                 {
-                    spriteBatch.Draw(Texture, Vector2.Transform(new Vector2(ExtendedRectangle.X, ExtendedRectangle.Y), transform), action.SourceRectangle, Color.White * Transparency, Transform.Rotation, Origin, Transform.Scale, SpriteEffects.None, 1);
+                    spriteBatch.Draw(Texture, Vector2.Transform(ExtendedRectangle.Position, transform), action.SourceRectangle, Color.White * Transparency, Transform.Rotation, Origin, Transform.Scale, SpriteEffects.None, 1);
                 }
             }
         }

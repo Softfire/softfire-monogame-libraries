@@ -213,7 +213,7 @@ namespace Softfire.MonoGame.ANIM.Actions
         private void AnimationPattern()
         {
             // If time elapsed is greater than the delay between frames.
-            if (ElapsedTime >= FrameSpeedInSeconds)
+            if (ElapsedTime >= FrameSpeedInSeconds * 1000)
             {
                 switch (LoopStyle)
                 {
