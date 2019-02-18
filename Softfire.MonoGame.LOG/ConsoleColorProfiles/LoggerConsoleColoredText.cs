@@ -2,6 +2,9 @@
 
 namespace Softfire.MonoGame.LOG.ConsoleColorProfiles
 {
+    /// <summary>
+    /// A console logger colored text class.
+    /// </summary>
     public sealed class LoggerConsoleColoredText
     {
         /// <summary>

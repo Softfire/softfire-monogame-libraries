@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace Softfire.MonoGame.IO.Parsers.Commands
 {
+    /// <summary>
+    /// A command line command class.
+    /// </summary>
     public class IOCommandCommand
     {
         /// <summary>

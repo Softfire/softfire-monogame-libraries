@@ -3,7 +3,7 @@
 namespace Softfire.MonoGame.CORE
 {
     /// <summary>
-    /// A Size struct.
+    /// A Size class.
     /// </summary>
     public class Size : IEquatable<Size>
     {

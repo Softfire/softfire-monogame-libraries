@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using static Softfire.MonoGame.CORE.Graphics.Identities;
+using static Softfire.MonoGame.CORE.Identities;
 
 namespace Softfire.MonoGame.UI.Effects
 {

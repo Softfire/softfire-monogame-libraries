@@ -2,6 +2,9 @@
 
 namespace Softfire.MonoGame.IO.Parsers.CommandLine
 {
+    /// <summary>
+    /// A command line flag.
+    /// </summary>
     public sealed class IOCommandLineFlag
     {
         /// <summary>

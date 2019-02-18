@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Softfire.MonoGame.ANIM.Actions;
+using Softfire.MonoGame.CORE;
 using Softfire.MonoGame.CORE.Common;
 using Softfire.MonoGame.CORE.Graphics;
 
@@ -61,12 +62,15 @@ namespace Softfire.MonoGame.ANIM
         /// <summary>
         /// A 2D animation.
         /// </summary>
-        /// <param name="parent">The animation's parent. Intaken as a <see cref="Animation"/></param>
-        /// <param name="id">The animation's id. Intaken as an <see cref="int"/>.</param>
-        /// <param name="name">The animation's name. Intaken as a <see cref="string"/>.</param>
-        /// <param name="texturePath">The animation's texture path. Relative to the Content folder location. Intaken as a <see cref="string"/>.</param>
-        /// <param name="position">The animation's initial position. Intaken as a <see cref="Vector2"/>.</param>
-        protected Animation(Animation parent, int id, string name, string texturePath, Vector2 position) : base(parent, id, name, position)
+        /// <param name="parent">The <see cref="Animation"/>'s parent. Intaken as a <see cref="Animation"/></param>
+        /// <param name="id">The <see cref="Animation"/>'s id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">The <see cref="Animation"/>'s name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="texturePath">The <see cref="Animation"/>'s texture path. Relative to the Content folder location. Intaken as a <see cref="string"/>.</param>
+        /// <param name="position">The <see cref="Animation"/>'s initial position. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="width">The <see cref="Animation"/>'s width. Intaken as a <see cref="float"/>.</param>
+        /// <param name="height">The <see cref="Animation"/>'s height. Intaken as a <see cref="float"/>.</param>
+        /// <param name="isVisible">The <see cref="Animation"/>'s visibility. Intaken as a <see cref="bool"/>.</param>
+        protected Animation(Animation parent, int id, string name, string texturePath, Vector2 position, int width, int height, bool isVisible = true) : base(parent, id, name, position, width, height, isVisible)
         {
             TexturePath = texturePath;
             StoredActions = new List<AnimationAction>();
@@ -77,15 +81,15 @@ namespace Softfire.MonoGame.ANIM
         /// <summary>
         /// Defines a new action for the animation to perform and stores it in memory.
         /// </summary>
-        /// <param name="name">The action's name. Intaken as a <see cref="string"/>.</param>
-        /// <param name="sourcePosition">The action's source position within the sprite sheet. Intaken as a <see cref="Vector2"/>.</param>
-        /// <param name="frameWidth">The action's frame width. Intaken as an <see cref="int"/>.</param>
-        /// <param name="frameHeight">The action's frame height. Intaken as an <see cref="int"/>.</param>
-        /// <param name="frameCount">The action's frame count. Intaken as an <see cref="int"/>.</param>
-        /// <param name="frameSpeedInSeconds">The action's frame speed in seconds. Intaken as a <see cref="float"/>.</param>
-        /// <param name="loopStyle">The action's loop style. Intaken as a <see cref="AnimationAction.LoopStyles"/>.</param>
-        /// <param name="loopLength">The action's loop length. Intaken as an <see cref="int"/>.</param>
-        /// <returns>Returns the action's id as an int.</returns>
+        /// <param name="name">The <see cref="AnimationAction"/>'s name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="sourcePosition">The <see cref="AnimationAction"/>'s source position within the sprite sheet. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="frameWidth">The <see cref="AnimationAction"/>'s frame width. Intaken as an <see cref="int"/>.</param>
+        /// <param name="frameHeight">The <see cref="AnimationAction"/>'s frame height. Intaken as an <see cref="int"/>.</param>
+        /// <param name="frameCount">The <see cref="AnimationAction"/>'s frame count. Intaken as an <see cref="int"/>.</param>
+        /// <param name="frameSpeedInSeconds">The <see cref="AnimationAction"/>'s frame speed in seconds. Intaken as a <see cref="float"/>.</param>
+        /// <param name="loopStyle">The <see cref="AnimationAction"/>'s loop style. Intaken as a <see cref="AnimationAction.LoopStyles"/>.</param>
+        /// <param name="loopLength">The <see cref="AnimationAction"/>'s loop length. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns the <see cref="AnimationAction"/>'s id as an <see cref="int"/>.</returns>
         public int AddAction(string name, Vector2 sourcePosition, int frameWidth, int frameHeight, int frameCount, float frameSpeedInSeconds,
                              AnimationAction.LoopStyles loopStyle = AnimationAction.LoopStyles.Forward, int loopLength = (int)AnimationAction.LoopLengths.Infinite)
         {
@@ -106,38 +110,74 @@ namespace Softfire.MonoGame.ANIM
         }
 
         /// <summary>
-        /// Starts an action, by id.
+        /// Retrieves a <see cref="AnimationAction"/>, by id.
         /// </summary>
         /// <param name="id">The id of the action to retrieve. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns the requested <see cref="AnimationAction"/>, by id, if found, otherwise null.</returns>
+        public AnimationAction GetAction(int id) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, id);
+
+        /// <summary>
+        /// Retrieves an <see cref="AnimationAction"/>, by id.
+        /// </summary>
+        /// <param name="name">The name of the <see cref="AnimationAction"/> to retrieve. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns the requested <see cref="AnimationAction"/>, by id, if found, otherwise null.</returns>
+        public AnimationAction GetAction(string name) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, name);
+
+        /// <summary>
+        /// Starts an <see cref="AnimationAction"/>, by id.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="AnimationAction"/> to retrieve. Intaken as an <see cref="int"/>.</param>
         public void StartAction(int id) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, id).IsActive = true;
 
         /// <summary>
-        /// Starts an action, by name.
+        /// Starts an <see cref="AnimationAction"/>, by name.
         /// </summary>
-        /// <param name="name">The name of the action to retrieve. Intaken as a <see cref="string"/>.</param>
+        /// <param name="name">The name of the <see cref="AnimationAction"/> to retrieve. Intaken as a <see cref="string"/>.</param>
         public void StartAction(string name) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, name).IsActive = true;
 
         /// <summary>
-        /// Stops an action, by id.
+        /// Starts all loaded <see cref="AnimationAction"/>'s in <see cref="StoredActions"/>.
         /// </summary>
-        /// <param name="id">The id of the action to retrieve. Intaken as an <see cref="int"/>.</param>
+        public void StartAllActions()
+        {
+            foreach (var action in StoredActions)
+            {
+                action.IsActive = false;
+            }
+        }
+
+        /// <summary>
+        /// Stops an <see cref="AnimationAction"/>, by id.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="AnimationAction"/> to retrieve. Intaken as an <see cref="int"/>.</param>
         public void StopAction(int id) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, id).IsActive = false;
 
         /// <summary>
-        /// Stops an action, by name.
+        /// Stops an <see cref="AnimationAction"/>, by name.
         /// </summary>
-        /// <param name="name">The name of the action to retrieve. Intaken as a <see cref="string"/>.</param>
+        /// <param name="name">The name of the <see cref="AnimationAction"/> to retrieve. Intaken as a <see cref="string"/>.</param>
         public void StopAction(string name) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, name).IsActive = false;
 
         /// <summary>
-        /// Removes an action, by id.
+        /// Stops all <see cref="AnimationAction"/>'s in <see cref="StoredActions"/> that are currently active.
         /// </summary>
-        /// <param name="id">The id of the action to be removed. Intaken as an <see cref="int"/>.</param>
-        /// <returns>Returns a <see cref="bool"/> indicating whether the action was removed.</returns>
+        public void StopAllActions()
+        {
+            foreach (var action in StoredActions)
+            {
+                action.IsActive = false;
+            }
+        }
+
+        /// <summary>
+        /// Removes an <see cref="AnimationAction"/>, by id.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="AnimationAction"/> to be removed. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the <see cref="AnimationAction"/> was removed.</returns>
         public bool RemoveAction(int id) => Identities.RemoveObject<AnimationAction, AnimationAction>(StoredActions, id);
 
         /// <summary>
-        /// Removes an action, by name.
+        /// Removes an <see cref="AnimationAction"/>, by name.
         /// </summary>
         /// <param name="name">The name of the action to be removed. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the action was removed.</returns>
@@ -146,7 +186,7 @@ namespace Softfire.MonoGame.ANIM
         #endregion
 
         /// <summary>
-        /// Loads the animation's texture and color data.
+        /// Loads the <see cref="Animation"/>'s texture and color data.
         /// </summary>
         /// <param name="content">The <see cref="ContentManager"/> for the animation.</param>
         public override void LoadContent(ContentManager content)
@@ -193,7 +233,7 @@ namespace Softfire.MonoGame.ANIM
             {
                 foreach (var action in StoredActions.Where(action => action.IsActive))
                 {
-                    spriteBatch.Draw(Texture, Vector2.Transform(ExtendedRectangle.Position, transform), action.SourceRectangle, Color.White * Transparency, Transform.Rotation, Origin, Transform.Scale, SpriteEffects.None, 1);
+                    spriteBatch.Draw(Texture, Vector2.Transform(Transform.WorldPosition(), transform), action.SourceRectangle, Color.White * Transparency, Transform.Rotation, Origin, Transform.Scale, SpriteEffects.None, 1);
                 }
             }
         }

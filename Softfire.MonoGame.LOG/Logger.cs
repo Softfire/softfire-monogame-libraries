@@ -10,34 +10,49 @@ namespace Softfire.MonoGame.LOG
     /// </summary>
     public enum LogTypes
     {
+        /// <summary>
+        /// The information log type.
+        /// </summary>
         Info,
+        /// <summary>
+        /// The console log type.
+        /// </summary>
         Console,
+        /// <summary>
+        /// The debug log type.
+        /// </summary>
         Debug,
+        /// <summary>
+        /// The warning log type.
+        /// </summary>
         Warning,
+        /// <summary>
+        /// The error log type.
+        /// </summary>
         Error,
+        /// <summary>
+        /// The special log type.
+        /// </summary>
         Special
     }
 
     /// <summary>
-    /// Logger.
     /// Logs text to a log file.
     /// </summary>
     public class Logger
     {
         /// <summary>
-        /// Log File Path.
-        /// Relative to calling application's location.
+        /// The log file path, relative to calling application's location.
         /// </summary>
         private string LogFilePath { get; set; }
 
         /// <summary>
-        /// Record Log.
         /// An Internal list used to store log entries for later output.
         /// </summary>
         private List<Tuple<DateTime, LogTypes, string, bool>> RecordLog { get; }
         
         /// <summary>
-        /// Logger Constructor.
+        /// A logger.
         /// </summary>
         /// <param name="logFilePath">Intakes a log file path for any written logs.</param>
         public Logger(string logFilePath)
@@ -62,7 +77,6 @@ namespace Softfire.MonoGame.LOG
         }
 
         /// <summary>
-        /// Write.
         /// Writes to a log file from the internal Records Log.
         /// </summary>
         /// <param name="fileName">Intakes a file name as a string. Leave off extension. Default extension is .log.</param>
@@ -114,7 +128,6 @@ namespace Softfire.MonoGame.LOG
         }
 
         /// <summary>
-        /// Write.
         /// Writes to a log file.
         /// </summary>
         /// <param name="strings">Intakes a 2D string array. Preceed with LOG.LogTypes in [X, 0] and text in [X, 1].</param>
@@ -168,7 +181,6 @@ namespace Softfire.MonoGame.LOG
         }
 
         /// <summary>
-        /// Write.
         /// Writes to a log file.
         /// </summary>
         /// <param name="logType">The log type.</param>
@@ -223,7 +235,6 @@ namespace Softfire.MonoGame.LOG
         }
 
         /// <summary>
-        /// Write.
         /// Writes to a log file.
         /// </summary>
         /// <param name="logType">The log type.</param>
@@ -275,7 +286,7 @@ namespace Softfire.MonoGame.LOG
         }
 
         /// <summary>
-        /// Write.
+        /// Writes to a log file.
         /// </summary>
         /// <param name="filePath">The file path. Leave off trailing slash.</param>
         /// <param name="logType">The log type.</param>

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using static Softfire.MonoGame.CORE.Graphics.Identities;
+using static Softfire.MonoGame.CORE.Identities;
 
 namespace Softfire.MonoGame.UI.Themes
 {

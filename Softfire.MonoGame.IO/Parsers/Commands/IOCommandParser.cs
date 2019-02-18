@@ -2,6 +2,9 @@
 
 namespace Softfire.MonoGame.IO.Parsers.Commands
 {
+    /// <summary>
+    /// A command parser class.
+    /// </summary>
     public class IOCommandParser
     {
         /// <summary>
@@ -9,8 +12,14 @@ namespace Softfire.MonoGame.IO.Parsers.Commands
         /// </summary>
         private Dictionary<string, IOCommandCommand> Commands { get; }
 
+        /// <summary>
+        /// The current command.
+        /// </summary>
         public IOCommandCommand CurrentCommand { get; private set; }
 
+        /// <summary>
+        /// A command parser.
+        /// </summary>
         public IOCommandParser()
         {
             Commands = new Dictionary<string, IOCommandCommand>();

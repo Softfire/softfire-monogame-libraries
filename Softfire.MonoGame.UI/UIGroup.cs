@@ -7,6 +7,7 @@ using Softfire.MonoGame.IO;
 using Softfire.MonoGame.UI.Items;
 using System.Collections.Generic;
 using System.Linq;
+using Softfire.MonoGame.CORE;
 
 namespace Softfire.MonoGame.UI
 {

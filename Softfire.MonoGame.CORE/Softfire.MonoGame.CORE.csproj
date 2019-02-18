@@ -97,7 +97,7 @@
     <Compile Include="Graphics\Views\ViewWindow.cs" />
     <Compile Include="Graphics\Views\ViewSettings.cs" />
     <Compile Include="Graphics\Drawing\Draw.cs" />
-    <Compile Include="Graphics\Identities.cs" />
+    <Compile Include="Identities.cs" />
     <Compile Include="Graphics\Transforms\IMonoGameTransformComponent.cs" />
     <Compile Include="Graphics\Transforms\Transform2D.cs" />
     <Compile Include="Input\IMonoGameInputComponent.cs" />

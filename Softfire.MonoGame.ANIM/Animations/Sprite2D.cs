@@ -12,11 +12,14 @@ namespace Softfire.MonoGame.ANIM.Animations
         /// A 2D sprite animation.
         /// </summary>
         /// <param name="parent">The parent <see cref="Animation"/>.</param>
-        /// <param name="id">The sprite's unique id. Intaken as an <see cref="int"/>.</param>
-        /// <param name="name">The sprite's unique name. Intaken as a <see cref="string"/>.</param>
-        /// <param name="texturePath">The sprite's texture path. Relative to the Content's folder location. Intaken as a <see cref="string"/>.</param>
-        /// <param name="position">The sprite's initial position. Intaken as a <see cref="Vector2"/>.</param>
-        protected Sprite2D(Animation parent, int id, string name, string texturePath, Vector2 position) : base(parent, id, name, texturePath, position)
+        /// <param name="id">The <see cref="Sprite2D"/>'s unique id. Intaken as an <see cref="int"/>.</param>
+        /// <param name="name">The <see cref="Sprite2D"/>'s unique name. Intaken as a <see cref="string"/>.</param>
+        /// <param name="texturePath">The <see cref="Sprite2D"/>'s texture path. Relative to the Content's folder location. Intaken as a <see cref="string"/>.</param>
+        /// <param name="position">The <see cref="Sprite2D"/>'s initial position. Intaken as a <see cref="Vector2"/>.</param>
+        /// <param name="width">The <see cref="Sprite2D"/>'s width. Intaken as a <see cref="float"/>.</param>
+        /// <param name="height">The <see cref="Sprite2D"/>'s height. Intaken as a <see cref="float"/>.</param>
+        /// <param name="isVisible">The <see cref="Sprite2D"/>'s visibility. Intaken as a <see cref="bool"/>.</param>
+        protected Sprite2D(Animation parent, int id, string name, string texturePath, Vector2 position, int width, int height, bool isVisible = true) : base(parent, id, name, texturePath, position, width, height, isVisible)
         {
         }
 

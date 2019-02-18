@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Softfire.MonoGame.ANIM.Demos.WinDX.Animations.Ships;
 
 namespace Softfire.MonoGame.ANIM.Demos.WinDX
@@ -39,10 +40,9 @@ namespace Softfire.MonoGame.ANIM.Demos.WinDX
         /// </summary>
         protected override void LoadContent()
         {
-            AnimationManager.LoadAnimation(new Ship(null, 1, "Cutler", @"Sprites\Ships\SS_Cutler", Vector2.Zero));
+            AnimationManager.LoadAnimation(new Ship(null, 1, "Cutler", @"Sprites\Ships\SS_Cutler", new Vector2(32), 64, 64));
             AnimationManager.GetAnimation<Ship>(1).AddAction("Idle", new Vector2(0, 0), 64, 64,8, .06f);
-            AnimationManager.GetAnimation<Ship>(1).AddAction("Up", new Vector2(0, 32), 64, 64, 8, 1f);
-            AnimationManager.GetAnimation<Ship>(1).StartAction("Idle");
+            AnimationManager.GetAnimation<Ship>(1).AddAction("Up", new Vector2(0, 64), 64, 64, 8, .06f);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -67,6 +67,24 @@ namespace Softfire.MonoGame.ANIM.Demos.WinDX
         protected override void Update(GameTime gameTime)
         {
             AnimationManager.Update(gameTime);
+
+            if (Keyboard.GetState().IsKeyUp(Keys.Up))
+            {
+                if (!AnimationManager.GetAnimation<Ship>(1).GetAction("Idle").IsActive)
+                {
+                    AnimationManager.GetAnimation<Ship>(1).StopAllActions();
+                    AnimationManager.GetAnimation<Ship>(1).StartAction("Idle");
+                }
+            }
+            else
+            {
+                if (AnimationManager.GetAnimation<Ship>(1).GetAction("Idle").IsActive)
+                {
+                    AnimationManager.GetAnimation<Ship>(1).StopAction("Idle");
+                }
+
+                AnimationManager.GetAnimation<Ship>(1).StartAction("Up");
+            }
             
             base.Update(gameTime);
         }

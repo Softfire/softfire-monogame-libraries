@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Softfire.MonoGame.CORE.Common;
 using Softfire.MonoGame.CORE.Graphics.Drawing;
-using static Softfire.MonoGame.CORE.Graphics.Identities;
+using static Softfire.MonoGame.CORE.Identities;
 
 namespace Softfire.MonoGame.UI.Themes
 {

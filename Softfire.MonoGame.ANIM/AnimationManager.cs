@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using static Softfire.MonoGame.CORE.Graphics.Identities;
+using Softfire.MonoGame.CORE;
 
 namespace Softfire.MonoGame.ANIM
 {
@@ -44,10 +44,7 @@ namespace Softfire.MonoGame.ANIM
         /// Retrieves the next valid id from the list of animations.
         /// </summary>
         /// <returns>Returns the next valid id from the list of animations as an <see cref="int"/>.</returns>
-        public int GetNextValidAnimationId()
-        {
-            return GetNextValidObjectId<Animation, Animation>(Animations);
-        }
+        public int GetNextValidAnimationId() => Identities.GetNextValidObjectId<Animation, Animation>(Animations);
 
         /// <summary>
         /// Loads a new animation.
@@ -59,7 +56,8 @@ namespace Softfire.MonoGame.ANIM
         {
             var result = false;
 
-            if (!AnimationExists(animation.Name) &&
+            if (animation != null &&
+                !AnimationExists(animation.Name) &&
                 !AnimationExists(animation.Id))
             {
                 animation.LoadContent(Content);
@@ -78,7 +76,7 @@ namespace Softfire.MonoGame.ANIM
         /// <param name="id">The id of the animation to search. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the animation exists.</returns>
         /// <exception cref="ArgumentNullException">Throws an <see cref="ArgumentNullException"/> if the provided list is null.</exception>
-        public bool AnimationExists(int id) => ObjectExists<Animation, Animation>(Animations, id);
+        public bool AnimationExists(int id) => Identities.ObjectExists<Animation, Animation>(Animations, id);
 
         /// <summary>
         /// Determines whether an animation exists, by name.
@@ -86,7 +84,7 @@ namespace Softfire.MonoGame.ANIM
         /// <param name="name">The name of the animation to search. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the animation exists.</returns>
         /// <exception cref="ArgumentNullException">Throws an <see cref="ArgumentNullException"/> if the provided list is null.</exception>
-        public bool AnimationExists(string name) => ObjectExists<Animation, Animation>(Animations, name);
+        public bool AnimationExists(string name) => Identities.ObjectExists<Animation, Animation>(Animations, name);
 
         /// <summary>
         /// Retrieves an animation by id.
@@ -94,7 +92,7 @@ namespace Softfire.MonoGame.ANIM
         /// <typeparam name="T">Type <see cref="Animation"/>.</typeparam>
         /// <param name="id">The id of the requested animation. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns an object of type <see cref="Animation"/>, if found, otherwise null.</returns>
-        public T GetAnimation<T>(int id) where T : Animation => GetObject<Animation, T>(Animations, id);
+        public T GetAnimation<T>(int id) where T : Animation => Identities.GetObject<Animation, T>(Animations, id);
 
         /// <summary>
         /// Retrieves an animation by name.
@@ -102,49 +100,49 @@ namespace Softfire.MonoGame.ANIM
         /// <typeparam name="T">Type <see cref="Animation"/>.</typeparam>
         /// <param name="name">The name of the requested animation. Intaken as an <see cref="string"/>.</param>
         /// <returns>Returns an object of type <see cref="Animation"/>, if found, otherwise null.</returns>
-        public T GetAnimation<T>(string name) where T : Animation => GetObject<Animation, T>(Animations, name);
+        public T GetAnimation<T>(string name) where T : Animation => Identities.GetObject<Animation, T>(Animations, name);
 
         /// <summary>
         /// Removes an animation by id.
         /// </summary>
         /// <param name="id">The id of the requested animation. Intaken as an <see cref="int"/></param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the animation was removed.</returns>
-        public bool RemoveAnimation(int id) => RemoveObject<Animation, Animation>(Animations, id);
+        public bool RemoveAnimation(int id) => Identities.RemoveObject<Animation, Animation>(Animations, id);
 
         /// <summary>
         /// Removes an animation by name.
         /// </summary>
         /// <param name="name">The id of the requested animation. Intaken as an <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the animation was removed.</returns>
-        public bool RemoveAnimation(string name) => RemoveObject<Animation, Animation>(Animations, name);
+        public bool RemoveAnimation(string name) => Identities.RemoveObject<Animation, Animation>(Animations, name);
 
         /// <summary> 
         /// Reorder an animation's draw order, by id.
         /// </summary>
         /// <param name="id">The id of the animation to move. Intaken as an <see cref="int"/>.</param>
         /// <param name="otherId">The id of the animation to move the animation to. Intaken as an <see cref="int"/>.</param>
-        public void ReorderAnimationDrawOrder(int id, int otherId) => ReorderObject<Animation, Animation>(Animations, id, otherId);
+        public void ReorderAnimationDrawOrder(int id, int otherId) => Identities.ReorderObject<Animation, Animation>(Animations, id, otherId);
         
         /// <summary> 
         /// Reorder an animation's draw order, by name.
         /// </summary>
         /// <param name="name">The name of the animation to move. Intaken as a <see cref="string"/>.</param>
         /// <param name="otherId">The id of the animation to move the animation to. Intaken as an <see cref="int"/>.</param>
-        public void ReorderAnimationDrawOrder(string name, int otherId) => ReorderObject<Animation, Animation>(Animations, name, otherId);
+        public void ReorderAnimationDrawOrder(string name, int otherId) => Identities.ReorderObject<Animation, Animation>(Animations, name, otherId);
         
         /// <summary> 
         /// Reorder an animation's draw order, by id.
         /// </summary>
         /// <param name="id">The id of the animation to move. Intaken as an <see cref="int"/>.</param>
         /// <param name="otherName">The name of the animation to move the animation to. Intaken as a <see cref="string"/>.</param>
-        public void ReorderAnimationDrawOrder(int id, string otherName) => ReorderObject<Animation, Animation>(Animations, id, otherName);
+        public void ReorderAnimationDrawOrder(int id, string otherName) => Identities.ReorderObject<Animation, Animation>(Animations, id, otherName);
         
         /// <summary> 
         /// Reorder an animation's draw order, by name.
         /// </summary>
         /// <param name="name">The name of the animation to move. Intaken as a <see cref="string"/>.</param>
         /// <param name="otherName">The name of the animation to move the animation to. Intaken as a <see cref="string"/>.</param>
-        public void ReorderAnimationDrawOrder(string name, string otherName) => ReorderObject<Animation, Animation>(Animations, name, otherName);
+        public void ReorderAnimationDrawOrder(string name, string otherName) => Identities.ReorderObject<Animation, Animation>(Animations, name, otherName);
         
         #endregion
 
