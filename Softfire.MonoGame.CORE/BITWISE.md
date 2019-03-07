@@ -22,18 +22,18 @@ C = 0000 0000
 <center>
 
 | Operator | Description                                                                 | Example                                                                                |
-| :------: | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-|     &    | AND: Returns the bits that match in both variables.                         | <center> C = (A \| B) </center> A \| 0011 1100 <br> B \| 0000 1101 <br> C \| 0000 1100 |
-|    \|    | OR: Returns the bits that exist in each variable.                           | <center> C = (A & B) </center> A \| 0011 1100 <br> B \| 0000 1101 <br> C \| 0011 1101  |
-|     ^    | XOR: Returns the unique bits from each variable.                            | <center> C = (A ^ B) </center> A \| 0011 1100 <br> B \| 0000 1101 <br> C \| 0011 0001  |
-|     ~    | Negate: Returns the flipped bits of the variable.                           | <center> C = ~A </center> A \| 0011 1100 <br> C \| 1100 0011                           |
-|    <<    | Shift Left: Returns the bits after they've been shifted to the left by x.   | <center> C = A << 1 </center> A \| 0011 1100 <br> C \| 0111 1000                       |
-|    >>    | Shift Right: Returns the bits after they've been shifted to the right by x. | <center> C = A >> 1 </center> A \| 0011 1100 <br> C \| 0001 1110                       |
-|    &=    | AND with Assignment: Equivalent to A = (A & B).                             | <center> A &= B </center> A \| 0011 1100 <br> B \| 0000 1101 <br> A \| 0000 1100       |
-|   \|=    | OR with Assignment: Equivalent to A = (A \| B).                             | <center> A \|= B </center> A \| 0011 1100 <br> B \| 0000 1101 <br> A \| 0011 1101      |
-|    ^=    | XOR with Assignment: Equivalent to A = (A ^ B).                             | <center> A ^= B </center> A \| 0011 1100 <br> B \| 0000 1101 <br> A \| 0011 0001       |
-|   <<=    | Shift Left with Assignment: Equivalent to A = (A << 1).                     | <center> A <<= 1 </center> A \| 0011 1100 <br> A \| 0111 1000                          |
-|   >>=    | Shift Right with Assignment: Equivalent to A = (A >> 1).                    | <center> A >>= 1 </center> A \| 0011 1100 <br> A \| 0111 1000                          |
+| :------: | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+|     &    | AND: Returns the bits that match in both variables.                         | <center> C = (A \| B) <br> A \| 0011 1100 <br> B \| 0000 1101 <br> C \| 0000 1100  </center> |
+|    \|    | OR: Returns the bits that exist in each variable.                           | <center> C = (A & B) <br> A \| 0011 1100 <br> B \| 0000 1101 <br> C \| 0011 1101  </center>  |
+|     ^    | XOR: Returns the unique bits from each variable.                            | <center> C = (A ^ B) <br> A \| 0011 1100 <br> B \| 0000 1101 <br> C \| 0011 0001  </center>  |
+|     ~    | Negate: Returns the flipped bits of the variable.                           | <center> C = ~A <br> A \| 0011 1100 <br> C \| 1100 0011  </center>                           |
+|    <<    | Shift Left: Returns the bits after they've been shifted to the left by x.   | <center> C = A << 1 <br> A \| 0011 1100 <br> C \| 0111 1000  </center>                       |
+|    >>    | Shift Right: Returns the bits after they've been shifted to the right by x. | <center> C = A >> 1 <br> A \| 0011 1100 <br> C \| 0001 1110  </center>                       |
+|    &=    | AND with Assignment: Equivalent to A = (A & B).                             | <center> A &= B <br> A \| 0011 1100 <br> B \| 0000 1101 <br> A \| 0000 1100  </center>       |
+|   \|=    | OR with Assignment: Equivalent to A = (A \| B).                             | <center> A \|= B <br> A \| 0011 1100 <br> B \| 0000 1101 <br> A \| 0011 1101  </center>      |
+|    ^=    | XOR with Assignment: Equivalent to A = (A ^ B).                             | <center> A ^= B <br> A \| 0011 1100 <br> B \| 0000 1101 <br> A \| 0011 0001  </center>       |
+|   <<=    | Shift Left with Assignment: Equivalent to A = (A << 1).                     | <center> A <<= 1 <br> A \| 0011 1100 <br> A \| 0111 1000  </center>                          |
+|   >>=    | Shift Right with Assignment: Equivalent to A = (A >> 1).                    | <center> A >>= 1 <br> A \| 0011 1100 <br> A \| 0111 1000  </center>                          |
 
 </center>
 
@@ -72,4 +72,4 @@ public Colors ColorFlags { get; set; } = (Colors.Blue | Colors.Red | Color.Green
 
 Version: `1.0`  
 Author: `Softfire`  
-Updated: `Jan. 27, 2019` 
+Updated: `Mar. 7, 2019` 
