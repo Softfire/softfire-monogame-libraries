@@ -11,18 +11,18 @@ namespace Softfire.MonoGame.CORE
     public static class Identities
     {
         #region Identity
-        
+
         /// <summary>
-        /// Retrieves the next valid id for an object of type T2 from the provided list.
+        /// Retrieves the next valid id for an object of type TDerivative from the provided list.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to inspect to produce a valid id. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <returns>Returns a valid id for an object of type T2 as an <see cref="int"/>.</returns>
-        public static int GetNextValidObjectId<T1, T2>(IList<T1> list) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to inspect to produce a valid id. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <returns>Returns a valid id for an object of type TDerivative as an <see cref="int"/>.</returns>
+        public static int GetNextValidObjectId<TBase, TDerivative>(IList<TBase> list) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
             var nextId = 1;
-            while (list.Any(obj => obj is T2 && obj.Id == nextId))
+            while (list.Any(obj => obj is TDerivative && obj.Id == nextId))
             {
                 nextId++;
             }
@@ -31,104 +31,104 @@ namespace Softfire.MonoGame.CORE
         }
 
         /// <summary>
-        /// Determines whether the object exists in the list of type T2, by id.
+        /// Determines whether the object exists in the list of type TDerivative, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectId">The id of the object to search. Intaken as an <see cref="int"/>.</param>
-        /// <returns>Returns a <see cref="bool"/> indicating whether the object exists.</returns>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IEnumerable{TBase}"/>.</param>
+        /// <param name="id">The id of the object to search. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the object exists in the list matching the provided id.</returns>
         /// <exception cref="ArgumentNullException">Throws an <see cref="ArgumentNullException"/> if the provided list is null.</exception>
-        public static bool ObjectExists<T1, T2>(IList<T1> list, int objectId) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        public static bool ObjectExists<TBase, TDerivative>(IEnumerable<TBase> list, int id) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
-            return list?.Any(obj => obj is T2 && obj.Id == objectId) ?? throw new ArgumentNullException();
+            return list?.Any(obj => obj is TDerivative && obj.Id == id) ?? throw new ArgumentNullException();
         }
 
         /// <summary>
-        /// Determines whether the object exists in the list of type T2, by name.
+        /// Determines whether the object exists in the list of type TDerivative, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectName">The name of the object to search. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns a <see cref="bool"/> indicating whether the object exists.</returns>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IEnumerable{TBase}"/>.</param>
+        /// <param name="name">The name of the object to search. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the object exists in the list matching the provided name.</returns>
         /// <exception cref="ArgumentNullException">Throws an <see cref="ArgumentNullException"/> if the provided list is null.</exception>
-        public static bool ObjectExists<T1, T2>(IList<T1> list, string objectName) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        public static bool ObjectExists<TBase, TDerivative>(IEnumerable<TBase> list, string name) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
-            return list?.Any(obj => obj is T2 && obj.Name == objectName) ?? throw new ArgumentNullException();
+            return list?.Any(obj => obj is TDerivative && obj.Name == name) ?? throw new ArgumentNullException();
         }
 
         /// <summary>
-        /// Retrieves an object of type T2, by id.
+        /// Retrieves an object of type TDerivative, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectId">The id of the object to retrieve. Intaken as an <see cref="int"/>.</param>
-        /// <returns>Returns an object of Type T2, if present, otherwise null.</returns>
-        public static T2 GetObject<T1, T2>(IList<T1> list, int objectId) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <param name="id">The id of the object to retrieve. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns an object of Type TDerivative, if present, otherwise null.</returns>
+        public static TDerivative GetObject<TBase, TDerivative>(IList<TBase> list, int id) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
-            return ObjectExists<T1, T2>(list, objectId) ? (T2)list.FirstOrDefault(item => item.Id == objectId) : default;
+            return ObjectExists<TBase, TDerivative>(list, id) ? list.FirstOrDefault(item => item.Id == id) as TDerivative : default;
         }
 
         /// <summary>
-        /// Retrieves an object of type T2, by name.
+        /// Retrieves an object of type TDerivative, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectName">The name of the object to retrieve. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns an object of Type T2, if present, otherwise null.</returns>
-        public static T2 GetObject<T1, T2>(IList<T1> list, string objectName) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <param name="name">The name of the object to retrieve. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns an object of Type TDerivative, if present, otherwise null.</returns>
+        public static TDerivative GetObject<TBase, TDerivative>(IList<TBase> list, string name) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
-            return ObjectExists<T1, T2>(list, objectName) ? (T2)list.FirstOrDefault(item => item.Name == objectName) : default;
+            return ObjectExists<TBase, TDerivative>(list, name) ? list.FirstOrDefault(item => item.Name == name) as TDerivative : default;
         }
 
         /// <summary>
-        /// Removes an object of type T2, by id.
+        /// Removes an object of type TDerivative, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectId">The id of the object to remove. Intaken as an <see cref="int"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <param name="id">The id of the object to remove. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object was removed.</returns>
-        public static bool RemoveObject<T1, T2>(IList<T1> list, int objectId) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        public static bool RemoveObject<TBase, TDerivative>(IList<TBase> list, int id) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
-            return list.Remove(GetObject<T1, T2>(list, objectId));
+            return list.Remove(GetObject<TBase, TDerivative>(list, id));
         }
 
         /// <summary>
-        /// Removes an object of type T2, by name.
+        /// Removes an object of type TDerivative, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectName">The name of the object to remove. Intaken as a <see cref="string"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <param name="name">The name of the object to remove. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object was removed.</returns>
-        public static bool RemoveObject<T1, T2>(IList<T1> list, string objectName) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        public static bool RemoveObject<TBase, TDerivative>(IList<TBase> list, string name) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
-            return list.Remove(GetObject<T1, T2>(list, objectName));
+            return list.Remove(GetObject<TBase, TDerivative>(list, name));
         }
 
         /// <summary> 
         /// Reorders an object within the list, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectId">The id of the object to move. Intaken as an <see cref="int"/>.</param>
-        /// <param name="otherObjectId">The id of the object to move above. Intaken as an <see cref="int"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <param name="id">The id of the object to move. Intaken as an <see cref="int"/>.</param>
+        /// <param name="otherId">The id of the object to move above. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object's layer was changed.</returns>
-        public static void ReorderObject<T1, T2>(IList<T1> list, int objectId, int otherObjectId) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        public static void ReorderObject<TBase, TDerivative>(IList<TBase> list, int id, int otherId) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
             // Temporarily store the object.
-            var item = GetObject<T1, T2>(list, objectId);
+            var item = GetObject<TBase, TDerivative>(list, id);
 
-            var otherItem = GetObject<T1, T2>(list, otherObjectId);
+            var otherItem = GetObject<TBase, TDerivative>(list, otherId);
             var otherItemIndex = list.IndexOf(otherItem);
 
             // Remove current object.
-            RemoveObject<T1, T2>(list, objectId);
+            RemoveObject<TBase, TDerivative>(list, id);
 
             // Update layer.
             list.Insert(otherItemIndex, item);
@@ -137,22 +137,22 @@ namespace Softfire.MonoGame.CORE
         /// <summary> 
         /// Reorders an object within the list, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectName">The name of the object to move. Intaken as a <see cref="string"/>.</param>
-        /// <param name="otherObjectId">The id of the object to move above. Intaken as an <see cref="int"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <param name="name">The name of the object to move. Intaken as a <see cref="string"/>.</param>
+        /// <param name="otherId">The id of the object to move above. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object's layer was changed.</returns>
-        public static void ReorderObject<T1, T2>(IList<T1> list, string objectName, int otherObjectId) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        public static void ReorderObject<TBase, TDerivative>(IList<TBase> list, string name, int otherId) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
             // Temporarily store the object.
-            var item = GetObject<T1, T2>(list, objectName);
+            var item = GetObject<TBase, TDerivative>(list, name);
 
-            var otherItem = GetObject<T1, T2>(list, otherObjectId);
+            var otherItem = GetObject<TBase, TDerivative>(list, otherId);
             var otherItemIndex = list.IndexOf(otherItem);
 
             // Remove current object.
-            RemoveObject<T1, T2>(list, objectName);
+            RemoveObject<TBase, TDerivative>(list, name);
 
             // Update layer.
             list.Insert(otherItemIndex, item);
@@ -161,22 +161,22 @@ namespace Softfire.MonoGame.CORE
         /// <summary> 
         /// Reorders an object within the list, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectId">The id of the object to move. Intaken as an <see cref="int"/>.</param>
-        /// <param name="otherObjectName">The name of the object to move above. Intaken as a <see cref="string"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <param name="id">The id of the object to move. Intaken as an <see cref="int"/>.</param>
+        /// <param name="otherName">The name of the object to move above. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object's layer was changed.</returns>
-        public static void ReorderObject<T1, T2>(IList<T1> list, int objectId, string otherObjectName) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        public static void ReorderObject<TBase, TDerivative>(IList<TBase> list, int id, string otherName) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
             // Temporarily store the object.
-            var item = GetObject<T1, T2>(list, objectId);
+            var item = GetObject<TBase, TDerivative>(list, id);
 
-            var otherItem = GetObject<T1, T2>(list, otherObjectName);
+            var otherItem = GetObject<TBase, TDerivative>(list, otherName);
             var otherItemIndex = list.IndexOf(otherItem);
 
             // Remove current object.
-            RemoveObject<T1, T2>(list, objectId);
+            RemoveObject<TBase, TDerivative>(list, id);
 
             // Update layer.
             list.Insert(otherItemIndex, item);
@@ -185,22 +185,22 @@ namespace Softfire.MonoGame.CORE
         /// <summary> 
         /// Reorders an object within the list, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
-        /// <param name="objectName">The name of the object to move. Intaken as a <see cref="string"/>.</param>
-        /// <param name="otherObjectName">The name of the object to move above. Intaken as a <see cref="string"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
+        /// <param name="name">The name of the object to move. Intaken as a <see cref="string"/>.</param>
+        /// <param name="otherName">The name of the object to move above. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object's layer was changed.</returns>
-        public static void ReorderObject<T1, T2>(IList<T1> list, string objectName, string otherObjectName) where T1 : IMonoGameIdentifierComponent where T2 : T1
+        public static void ReorderObject<TBase, TDerivative>(IList<TBase> list, string name, string otherName) where TBase : IMonoGameIdentifierComponent where TDerivative : class, TBase
         {
             // Temporarily store the object.
-            var item = GetObject<T1, T2>(list, objectName);
+            var item = GetObject<TBase, TDerivative>(list, name);
 
-            var otherItem = GetObject<T1, T2>(list, otherObjectName);
+            var otherItem = GetObject<TBase, TDerivative>(list, otherName);
             var otherItemIndex = list.IndexOf(otherItem);
 
             // Remove current object.
-            RemoveObject<T1, T2>(list, objectName);
+            RemoveObject<TBase, TDerivative>(list, name);
 
             // Update layer.
             list.Insert(otherItemIndex, item);
@@ -211,17 +211,17 @@ namespace Softfire.MonoGame.CORE
         #region Identity + Layer
 
         /// <summary>
-        /// Retrieves the next valid id for an object of type T2 from the provided list on the provided layer.
+        /// Retrieves the next valid id for an object of type TDerivative from the provided list on the provided layer.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to inspect to produce a valid id. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to inspect to produce a valid id. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to produce a valid id on. Intaken as an <see cref="int"/>.</param>
-        /// <returns>Returns a valid id for an object of type T2 as an <see cref="int"/>.</returns>
-        public static int GetNextValidObjectId<T1, T2>(IList<T1> list, int layer) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        /// <returns>Returns a valid id for an object of type TDerivative as an <see cref="int"/>.</returns>
+        public static int GetNextValidObjectId<TBase, TDerivative>(IList<TBase> list, int layer) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
             var nextId = 1;
-            while (list.Any(obj => obj.Layer == layer && obj is T2 && obj.Id == nextId))
+            while (list.Any(obj => obj.Layer == layer && obj is TDerivative && obj.Id == nextId))
             {
                 nextId++;
             }
@@ -230,108 +230,108 @@ namespace Softfire.MonoGame.CORE
         }
 
         /// <summary>
-        /// Determines whether the object exists in the list of type T2 on the provided layer, by id.
+        /// Determines whether the object exists in the list of type TDerivative on the provided layer, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to search on. Intaken as an <see cref="int"/>.</param>
-        /// <param name="objectId">The id of the object to search. Intaken as an <see cref="int"/>.</param>
+        /// <param name="id">The id of the object to search. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object exists.</returns>
         /// <exception cref="ArgumentNullException">Throws an <see cref="ArgumentNullException"/> if the provided list is null.</exception>
-        public static bool ObjectExists<T1, T2>(IList<T1> list, int layer, int objectId) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        public static bool ObjectExists<TBase, TDerivative>(IList<TBase> list, int layer, int id) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
-            return list?.Any(obj => obj.Layer == layer && obj is T2 && obj.Id == objectId) ?? throw new ArgumentNullException();
+            return list?.Any(obj => obj.Layer == layer && obj is TDerivative && obj.Id == id) ?? throw new ArgumentNullException();
         }
 
         /// <summary>
-        /// Determines whether the object exists in the list of type T2 on the provided layer, by name.
+        /// Determines whether the object exists in the list of type TDerivative on the provided layer, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to search on. Intaken as an <see cref="int"/>.</param>
-        /// <param name="objectName">The name of the object to search. Intaken as a <see cref="string"/>.</param>
+        /// <param name="name">The name of the object to search. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object exists.</returns>
         /// <exception cref="ArgumentNullException">Throws an <see cref="ArgumentNullException"/> if the provided list is null.</exception>
-        public static bool ObjectExists<T1, T2>(IList<T1> list, int layer, string objectName) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        public static bool ObjectExists<TBase, TDerivative>(IList<TBase> list, int layer, string name) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
-            return list?.Any(obj => obj.Layer == layer && obj is T2 && obj.Name == objectName) ?? throw new ArgumentNullException();
+            return list?.Any(obj => obj.Layer == layer && obj is TDerivative && obj.Name == name) ?? throw new ArgumentNullException();
         }
 
         /// <summary>
-        /// Retrieves an object of type T2 on the provided layer, by id.
+        /// Retrieves an object of type TDerivative on the provided layer, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to search on. Intaken as an <see cref="int"/>.</param>
-        /// <param name="objectId">The id of the object to retrieve. Intaken as an <see cref="int"/>.</param>
-        /// <returns>Returns an object of Type T2, if present, otherwise null.</returns>
-        public static T2 GetObject<T1, T2>(IList<T1> list, int layer, int objectId) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        /// <param name="id">The id of the object to retrieve. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns an object of Type TDerivative, if present, otherwise null.</returns>
+        public static TDerivative GetObject<TBase, TDerivative>(IList<TBase> list, int layer, int id) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
-            return ObjectExists<T1, T2>(list, layer, objectId) ? (T2)list.FirstOrDefault(item => item.Layer == layer && item.Id == objectId) : default;
+            return ObjectExists<TBase, TDerivative>(list, layer, id) ? (TDerivative)list.FirstOrDefault(item => item.Layer == layer && item.Id == id) : default;
         }
 
         /// <summary>
-        /// Retrieves an object of type T2 on the provided layer, by name.
+        /// Retrieves an object of type TDerivative on the provided layer, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to search on. Intaken as an <see cref="int"/>.</param>
-        /// <param name="objectName">The name of the object to retrieve. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns an object of Type T2, if present, otherwise null.</returns>
-        public static T2 GetObject<T1, T2>(IList<T1> list, int layer, string objectName) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        /// <param name="name">The name of the object to retrieve. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns an object of Type TDerivative, if present, otherwise null.</returns>
+        public static TDerivative GetObject<TBase, TDerivative>(IList<TBase> list, int layer, string name) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
-            return ObjectExists<T1, T2>(list, layer, objectName) ? (T2)list.FirstOrDefault(item => item.Layer == layer && item.Name == objectName) : default;
+            return ObjectExists<TBase, TDerivative>(list, layer, name) ? (TDerivative)list.FirstOrDefault(item => item.Layer == layer && item.Name == name) : default;
         }
 
         /// <summary>
-        /// Removes an object of type T2 on the provided layer, by id.
+        /// Removes an object of type TDerivative on the provided layer, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to search on. Intaken as an <see cref="int"/>.</param>
-        /// <param name="objectId">The id of the object to remove. Intaken as an <see cref="int"/>.</param>
+        /// <param name="id">The id of the object to remove. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object was removed.</returns>
-        public static bool RemoveObject<T1, T2>(IList<T1> list, int layer, int objectId) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        public static bool RemoveObject<TBase, TDerivative>(IList<TBase> list, int layer, int id) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
-            return list.Remove(GetObject<T1, T2>(list, layer, objectId));
+            return list.Remove(GetObject<TBase, TDerivative>(list, layer, id));
         }
 
         /// <summary>
-        /// Removes an object of type T2 on the provided layer, by name.
+        /// Removes an object of type TDerivative on the provided layer, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to search on. Intaken as an <see cref="int"/>.</param>
-        /// <param name="objectName">The name of the object to remove. Intaken as a <see cref="string"/>.</param>
+        /// <param name="name">The name of the object to remove. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object was removed.</returns>
-        public static bool RemoveObject<T1, T2>(IList<T1> list, int layer, string objectName) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        public static bool RemoveObject<TBase, TDerivative>(IList<TBase> list, int layer, string name) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
-            return list.Remove(GetObject<T1, T2>(list, layer, objectName));
+            return list.Remove(GetObject<TBase, TDerivative>(list, layer, name));
         }
 
         /// <summary> 
         /// Modifies an object's layer, by id.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to search on. Intaken as an <see cref="int"/>.</param>
-        /// <param name="objectId">The id of the object to change it's layer. Intaken as an <see cref="int"/>.</param>
+        /// <param name="id">The id of the object to change it's layer. Intaken as an <see cref="int"/>.</param>
         /// <param name="newLayer">The layer to place the object on. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object's layer was changed.</returns>
-        public static void ChangeObjectLayer<T1, T2>(IList<T1> list, int layer, int objectId, int newLayer) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        public static void ChangeObjectLayer<TBase, TDerivative>(IList<TBase> list, int layer, int id, int newLayer) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
             // Temporarily store the object.
-            var item = GetObject<T1, T2>(list, layer, objectId);
+            var item = GetObject<TBase, TDerivative>(list, layer, id);
 
             // Remove current object.
-            RemoveObject<T1, T2>(list, layer, objectId);
+            RemoveObject<TBase, TDerivative>(list, layer, id);
 
             // Update layer.
             item.Layer = newLayer;
@@ -343,20 +343,20 @@ namespace Softfire.MonoGame.CORE
         /// <summary> 
         /// Modifies an object's layer, by name.
         /// </summary>
-        /// <typeparam name="T1">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
-        /// <typeparam name="T2">An object inheriting type T1.</typeparam>
-        /// <param name="list">The list to check against for an object of type T2. Intaken as a <see cref="IList{T1}"/>.</param>
+        /// <typeparam name="TBase">An object inheriting <see cref="IMonoGameIdentifierComponent"/> and <see cref="IMonoGameLayerComponent"/>.</typeparam>
+        /// <typeparam name="TDerivative">An object derived from type TBase.</typeparam>
+        /// <param name="list">The list to check against for an object of type TDerivative. Intaken as a <see cref="IList{TBase}"/>.</param>
         /// <param name="layer">The layer to search on. Intaken as an <see cref="int"/>.</param>
-        /// <param name="objectName">The id of the object to change it's layer. Intaken as a <see cref="string"/>.</param>
+        /// <param name="name">The name of the object to change it's layer. Intaken as a <see cref="string"/>.</param>
         /// <param name="newLayer">The layer to place the object on. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the object's layer was changed.</returns>
-        public static void ChangeObjectLayer<T1, T2>(IList<T1> list, int layer, string objectName, int newLayer) where T1 : IMonoGameIdentifierComponent, IMonoGameLayerComponent where T2 : T1
+        public static void ChangeObjectLayer<TBase, TDerivative>(IList<TBase> list, int layer, string name, int newLayer) where TBase : IMonoGameIdentifierComponent, IMonoGameLayerComponent where TDerivative : TBase
         {
             // Temporarily store the object.
-            var item = GetObject<T1, T2>(list, layer, objectName);
+            var item = GetObject<TBase, TDerivative>(list, layer, name);
 
             // Remove current object.
-            RemoveObject<T1, T2>(list, layer, objectName);
+            RemoveObject<TBase, TDerivative>(list, layer, name);
 
             // Update layer.
             item.Layer = newLayer;

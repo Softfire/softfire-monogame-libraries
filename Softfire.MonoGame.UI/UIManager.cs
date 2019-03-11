@@ -6,7 +6,6 @@ using Softfire.MonoGame.UI.Effects;
 using Softfire.MonoGame.UI.Themes;
 using System;
 using System.Collections.Generic;
-using Softfire.MonoGame.CORE.Graphics;
 
 namespace Softfire.MonoGame.UI
 {

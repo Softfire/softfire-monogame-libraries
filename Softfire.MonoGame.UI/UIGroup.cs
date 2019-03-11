@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Softfire.MonoGame.CORE.Common;
-using Softfire.MonoGame.CORE.Graphics;
 using Softfire.MonoGame.CORE.Input;
 using Softfire.MonoGame.IO;
 using Softfire.MonoGame.UI.Items;

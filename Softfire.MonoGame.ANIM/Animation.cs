@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Softfire.MonoGame.ANIM.Actions;
 using Softfire.MonoGame.CORE;
 using Softfire.MonoGame.CORE.Common;
-using Softfire.MonoGame.CORE.Graphics;
 
 namespace Softfire.MonoGame.ANIM
 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.CORE.Graphics;
 using Softfire.MonoGame.CORE.Graphics.Transforms;
 using Softfire.MonoGame.CORE.Input;
 

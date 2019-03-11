@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Softfire.MonoGame.CORE;
 using Softfire.MonoGame.CORE.Common;
-using Softfire.MonoGame.CORE.Graphics;
 using Softfire.MonoGame.CORE.Graphics.Drawing;
 using Softfire.MonoGame.UI.Effects;
 using Softfire.MonoGame.UI.Items;
