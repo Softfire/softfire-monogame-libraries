@@ -291,7 +291,7 @@ namespace Softfire.MonoGame.CORE.Common
         /// <param name="multiFocus">Allows the focusing of multiple <see cref="MonoGameObject"/>s, if set to true.</param>
         public static void CheckForFocus<T>(MonoGameObject mgObject, IList<T> children, InputEventArgs args, bool condition, bool multiFocus = false) where T : MonoGameObject
         {
-            // If the window is already focused then skip it.
+            // If the object is already focused then skip it.
             if (mgObject.IsStateSet(FocusStates.IsFocused))
             {
                 return;
@@ -300,19 +300,17 @@ namespace Softfire.MonoGame.CORE.Common
             foreach (var child in children)
             {
                 // Skip the current MonoGameObject if they're equal.
-                if (mgObject.Equals(child))
+                if (!mgObject.Equals(child))
                 {
-                    continue;
-                }
+                    // Calculate any overlap.
+                    var overlap = mgObject.ExtendedRectangle.OverlapWith(child.ExtendedRectangle);
 
-                // Calculate any overlap.
-                var overlap = mgObject.ExtendedRectangle.OverlapWith(child.ExtendedRectangle);
-
-                // If there is overlap and the input rectangle intersects or is contained within the overlap then skip to the next MonoGameObject.
-                if (overlap != RectangleF.Empty &&
-                    (overlap.IntersectsWith(args.InputRectangle) || overlap.Contains(args.InputRectangle)))
-                {
-                    continue;
+                    // If there is overlap and the input rectangle intersects or is contained within the overlap then skip to the next MonoGameObject.
+                    if (overlap != RectangleF.Empty &&
+                        (overlap.IntersectsWith(args.InputRectangle) || overlap.Contains(args.InputRectangle)))
+                    {
+                        continue;
+                    }
                 }
 
                 // if the condition is met then apply focus to the MonoGameObject.
