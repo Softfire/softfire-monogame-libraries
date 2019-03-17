@@ -179,7 +179,7 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// The subscription method to action when the window is scrolled.
+        /// The subscription method to action when the object is scrolled.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
