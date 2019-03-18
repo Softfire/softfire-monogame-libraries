@@ -352,11 +352,11 @@ namespace Softfire.MonoGame.CORE.Common
         }
 
         /// <summary>
-        /// The subscription method to action when the <see cref="MonoGameObject"/> is scrolled.
+        /// The subscription method to action when the <see cref="MonoGameObject"/> is scrolled, by an input device with a pointer such as a mouse or gamepad.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
-        public void OnScroll(object sender, InputEventArgs args)
+        public void OnScrollHovered(object sender, InputEventArgs args)
         {
             if (IsActive && IsVisible &&
                 IsStateSet(FocusStates.IsFocused))
@@ -376,7 +376,38 @@ namespace Softfire.MonoGame.CORE.Common
         }
 
         /// <summary>
-        /// The subscription method to action when the <see cref="MonoGameObject"/> gains focus.
+        /// The subscription method to action when the <see cref="MonoGameObject"/> is scrolled.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        public void OnScroll(object sender, InputEventArgs args)
+        {
+            if (IsActive && IsVisible &&
+                IsStateSet(FocusStates.IsFocused))
+            {
+                Events.InputScrollVelocity = args.InputScrollVelocity;
+                Events.PlayerIndex = args.PlayerIndex;
+                Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollUp, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollUp));
+                Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollDown, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollDown));
+                Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollLeft, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollLeft));
+                Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollRight, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollRight));
+                Events.InputFlags.SetFlag(InputKeyboardArrowFlags.UpKey, args.InputFlags.IsFlagSet(InputKeyboardArrowFlags.UpKey));
+                Events.InputFlags.SetFlag(InputKeyboardArrowFlags.DownKey, args.InputFlags.IsFlagSet(InputKeyboardArrowFlags.DownKey));
+                Events.InputFlags.SetFlag(InputKeyboardArrowFlags.LeftKey, args.InputFlags.IsFlagSet(InputKeyboardArrowFlags.LeftKey));
+                Events.InputFlags.SetFlag(InputKeyboardArrowFlags.RightKey, args.InputFlags.IsFlagSet(InputKeyboardArrowFlags.RightKey));
+                Events.InputFlags.SetFlag(InputKeyboardCommandFlags.PageUpKey, args.InputFlags.IsFlagSet(InputKeyboardCommandFlags.PageUpKey));
+                Events.InputFlags.SetFlag(InputKeyboardCommandFlags.PageDownKey, args.InputFlags.IsFlagSet(InputKeyboardCommandFlags.PageDownKey));
+                Events.InputFlags.SetFlag(InputKeyboardCommandFlags.HomeKey, args.InputFlags.IsFlagSet(InputKeyboardCommandFlags.HomeKey));
+                Events.InputFlags.SetFlag(InputKeyboardCommandFlags.EndKey, args.InputFlags.IsFlagSet(InputKeyboardCommandFlags.EndKey));
+                Events.InputFlags.SetFlag(InputKeyboardNumPadFlags.NumPad8Key, args.InputFlags.IsFlagSet(InputKeyboardNumPadFlags.NumPad8Key));
+                Events.InputFlags.SetFlag(InputKeyboardNumPadFlags.NumPad2Key, args.InputFlags.IsFlagSet(InputKeyboardNumPadFlags.NumPad2Key));
+                Events.InputFlags.SetFlag(InputKeyboardNumPadFlags.NumPad4Key, args.InputFlags.IsFlagSet(InputKeyboardNumPadFlags.NumPad4Key));
+                Events.InputFlags.SetFlag(InputKeyboardNumPadFlags.NumPad6Key, args.InputFlags.IsFlagSet(InputKeyboardNumPadFlags.NumPad6Key));
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the <see cref="MonoGameObject"/> gains focus, by an input device with a pointer such as a mouse or gamepad.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
@@ -386,12 +417,26 @@ namespace Softfire.MonoGame.CORE.Common
 
             if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
             {
-                // Add the window to the hover stack for clearing of it's hover flag later.
+                // Add the object to the hover stack for clearing of it's hover flag later.
                 if (hoveredChild.Equals(this) &&
                     !hoveredChild.IsStateSet(FocusStates.IsHovered))
                 {
                     hoveredChild.RiseUp();
                 }
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the <see cref="MonoGameObject"/> gains focus, by the keyboard's tab function.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        public void OnFocusTabbed(object sender, InputEventArgs args)
+        {
+            if (IsActive && IsVisible &&
+                TabOrder == args.InputTabOrderId)
+            {
+                RiseUp();
             }
         }
 
@@ -416,11 +461,11 @@ namespace Softfire.MonoGame.CORE.Common
         }
 
         /// <summary>
-        /// The subscription method to action when the object detects a press action.
+        /// The subscription method to action when the object detects a press action, when an input device with a pointer such as a mouse or gamepad is hovering over the object.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
-        public void OnPress(object sender, InputEventArgs args)
+        public void OnPressHovered(object sender, InputEventArgs args)
         {
             if (IsActive && IsVisible &&
                 IsStateSet(FocusStates.IsHovered) &&
@@ -430,164 +475,41 @@ namespace Softfire.MonoGame.CORE.Common
 
                 if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
                 {
-                    #region Mouse
+                    InputDeviceActionFlagCheck(hoveredChild, args, InputActionStateFlags.Press);
+                }
+            }
+        }
 
-                    // Cycle through all flags.
-                    foreach (InputMouseActionFlags flag in Enum.GetValues(typeof(InputMouseActionFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
+        /// <summary>
+        /// The subscription method to action when the object detects a press action.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        public void OnPress(object sender, InputEventArgs args)
+        {
+            if (IsActive && IsVisible &&
+                IsStateSet(FocusStates.IsFocused))
+            {
+                InputDeviceActionFlagCheck(this, args, InputActionStateFlags.Press);
+            }
+        }
 
-                    #endregion
+        /// <summary>
+        /// The subscription method to action when the object detects a click has been released, when an input device with a pointer such as a mouse or gamepad is hovering over the object.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        public void OnReleaseHovered(object sender, InputEventArgs args)
+        {
+            if (IsActive && IsVisible &&
+                IsStateSet(FocusStates.IsHovered) &&
+                IsStateSet(FocusStates.IsFocused))
+            {
+                MonoGameObject hoveredChild;
 
-                    #region Keyboard
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardFunctionFlags flag in Enum.GetValues(typeof(InputKeyboardFunctionFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardNumPadFlags flag in Enum.GetValues(typeof(InputKeyboardNumPadFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardNumberFlags flag in Enum.GetValues(typeof(InputKeyboardNumberFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardCommandFlags flag in Enum.GetValues(typeof(InputKeyboardCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardSpecialFlags flag in Enum.GetValues(typeof(InputKeyboardSpecialFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardSpecialFlags flag in Enum.GetValues(typeof(InputKeyboardSpecialFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardArrowFlags flag in Enum.GetValues(typeof(InputKeyboardArrowFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardLetterFlags flag in Enum.GetValues(typeof(InputKeyboardLetterFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    #endregion
-
-                    #region Gamepad
-
-                    // Cycle through all flags.
-                    foreach (InputGamepadActionFlags flag in Enum.GetValues(typeof(InputGamepadActionFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    #endregion
-
-                    #region Mappable
-
-                    // Cycle through all confirmation flags.
-                    foreach (InputMappableConfirmationCommandFlags flag in Enum.GetValues(typeof(InputMappableConfirmationCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all movement flags.
-                    foreach (InputMappableMovementCommandFlags flag in Enum.GetValues(typeof(InputMappableMovementCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    // Cycle through all movement flags.
-                    foreach (InputMappableCameraCommandFlags flag in Enum.GetValues(typeof(InputMappableCameraCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Press)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Press);
-                        }
-                    }
-
-                    #endregion
+                if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
+                {
+                    InputDeviceActionFlagCheck(hoveredChild, args, InputActionStateFlags.Release);
                 }
             }
         }
@@ -600,6 +522,20 @@ namespace Softfire.MonoGame.CORE.Common
         public void OnRelease(object sender, InputEventArgs args)
         {
             if (IsActive && IsVisible &&
+                IsStateSet(FocusStates.IsFocused))
+            {
+                InputDeviceActionFlagCheck(this, args, InputActionStateFlags.Release);
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects a click has been held, when an input device with a pointer such as a mouse or gamepad is hovering over the object.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        public void OnHeldHovered(object sender, InputEventArgs args)
+        {
+            if (IsActive && IsVisible &&
                 IsStateSet(FocusStates.IsHovered) &&
                 IsStateSet(FocusStates.IsFocused))
             {
@@ -607,164 +543,7 @@ namespace Softfire.MonoGame.CORE.Common
 
                 if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
                 {
-                    #region Mouse
-
-                    // Cycle through all flags.
-                    foreach (InputMouseActionFlags flag in Enum.GetValues(typeof(InputMouseActionFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    #endregion
-
-                    #region Keyboard
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardFunctionFlags flag in Enum.GetValues(typeof(InputKeyboardFunctionFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardNumPadFlags flag in Enum.GetValues(typeof(InputKeyboardNumPadFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardNumberFlags flag in Enum.GetValues(typeof(InputKeyboardNumberFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardCommandFlags flag in Enum.GetValues(typeof(InputKeyboardCommandFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardSpecialFlags flag in Enum.GetValues(typeof(InputKeyboardSpecialFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardSpecialFlags flag in Enum.GetValues(typeof(InputKeyboardSpecialFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardArrowFlags flag in Enum.GetValues(typeof(InputKeyboardArrowFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardLetterFlags flag in Enum.GetValues(typeof(InputKeyboardLetterFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    #endregion
-
-                    #region Gamepad
-
-                    // Cycle through all flags.
-                    foreach (InputGamepadActionFlags flag in Enum.GetValues(typeof(InputGamepadActionFlags)))
-                    {
-                        // Is the flag in a released state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the release flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    #endregion
-
-                    #region Mappable
-
-                    // Cycle through all confirmation flags.
-                    foreach (InputMappableConfirmationCommandFlags flag in Enum.GetValues(typeof(InputMappableConfirmationCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all movement flags.
-                    foreach (InputMappableMovementCommandFlags flag in Enum.GetValues(typeof(InputMappableMovementCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    // Cycle through all movement flags.
-                    foreach (InputMappableCameraCommandFlags flag in Enum.GetValues(typeof(InputMappableCameraCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Release)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Release);
-                        }
-                    }
-
-                    #endregion
+                    InputDeviceActionFlagCheck(hoveredChild, args, InputActionStateFlags.Held);
                 }
             }
         }
@@ -777,173 +556,178 @@ namespace Softfire.MonoGame.CORE.Common
         public void OnHeld(object sender, InputEventArgs args)
         {
             if (IsActive && IsVisible &&
-                IsStateSet(FocusStates.IsHovered) &&
                 IsStateSet(FocusStates.IsFocused))
             {
-                MonoGameObject hoveredChild;
+                InputDeviceActionFlagCheck(this, args, InputActionStateFlags.Held);
+            }
+        }
 
-                if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
+        /// <summary>
+        /// Cycles through all input action flags to check if the flag is active.
+        /// </summary>
+        /// <param name="obj">The <see cref="MonoGameObject"/> to check against.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        /// <param name="inputActionStateFlagToCheck">The <see cref="InputActionStateFlags"/> to check to see if it is active on the provided <see cref="MonoGameObject"/>.</param>
+        private void InputDeviceActionFlagCheck(MonoGameObject obj, InputEventArgs args, InputActionStateFlags inputActionStateFlagToCheck)
+        {
+            #region Mouse
+
+            // Cycle through all flags.
+            foreach (InputMouseActionFlags flag in Enum.GetValues(typeof(InputMouseActionFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
                 {
-                    #region Mouse
-
-                    // Cycle through all flags.
-                    foreach (InputMouseActionFlags flag in Enum.GetValues(typeof(InputMouseActionFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    #endregion
-
-                    #region Keyboard
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardFunctionFlags flag in Enum.GetValues(typeof(InputKeyboardFunctionFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardNumPadFlags flag in Enum.GetValues(typeof(InputKeyboardNumPadFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardNumberFlags flag in Enum.GetValues(typeof(InputKeyboardNumberFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardCommandFlags flag in Enum.GetValues(typeof(InputKeyboardCommandFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardSpecialFlags flag in Enum.GetValues(typeof(InputKeyboardSpecialFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardSpecialFlags flag in Enum.GetValues(typeof(InputKeyboardSpecialFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardArrowFlags flag in Enum.GetValues(typeof(InputKeyboardArrowFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all flags.
-                    foreach (InputKeyboardLetterFlags flag in Enum.GetValues(typeof(InputKeyboardLetterFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    #endregion
-
-                    #region Gamepad
-
-                    // Cycle through all flags.
-                    foreach (InputGamepadActionFlags flag in Enum.GetValues(typeof(InputGamepadActionFlags)))
-                    {
-                        // Is the flag in a held state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the held flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    #endregion
-
-                    #region Mappable
-
-                    // Cycle through all confirmation flags.
-                    foreach (InputMappableConfirmationCommandFlags flag in Enum.GetValues(typeof(InputMappableConfirmationCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all movement flags.
-                    foreach (InputMappableMovementCommandFlags flag in Enum.GetValues(typeof(InputMappableMovementCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    // Cycle through all movement flags.
-                    foreach (InputMappableCameraCommandFlags flag in Enum.GetValues(typeof(InputMappableCameraCommandFlags)))
-                    {
-                        // Is the flag in a pressed state.
-                        if (args.InputStates.GetState(flag) == InputActionStateFlags.Held)
-                        {
-                            // Add the press flag.
-                            hoveredChild.Events.InputStates.SetState(flag, InputActionStateFlags.Held);
-                        }
-                    }
-
-                    #endregion
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
                 }
             }
+
+            #endregion
+
+            #region Keyboard
+
+            // Cycle through all flags.
+            foreach (InputKeyboardFunctionFlags flag in Enum.GetValues(typeof(InputKeyboardFunctionFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all flags.
+            foreach (InputKeyboardNumPadFlags flag in Enum.GetValues(typeof(InputKeyboardNumPadFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all flags.
+            foreach (InputKeyboardNumberFlags flag in Enum.GetValues(typeof(InputKeyboardNumberFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all flags.
+            foreach (InputKeyboardCommandFlags flag in Enum.GetValues(typeof(InputKeyboardCommandFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all flags.
+            foreach (InputKeyboardSpecialFlags flag in Enum.GetValues(typeof(InputKeyboardSpecialFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all flags.
+            foreach (InputKeyboardSpecialFlags flag in Enum.GetValues(typeof(InputKeyboardSpecialFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all flags.
+            foreach (InputKeyboardArrowFlags flag in Enum.GetValues(typeof(InputKeyboardArrowFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all flags.
+            foreach (InputKeyboardLetterFlags flag in Enum.GetValues(typeof(InputKeyboardLetterFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            #endregion
+
+            #region Gamepad
+
+            // Cycle through all flags.
+            foreach (InputGamepadActionFlags flag in Enum.GetValues(typeof(InputGamepadActionFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            #endregion
+
+            #region Mappable
+
+            // Cycle through all confirmation flags.
+            foreach (InputMappableConfirmationCommandFlags flag in Enum.GetValues(typeof(InputMappableConfirmationCommandFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all movement flags.
+            foreach (InputMappableMovementCommandFlags flag in Enum.GetValues(typeof(InputMappableMovementCommandFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            // Cycle through all movement flags.
+            foreach (InputMappableCameraCommandFlags flag in Enum.GetValues(typeof(InputMappableCameraCommandFlags)))
+            {
+                // Is the flag in the provided state.
+                if (args.InputStates.GetState(flag) == inputActionStateFlagToCheck)
+                {
+                    // Add the provided flag.
+                    obj.Events.InputStates.SetState(flag, inputActionStateFlagToCheck);
+                }
+            }
+
+            #endregion
         }
 
         #endregion

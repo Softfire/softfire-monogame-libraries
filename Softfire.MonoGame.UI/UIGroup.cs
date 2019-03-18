@@ -192,7 +192,7 @@ namespace Softfire.MonoGame.UI
                     window.CheckForFocus(Children, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
                                                          args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
                                                          args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
-                    window.OnScroll(sender, args);
+                    window.OnScrollHovered(sender, args);
                 }
             }
         }
@@ -237,7 +237,7 @@ namespace Softfire.MonoGame.UI
                     window.CheckForFocus(Children, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
                                                          args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
                                                          args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
-                    window.OnPress(sender, args);
+                    window.OnPressHovered(sender, args);
                 }
 
                 if (window.IsStateSet(FocusStates.IsFocused))
@@ -262,7 +262,7 @@ namespace Softfire.MonoGame.UI
                     window.CheckForFocus(Children, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
                                                          args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
                                                          args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
-                    window.OnRelease(sender, args);
+                    window.OnReleaseHovered(sender, args);
                 }
             }
         }
@@ -276,7 +276,7 @@ namespace Softfire.MonoGame.UI
         {
             foreach (var window in Children)
             {
-                window.OnHeld(sender, args);
+                window.OnHeldHovered(sender, args);
             }
         }
 
