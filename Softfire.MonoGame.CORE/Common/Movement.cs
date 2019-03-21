@@ -5,9 +5,15 @@ namespace Softfire.MonoGame.CORE.Common
 {
     /// <summary>
     /// A movement class for <see cref="MonoGameObject"/>'s.
+    /// <para>Call <see cref="Accelerate(double)"/> or <see cref="Decelerate(double)"/> to modify <see cref="Acceleration"/>.</para>
+    /// <para>Call <see cref="Accelerate(double, double)"/> or <see cref="Decelerate(double, double)"/> to impose a limiter on <see cref="Acceleration"/>.</para>
+    /// <para>Then call <see cref="CalculateVelocity()"/> to calculate <see cref="Velocity"/>.</para>
+    /// <para>Lastly call <see cref="ApplyVelocity()"/> to apply <see cref="Velocity"/> to the <see cref="MonoGameObject.Transform"/>'s position.</para>
     /// </summary>
     public class Movement : IMonoGameMovementComponent, IMonoGameUpdateComponent
     {
+        #region Properties
+
         /// <summary>
         /// The time between updates.
         /// </summary>
@@ -29,18 +35,22 @@ namespace Softfire.MonoGame.CORE.Common
         public double Acceleration { get; private set; }
 
         /// <summary>
-        /// The <see cref="MonoGameObject"/>'s boundaries. Set to <see cref="RectangleF.Empty"/> to remove any boundaries.
+        /// The <see cref="MonoGameObject"/>'s boundaries. Call <see cref="ResetBounds()"/> to remove any boundaries.
         /// </summary>
         public RectangleF Bounds { get; private set; } = RectangleF.Empty;
 
+        #endregion
+
         /// <summary>
-        /// A class for applying movement to a <see cref="MonoGameObject"/>.
+        /// A class for applying movement to a <see cref="MonoGameObject"/> by calculating and applying <see cref="Velocity"/>.
         /// </summary>
         /// <param name="parent">The <see cref="MonoGameObject"/> to apply movement.</param>
         public Movement(MonoGameObject parent)
         {
             Parent = parent;
         }
+
+        #region Bounds
 
         /// <summary>
         /// Sets the <see cref="Bounds"/> of the <see cref="MonoGameObject"/> to confine it's movements.
@@ -58,6 +68,8 @@ namespace Softfire.MonoGame.CORE.Common
         {
             Bounds = RectangleF.Empty;
         }
+
+        #endregion
 
         #region Acceleration & Velocity
 
@@ -90,7 +102,7 @@ namespace Softfire.MonoGame.CORE.Common
         /// <summary>
         /// Calculates <see cref="Velocity"/> based on rotation angle of the object and <see cref="Acceleration"/>.
         /// </summary>
-        public void CalculateVelocity() => CalculateVelocity(Parent.Transform.Rotation, Acceleration);
+        public void CalculateVelocity() =>  Velocity = CalculateVelocity(Parent.Transform.Rotation, Acceleration);
 
         /// <summary>
         /// Calculates <see cref="Velocity"/> based on provided rotation angle, in degrees, and <see cref="Acceleration"/>.
@@ -167,6 +179,17 @@ namespace Softfire.MonoGame.CORE.Common
         /// <param name="deltas">Movement deltas. Intaken as a <see cref="Vector2"/>.</param>
         /// <param name="useExtendedRectangle">Determines whether to use the <see cref="IMonoGame2DComponent"/>'s extended or standard rectangle.</param>
         public static void Move(IMonoGame2DComponent objectToMove, Vector2 deltas, bool useExtendedRectangle = true) => objectToMove?.Movement.Move(deltas, useExtendedRectangle);
+
+        /// <summary>
+        /// Applies <see cref="Velocity"/> to the <see cref="MonoGameObject"/>'s position.
+        /// </summary>
+        public void ApplyVelocity()
+        {
+            if (Parent != null)
+            {
+                Parent.Transform.Position += Velocity;
+            }
+        }
 
         #endregion
 
