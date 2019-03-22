@@ -77,27 +77,27 @@ namespace Softfire.MonoGame.CORE.Common
         /// Increases the rate at which the <see cref="MonoGameObject"/> changes it's <see cref="Velocity"/>.
         /// </summary>
         /// <param name="increment">The amount to accelerate by. Intaken as a <see cref="double"/>.</param>
-        public void Accelerate(double increment) => Acceleration += increment > 0 ? increment : 0;
+        public void Accelerate(double increment) => Acceleration += increment > 0d ? increment * DeltaTime : 0d;
 
         /// <summary>
         /// Increases the rate at which the <see cref="MonoGameObject"/> changes it's <see cref="Velocity"/>, up to the provided limit.
         /// </summary>
         /// <param name="increment">The amount to accelerate by. Intaken as a <see cref="double"/>.</param>
         /// <param name="limit">The acceleration limit. Intaken as a <see cref="double"/>.</param>
-        public void Accelerate(double increment, double limit) => Acceleration += increment > 0 && limit >= 0 && Acceleration < limit ? increment * DeltaTime : 0;
+        public void Accelerate(double increment, double limit) => Acceleration += increment > 0d && limit >= 0d && Acceleration < limit ? increment * DeltaTime : 0d;
 
         /// <summary>
         /// Decreases the rate at which the <see cref="MonoGameObject"/> changes it's <see cref="Velocity"/>.
         /// </summary>
         /// <param name="decrement">The amount to decelerate by. Intaken as a <see cref="double"/>.</param>
-        public void Decelerate(double decrement) => Acceleration -= decrement > 0 ? decrement : 0;
+        public void Decelerate(double decrement) => Acceleration -= decrement > 0d ? decrement * DeltaTime : 0d;
 
         /// <summary>
         /// Decreases the rate at which the <see cref="MonoGameObject"/> changes its <see cref="Velocity"/>, up to it's limit.
         /// </summary>
         /// <param name="decrement">The amount to decelerate by. Intaken as a <see cref="double"/>.</param>
         /// <param name="limit">The deceleration limit. Intaken as a <see cref="double"/>.</param>
-        public void Decelerate(double decrement, double limit) => Acceleration -= decrement > 0 && limit >= 0 && Acceleration > -limit ? decrement * DeltaTime : 0;
+        public void Decelerate(double decrement, double limit) => Acceleration -= decrement > 0d && limit >= 0d && Acceleration > -limit ? decrement * DeltaTime : 0d;
 
         /// <summary>
         /// Calculates <see cref="Velocity"/> based on rotation angle of the object and <see cref="Acceleration"/>.
