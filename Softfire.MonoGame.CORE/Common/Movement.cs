@@ -84,7 +84,21 @@ namespace Softfire.MonoGame.CORE.Common
         /// </summary>
         /// <param name="increment">The amount to accelerate by. Intaken as a <see cref="double"/>.</param>
         /// <param name="limit">The acceleration limit. Intaken as a <see cref="double"/>.</param>
-        public void Accelerate(double increment, double limit) => Acceleration += increment > 0d && limit >= 0d && Acceleration < limit ? increment * DeltaTime : 0d;
+        public void Accelerate(double increment, double limit)
+        {
+            if (increment > 0d &&
+                Acceleration < limit)
+            {
+                if (Acceleration + (increment * DeltaTime) >= limit)
+                {
+                    Acceleration = limit;
+                }
+                else
+                {
+                    Acceleration += increment * DeltaTime;
+                }
+            }
+        }
 
         /// <summary>
         /// Decreases the rate at which the <see cref="MonoGameObject"/> changes it's <see cref="Velocity"/>.
@@ -97,7 +111,21 @@ namespace Softfire.MonoGame.CORE.Common
         /// </summary>
         /// <param name="decrement">The amount to decelerate by. Intaken as a <see cref="double"/>.</param>
         /// <param name="limit">The deceleration limit. Intaken as a <see cref="double"/>.</param>
-        public void Decelerate(double decrement, double limit) => Acceleration -= decrement > 0d && limit >= 0d && Acceleration > -limit ? decrement * DeltaTime : 0d;
+        public void Decelerate(double decrement, double limit)
+        {
+            if (decrement > 0d &&
+                Acceleration > limit)
+            {
+                if (Acceleration - (decrement * DeltaTime) <= limit)
+                {
+                    Acceleration = limit;
+                }
+                else
+                {
+                    Acceleration -= decrement * DeltaTime;
+                }
+            }
+        }
 
         /// <summary>
         /// Calculates <see cref="Velocity"/> based on rotation angle of the object and <see cref="Acceleration"/>.
@@ -118,6 +146,25 @@ namespace Softfire.MonoGame.CORE.Common
         /// <returns>Returns the calculated velocity from the provided rotation angle and rate of acceleration as a <see cref="Vector2"/>.</returns>
         public static Vector2 CalculateVelocity(double rotationAngleInRadians, double rateOfAcceleration) => new Vector2((float)(Math.Sin(rotationAngleInRadians) * rateOfAcceleration),
                                                                                                                         -(float)(Math.Cos(rotationAngleInRadians) * rateOfAcceleration));
+
+        /// <summary>
+        /// Stabilizes <see cref="Acceleration"/> by returning <see cref="Acceleration"/> to a defined limit.
+        /// </summary>
+        /// <param name="increment">The amount to accelerate by. Intaken as a <see cref="double"/>.</param>
+        /// <param name="decrement">The amount to decelerate by. Intaken as a <see cref="double"/>.</param>
+        /// <param name="limit">The stabilization limit. Intaken as a <see cref="double"/>.</param>
+        public void Stabilize(double increment, double decrement, double limit)
+        {
+            if (Acceleration > 0d)
+            {
+                Decelerate(decrement, limit);
+            }
+            else if (Acceleration < 0d)
+            {
+                Accelerate(increment, limit);
+            }
+        }
+        
         #endregion
 
         #region Movement
