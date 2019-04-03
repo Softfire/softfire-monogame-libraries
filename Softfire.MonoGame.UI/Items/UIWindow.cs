@@ -71,12 +71,12 @@ namespace Softfire.MonoGame.UI.Items
         /// <param name="position">The window's position. Intaken as a <see cref="Vector2"/>.</param>
         /// <param name="viewWidth">The window's view width. Intaken as an <see cref="int"/>.</param>
         /// <param name="viewHeight">The window's view height. Intaken as an <see cref="int"/>.</param>
-        /// <param name="worldWidth">the window's world width. Intaken as an <see cref="int"/>.</param>
-        /// <param name="worldHeight">the window's world height. Intaken as an <see cref="int"/>.</param>
+        /// <param name="worldWidth">the window's world width that is to be extended beyond the viewWidth of the window. Intaken as an <see cref="int"/>.</param>
+        /// <param name="worldHeight">the window's world height that is to be extended beyond the viewHeight of the window. Intaken as an <see cref="int"/>.</param>
         /// <param name="borderThickness">The window's border thickness. Intaken as an <see cref="int"/>. Set to 0 to disable borders.</param>
         /// <param name="isVisible">The window's visibility. Intaken as a <see cref="bool"/>.</param>
         public UIWindow(UIGroup group, UIBase parent, int id, string name, Vector2 position,
-                        int viewWidth, int viewHeight, int worldWidth, int worldHeight,
+                        int viewWidth, int viewHeight, int worldWidth = 0, int worldHeight = 0,
                         int borderThickness = 10, bool isVisible = true) : base(parent, id, name, position, viewWidth, viewHeight, isVisible)
         {
             Group = group;
@@ -89,7 +89,7 @@ namespace Softfire.MonoGame.UI.Items
                 ScissorTestEnable = true
             };
 
-            BorderThickness = borderThickness;
+            BorderThickness = borderThickness >= 0 ? borderThickness : 0;
 
             SetWindowTransparency(GetTransparency("Background").Level);
         }
@@ -99,7 +99,7 @@ namespace Softfire.MonoGame.UI.Items
         /// <summary>
         /// Pushes the ui element on to the <see cref="MonoGameObject.HoverStack"/>.
         /// </summary>
-        /// <typeparam name="T">Type of <see cref="MonoGameObject"/>.</typeparam>
+        /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
         /// <param name="element">The ui element to push on to the <see cref="MonoGameObject.HoverStack"/>.</param>
         public override void RiseUp<T>(T element)
         {
@@ -153,28 +153,28 @@ namespace Softfire.MonoGame.UI.Items
         /// Determines whether text exists, by id.
         /// </summary>
         /// <param name="id">The id of the text to search. Intaken as an <see cref="int"/>.</param>
-        /// <returns>Returns a bool indicating whether the text exists.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the text exists.</returns>
         public bool TextExists(int id) => ChildExists<UIText>((int)Layers.Text, id);
 
         /// <summary>
         /// Determines whether text exists, by name.
         /// </summary>
         /// <param name="name">The name of the text to search. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns a bool indicating whether the text exists.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the text exists.</returns>
         public bool TextExists(string name) => ChildExists<UIText>((int)Layers.Text, name);
 
         /// <summary>
-        /// Gets text, by id.
+        /// Retrieves text, by id.
         /// </summary>
         /// <param name="id">The id of the text to retrieve. Intaken as an <see cref="int"/>.</param>
-        /// <returns>Returns a text with the requested id, if present, otherwise null.</returns>
+        /// <returns>Returns <see cref="UIText"/> with the requested id, if present, otherwise null.</returns>
         public UIText GetText(int id) => GetChild<UIText>((int)Layers.Text, id);
 
         /// <summary>
-        /// Gets text, by name.
+        /// Retrieves text, by name.
         /// </summary>
         /// <param name="name">The name of the text to retrieve. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns a text with the requested name, if present, otherwise null.</returns>
+        /// <returns>Returns <see cref="UIText"/> with the requested name, if present, otherwise null.</returns>
         public UIText GetText(string name) => GetChild<UIText>((int)Layers.Text, name);
 
         /// <summary>
@@ -242,14 +242,14 @@ namespace Softfire.MonoGame.UI.Items
         public bool ButtonExists(string name) => ChildExists<UIButton>((int)Layers.Button, name);
 
         /// <summary>
-        /// Gets a button, by id.
+        /// Retrieves a button, by id.
         /// </summary>
         /// <param name="id">The id of the button to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a button with the requested id, if present, otherwise null.</returns>
         public UIButton GetButton(int id) => GetChild<UIButton>((int)Layers.Button, id);
 
         /// <summary>
-        /// Gets a button, by name.
+        /// Retrieves a button, by name.
         /// </summary>
         /// <param name="name">The name of the button to retrieve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a button with the requested name, if present, otherwise null.</returns>
@@ -319,28 +319,28 @@ namespace Softfire.MonoGame.UI.Items
         public bool BorderExists(string name) => ChildExists<UIBorder>((int)Layers.Border, name);
 
         /// <summary>
-        /// Gets border, by id.
+        /// Retrieves a border, by id.
         /// </summary>
         /// <param name="id">The id of the border to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a border with the requested id, if present, otherwise null.</returns>
         public UIBorder GetBorder(int id) => GetChild<UIBorder>((int)Layers.Border, id);
 
         /// <summary>
-        /// Gets border, by name.
+        /// Retrieves a border, by name.
         /// </summary>
         /// <param name="name">The name of the border to retrieve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a border with the requested name, if present, otherwise null.</returns>
         public UIBorder GetBorder(string name) => GetChild<UIBorder>((int)Layers.Border, name);
 
         /// <summary>
-        /// Removes border, by id.
+        /// Removes a border, by id.
         /// </summary>
         /// <param name="id">The id of the border to be removed. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the border was removed.</returns>
         public bool RemoveBorder(int id) => RemoveChild<UIBorder>((int)Layers.Border, id);
 
         /// <summary>
-        /// Removes border, by name.
+        /// Removes a border, by name.
         /// </summary>
         /// <param name="name">The name of the border to be removed. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the border was removed.</returns>
@@ -429,7 +429,6 @@ namespace Softfire.MonoGame.UI.Items
         /// <param name="topRight">A boolean indicating whether the top right corner border is visible.</param>
         /// <param name="bottomRight">A boolean indicating whether the bottom right corner border is visible.</param>
         /// <param name="bottomLeft">A boolean indicating whether the bottom left corner border is visible.</param>
-        /// <see cref="UIBase.IsVisible"/>
         public void SetBorderVisibility(bool top, bool right, bool bottom, bool left,
                                         bool topLeft, bool topRight, bool bottomRight, bool bottomLeft)
         {
@@ -498,6 +497,82 @@ namespace Softfire.MonoGame.UI.Items
                 borderBottomLeft.Transform.Position = new Vector2(-(ExtendedRectangle.Origin.X - borderBottomLeft.ExtendedRectangle.Origin.X), ExtendedRectangle.Origin.Y - borderBottomLeft.ExtendedRectangle.Origin.Y);
             }
         }
+
+        #endregion
+
+        #region Content
+
+        /// <summary>
+        /// Adds content (non-ui) elements to the <see cref="UIWindow"/>.
+        /// </summary>
+        /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
+        /// <param name="content">The content to add. A derivative of <see cref="MonoGameObject"/>.</param>
+        /// <param name="contentManager">The <see cref="ContentManager"/> for the content.</param>
+        /// <returns>Returns the content's id, if the content has been added, otherwise zero.</returns>
+        public int AddContent<T>(T content, ContentManager contentManager) where T : MonoGameObject
+        {
+            if (!ContentExists<T>(content.Name) &&
+                !ContentExists<T>(content.Id) &&
+                contentManager != null)
+            {
+                content.Transform.Parent = Transform;
+                content.LoadContent(contentManager);
+
+                Children.Add(content);
+
+                return content.Id;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Determines whether content exists, by id.
+        /// </summary>
+        /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
+        /// <param name="id">The id of the content to search. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the content exists.</returns>
+        public bool ContentExists<T>(int id) where T : MonoGameObject => ChildExists<T>((int)Layers.Content, id);
+
+        /// <summary>
+        /// Determines whether content exists, by name.
+        /// </summary>
+        /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
+        /// <param name="name">The name of the content to search. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the content exists.</returns>
+        public bool ContentExists<T>(string name) where T : MonoGameObject => ChildExists<T>((int)Layers.Content, name);
+
+        /// <summary>
+        /// Retrieves content, by id.
+        /// </summary>
+        /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
+        /// <param name="id">The id of the content to retrieve. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns an object of type <see cref="T"/> with the requested id, if present, otherwise null.</returns>
+        public T GetContent<T>(int id) where T : MonoGameObject => GetChild<T>((int)Layers.Content, id);
+
+        /// <summary>
+        /// Retrieves content, by name.
+        /// </summary>
+        /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
+        /// <param name="name">The content of the text to retrieve. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns an object of type <see cref="T"/> with the requested name, if present, otherwise null.</returns>
+        public T GetContent<T>(string name) where T : MonoGameObject => GetChild<T>((int)Layers.Content, name);
+
+        /// <summary>
+        /// Removes content, by id.
+        /// </summary>
+        /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
+        /// <param name="id">The id of the content to be removed. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the content was removed.</returns>
+        public bool RemoveContent<T>(int id) where T : MonoGameObject => RemoveChild<T>((int)Layers.Content, id);
+
+        /// <summary>
+        /// Removes content, by name.
+        /// </summary>
+        /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
+        /// <param name="name">The name of the content to be removed. Intaken as an <see cref="int"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the content was removed.</returns>
+        public bool RemoveContent<T>(string name) where T : MonoGameObject => RemoveChild<T>((int)Layers.Content, name);
 
         #endregion
 
@@ -626,8 +701,9 @@ namespace Softfire.MonoGame.UI.Items
             AddBorder("BottomRight");
 
             // Define the border's sizes.
-            SetBorderThickness(BorderThickness);
-            
+            SetBorderThickness(BorderThickness == 0 ? 0 : BorderThickness);
+            SetBorderVisibility(BorderThickness > 0);
+
             // Load Content.
             base.LoadContent();
 
