@@ -59,6 +59,11 @@ namespace Softfire.MonoGame.CORE.Common
         public bool IsHoverable { get; set; } = true;
 
         /// <summary>
+        /// Determines whether the <see cref="MonoGameObject"/> is focusable.
+        /// </summary>
+        public bool IsFocusable { get; set; } = true;
+
+        /// <summary>
         /// Determines whether the <see cref="MonoGameObject"/> is movable.
         /// </summary>
         public bool IsMovable { get; set; }
@@ -238,24 +243,24 @@ namespace Softfire.MonoGame.CORE.Common
                 // Check all child MonoGameObjects for hover.
                 foreach (var child in mgObject.Children)
                 {
-                    MonoGameObject hoveredChild;
+                    MonoGameObject hoveredMonoGameObject;
 
                     // Check current child and all it's children for hover.
                     // Performs a recursive loop for all child MonoGameObjects.
-                    if ((hoveredChild = CheckForHover(child, input)) != null)
+                    if ((hoveredMonoGameObject = CheckForHover(child, input)) != null)
                     {
                         // If the MonoGameObject intersects or contains the input rectangle.
-                        if (hoveredChild.Rectangle.IntersectsWith(input) || hoveredChild.Rectangle.Contains(input))
+                        if (hoveredMonoGameObject.Rectangle.IntersectsWith(input) || hoveredMonoGameObject.Rectangle.Contains(input))
                         {
                             // Rise up the last hovered child to the parent.
-                            if (!hoveredChild.IsStateSet(FocusStates.IsHovered) &&
-                                hoveredChild.IsHoverable)
+                            if (!hoveredMonoGameObject.IsStateSet(FocusStates.IsHovered) &&
+                                hoveredMonoGameObject.IsHoverable)
                             {
-                                hoveredChild.RiseUp();
+                                hoveredMonoGameObject.RiseUp();
                             }
 
-                            // Return the hovered child if is hoverable, otherwise return it's parent.
-                            return hoveredChild.IsHoverable ? hoveredChild : hoveredChild.Parent;
+                            // Return the hovered child if it is hoverable, otherwise return it's parent.
+                            return hoveredMonoGameObject.IsHoverable ? hoveredMonoGameObject : hoveredMonoGameObject.Parent;
                         }
                     }
                 }
@@ -282,6 +287,47 @@ namespace Softfire.MonoGame.CORE.Common
         public void CheckForFocus<T>(IList<T> children, InputEventArgs args, bool condition, bool multiFocus = false) where T : MonoGameObject => CheckForFocus(this, children, args, condition, multiFocus);
 
         /// <summary>
+        /// Determines whether the <see cref="MonoGameObject"/> is being focused. A recursive check is performed on all children.
+        /// </summary>
+        /// <param name="mgObject">The <see cref="MonoGameObject"/> to check for focus.</param>
+        /// <param name="condition">The condition that must be met to grant focus to the <see cref="MonoGameObject"/>.</param>
+        /// <returns>Returns the focused <see cref="MonoGameObject"/>, if found, otherwise null.</returns>
+        public static MonoGameObject CheckForFocus(MonoGameObject mgObject, bool condition)
+        {
+            // Only check the children for focus if the MonoGameObject is active and visible.
+            if (mgObject.IsActive && mgObject.IsVisible)
+            {
+                // Check all child MonoGameObjects for focus.
+                foreach (var child in mgObject.Children)
+                {
+                    MonoGameObject focusedMonoGameObject;
+
+                    // Check current child and all it's children for focus.
+                    // Performs a recursive loop for all child MonoGameObjects.
+                    if ((focusedMonoGameObject = CheckForFocus(child, condition)) != null)
+                    {
+                        // Rise up the last hovered child to the parent.
+                        if (!focusedMonoGameObject.IsStateSet(FocusStates.IsFocused) &&
+                            focusedMonoGameObject.IsFocusable &&
+                            condition)
+                        {
+                            focusedMonoGameObject.RiseUp();
+                        }
+
+                        // Return the focused child if it is focusable, otherwise return it's parent.
+                        return focusedMonoGameObject.IsFocusable ? focusedMonoGameObject : focusedMonoGameObject.Parent;
+                    }
+
+                    // If no child is focused then pass the current child.
+                    return mgObject;
+                }
+            }
+
+            // If the object is not intersecting or does not contain the input rectangle then return null.
+            return null;
+        }
+
+        /// <summary>
         /// Determines whether the <see cref="MonoGameObject"/> is focused.
         /// </summary>
         /// <param name="mgObject">The <see cref="MonoGameObject"/> to check for focus.</param>
@@ -306,8 +352,7 @@ namespace Softfire.MonoGame.CORE.Common
                     var overlap = mgObject.ExtendedRectangle.OverlapWith(child.ExtendedRectangle);
 
                     // If there is overlap and the input rectangle intersects or is contained within the overlap then skip to the next MonoGameObject.
-                    if (overlap != RectangleF.Empty &&
-                        (overlap.IntersectsWith(args.InputRectangle) || overlap.Contains(args.InputRectangle)))
+                    if (overlap != RectangleF.Empty && (overlap.IntersectsWith(args.InputRectangle) || overlap.Contains(args.InputRectangle)))
                     {
                         continue;
                     }
@@ -361,16 +406,16 @@ namespace Softfire.MonoGame.CORE.Common
             if (IsActive && IsVisible &&
                 IsStateSet(FocusStates.IsFocused))
             {
-                MonoGameObject hoveredChild;
+                MonoGameObject hoveredMonoGameObject;
 
-                if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
+                if ((hoveredMonoGameObject = CheckForHover(this, args.InputRectangle)) != null)
                 {
-                    hoveredChild.Events.InputScrollVelocity = args.InputScrollVelocity;
-                    hoveredChild.Events.PlayerIndex = args.PlayerIndex;
-                    hoveredChild.Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollUp, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollUp));
-                    hoveredChild.Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollDown, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollDown));
-                    hoveredChild.Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollLeft, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollLeft));
-                    hoveredChild.Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollRight, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollRight));
+                    hoveredMonoGameObject.Events.InputScrollVelocity = args.InputScrollVelocity;
+                    hoveredMonoGameObject.Events.PlayerIndex = args.PlayerIndex;
+                    hoveredMonoGameObject.Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollUp, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollUp));
+                    hoveredMonoGameObject.Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollDown, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollDown));
+                    hoveredMonoGameObject.Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollLeft, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollLeft));
+                    hoveredMonoGameObject.Events.InputFlags.SetFlag(InputMouseActionFlags.ScrollRight, args.InputFlags.IsFlagSet(InputMouseActionFlags.ScrollRight));
                 }
             }
         }
@@ -411,17 +456,17 @@ namespace Softfire.MonoGame.CORE.Common
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
-        public void OnFocus(object sender, InputEventArgs args)
+        public void OnFocusHovered(object sender, InputEventArgs args)
         {
-            MonoGameObject hoveredChild;
+            MonoGameObject hoveredMonoGameObject;
 
-            if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
+            if ((hoveredMonoGameObject = CheckForHover(this, args.InputRectangle)) != null)
             {
                 // Add the object to the hover stack for clearing of it's hover flag later.
-                if (hoveredChild.Equals(this) &&
-                    !hoveredChild.IsStateSet(FocusStates.IsHovered))
+                if (hoveredMonoGameObject.Equals(this) &&
+                    !hoveredMonoGameObject.IsStateSet(FocusStates.IsHovered))
                 {
-                    hoveredChild.RiseUp();
+                    hoveredMonoGameObject.RiseUp();
                 }
             }
         }
@@ -471,11 +516,11 @@ namespace Softfire.MonoGame.CORE.Common
                 IsStateSet(FocusStates.IsHovered) &&
                 IsStateSet(FocusStates.IsFocused))
             {
-                MonoGameObject hoveredChild;
+                MonoGameObject hoveredMonoGameObject;
 
-                if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
+                if ((hoveredMonoGameObject = CheckForHover(this, args.InputRectangle)) != null)
                 {
-                    InputDeviceActionFlagCheck(hoveredChild, args, InputActionStateFlags.Press);
+                    InputDeviceActionFlagCheck(hoveredMonoGameObject, args, InputActionStateFlags.Press);
                 }
             }
         }
@@ -505,11 +550,11 @@ namespace Softfire.MonoGame.CORE.Common
                 IsStateSet(FocusStates.IsHovered) &&
                 IsStateSet(FocusStates.IsFocused))
             {
-                MonoGameObject hoveredChild;
+                MonoGameObject hoveredMonoGameObject;
 
-                if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
+                if ((hoveredMonoGameObject = CheckForHover(this, args.InputRectangle)) != null)
                 {
-                    InputDeviceActionFlagCheck(hoveredChild, args, InputActionStateFlags.Release);
+                    InputDeviceActionFlagCheck(hoveredMonoGameObject, args, InputActionStateFlags.Release);
                 }
             }
         }
@@ -539,11 +584,11 @@ namespace Softfire.MonoGame.CORE.Common
                 IsStateSet(FocusStates.IsHovered) &&
                 IsStateSet(FocusStates.IsFocused))
             {
-                MonoGameObject hoveredChild;
+                MonoGameObject hoveredMonoGameObject;
 
-                if ((hoveredChild = CheckForHover(this, args.InputRectangle)) != null)
+                if ((hoveredMonoGameObject = CheckForHover(this, args.InputRectangle)) != null)
                 {
-                    InputDeviceActionFlagCheck(hoveredChild, args, InputActionStateFlags.Held);
+                    InputDeviceActionFlagCheck(hoveredMonoGameObject, args, InputActionStateFlags.Held);
                 }
             }
         }
@@ -905,7 +950,7 @@ namespace Softfire.MonoGame.CORE.Common
         /// <summary>
         /// The <see cref="MonoGameObject"/>'s update method.
         /// </summary>
-        /// <param name="gameTime">Intakes MonoGame <see cref="GameTime"/>.</param>
+        /// <param name="gameTime">Intakes <see cref="GameTime"/>.</param>
         public virtual void Update(GameTime gameTime)
         {
             DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
