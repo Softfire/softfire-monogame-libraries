@@ -121,10 +121,11 @@ namespace Softfire.MonoGame.UI.Items
         /// <param name="name">The text's name. Intaken as a <see cref="string"/>.</param>
         /// <param name="font">The text's font. Intaken as a <see cref="SpriteFont"/>.</param>
         /// <param name="text">The text's text. Intaken as a <see cref="string"/>.</param>
+        /// <param name="position">The text's position relative to the window's center.  Intaken as a <see cref="Vector2"/>.</param>
         /// <param name="isVisible">The button's visibility. Intaken as a <see cref="bool"/>.</param>
         /// <returns>Returns the text id, if added, otherwise zero.</returns>
         /// <remarks>If text already exists with the provided name then a zero is returned indicating failure to add the text.</remarks>
-        public int AddText(string name, SpriteFont font, string text, bool isVisible = true)
+        public int AddText(string name, SpriteFont font, string text, Vector2 position = default, bool isVisible = true)
         {
             var nextTextId = 0;
 
@@ -134,7 +135,7 @@ namespace Softfire.MonoGame.UI.Items
 
                 if (!TextExists(nextTextId))
                 {
-                    var newText = new UIText(this, nextTextId, name, font, text, Vector2.Zero, isVisible)
+                    var newText = new UIText(this, nextTextId, name, font, text, position, isVisible)
                     {
                         Layer = (int)Layers.Text
                     };
