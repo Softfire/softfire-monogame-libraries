@@ -29,28 +29,28 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Load Font.
+        /// Loads a <see cref="SpriteFont"/>. Call <see cref="GetFont(string)"/> to access the loaded font.
         /// </summary>
         /// <param name="identifier">The font's unique identifier. Intaken as a <see cref="string"/>.</param>
-        /// <param name="fontFilePath">The font's file path.</param>
-        /// <returns>Returns a bool indicating whether the font was loaded.</returns>
-        public bool LoadFont(string identifier, string fontFilePath)
+        /// <param name="fontFilePath">The font's file path. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns the loaded <see cref="SpriteFont"/> if the font was loaded, otherwise null.</returns>
+        public SpriteFont LoadFont(string identifier, string fontFilePath)
         {
-            var result = false;
+            SpriteFont font = null;
 
             if (!string.IsNullOrWhiteSpace(identifier) &&
                 !string.IsNullOrWhiteSpace(fontFilePath) &&
                 !Fonts.ContainsKey(identifier))
             {
-                Fonts.Add(identifier, Content.Load<SpriteFont>(fontFilePath));
-                result = true;
+                font = Content.Load<SpriteFont>(fontFilePath);
+                Fonts.Add(identifier, font);
             }
 
-            return result;
+            return font;
         }
 
         /// <summary>
-        /// Unload Fonts.
+        /// Unloads a <see cref="SpriteFont"/>.
         /// </summary>
         /// <param name="identifier">The font's unique identifier. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the font was unloaded.</returns>
@@ -60,21 +60,15 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// Unload All Fonts.
+        /// Unload all loaded <see cref="SpriteFont"/>s.
         /// </summary>
-        public void UnloadAllFonts()
-        {
-            Content.Unload();
-        }
+        public void UnloadAllFonts() => Content.Unload();
 
         /// <summary>
-        /// Get Font.
+        /// Retrieves a <see cref="SpriteFont"/>.
         /// </summary>
         /// <param name="identifier">The font's unique identifier. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns the requested font or null if not found.</returns>
-        public SpriteFont GetFont(string identifier)
-        {
-            return !string.IsNullOrWhiteSpace(identifier) && Fonts.ContainsKey(identifier) ? Fonts[identifier] : null;
-        }
+        /// <returns>Returns the requested font, if found, otherwise null.</returns>
+        public SpriteFont GetFont(string identifier) => !string.IsNullOrWhiteSpace(identifier) && Fonts.ContainsKey(identifier) ? Fonts[identifier] : null;
     }
 }
