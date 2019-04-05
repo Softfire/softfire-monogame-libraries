@@ -53,14 +53,14 @@ namespace Softfire.MonoGame.UI
         /// <summary>
         /// The element's transparency levels.
         /// </summary>
-        private List<Transparency> Transparencies { get; } = new List<Transparency>(6)
+        private List<UITransparency> Transparencies { get; } = new List<UITransparency>(6)
         {
-            new Transparency(1, "Background", 1f),
-            new Transparency(2, "Highlight", 0.25f),
-            new Transparency(3, "Outline", 1f),
-            new Transparency(4, "Font", 1f ),
-            new Transparency(5, "FontHighlight", 0.75f),
-            new Transparency(6, "Selection", 0.75f)
+            new UITransparency(1, "Background", 1f),
+            new UITransparency(2, "Highlight", 0.25f),
+            new UITransparency(3, "Outline", 1f),
+            new UITransparency(4, "Font", 1f ),
+            new UITransparency(5, "FontHighlight", 0.75f),
+            new UITransparency(6, "Selection", 0.75f)
         };
 
         /// <summary>
@@ -116,14 +116,14 @@ namespace Softfire.MonoGame.UI
         /// </summary>
         /// <param name="transparencyId">The id of the transparency to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the transparency with the specified id, if present, otherwise null.</returns>
-        public Transparency GetTransparency(int transparencyId) => Identities.GetObject<Transparency, Transparency>(Transparencies, transparencyId);
+        public UITransparency GetTransparency(int transparencyId) => Identities.GetObject<UITransparency, UITransparency>(Transparencies, transparencyId);
 
         /// <summary>
         /// Gets a transparency, by name.
         /// </summary>
         /// <param name="transparencyName">The name of the transparency to retrieve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns the transparency with the specified name, if present, otherwise null.</returns>
-        public Transparency GetTransparency(string transparencyName) => Identities.GetObject<Transparency, Transparency>(Transparencies, transparencyName);
+        public UITransparency GetTransparency(string transparencyName) => Identities.GetObject<UITransparency, UITransparency>(Transparencies, transparencyName);
 
         #endregion
 

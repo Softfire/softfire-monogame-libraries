@@ -104,10 +104,6 @@
     <Compile Include="Common\IMonoGameUpdateComponent.cs" />
     <Compile Include="Common\IMonoGameVisibleComponent.cs" />
     <Compile Include="Common\MonoGameObject.cs" />
-    <Compile Include="Graphics\Drawing\IMonoGameDrawingTransparencyComponent.cs" />
-    <Compile Include="Graphics\Drawing\LayersEnum.cs" />
-    <Compile Include="Graphics\Drawing\IMonoGameDrawingPaddingComponent.cs" />
-    <Compile Include="Graphics\Drawing\Transparency.cs" />
     <Compile Include="Input\IMonoGameInputTabComponent.cs" />
     <Compile Include="Input\InputCommands.cs" />
     <Compile Include="Input\InputEventArgs.cs" />

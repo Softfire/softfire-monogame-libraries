@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Softfire.MonoGame.CORE.Common;
-using Softfire.MonoGame.CORE.Graphics.Drawing;
+using Softfire.MonoGame.UI.Items;
 using static Softfire.MonoGame.CORE.Identities;
 
 namespace Softfire.MonoGame.UI.Themes
@@ -40,7 +40,7 @@ namespace Softfire.MonoGame.UI.Themes
         /// <summary>
         /// Theme's transparencies.
         /// </summary>
-        private List<Transparency> Transparencies { get; }
+        private List<UITransparency> Transparencies { get; }
 
         /// <summary>
         /// A theme that is used to customize the UI.
@@ -87,14 +87,14 @@ namespace Softfire.MonoGame.UI.Themes
                 { "Selection", selectionColor ?? Color.CornflowerBlue }
             };
 
-            Transparencies = new List<Transparency>(6)
+            Transparencies = new List<UITransparency>(6)
             {
-                new Transparency(1, "Background", backgroundTransparencyLevel),
-                new Transparency(2, "Highlight", highlightTransparencyLevel),
-                new Transparency(3, "Outline", outlineTransparencyLevel),
-                new Transparency(4, "Font", fontTransparencyLevel ),
-                new Transparency(5, "FontHighlight", fontHighlightTransparencyLevel),
-                new Transparency(6, "Selection", selectionTransparencyLevel)
+                new UITransparency(1, "Background", backgroundTransparencyLevel),
+                new UITransparency(2, "Highlight", highlightTransparencyLevel),
+                new UITransparency(3, "Outline", outlineTransparencyLevel),
+                new UITransparency(4, "Font", fontTransparencyLevel ),
+                new UITransparency(5, "FontHighlight", fontHighlightTransparencyLevel),
+                new UITransparency(6, "Selection", selectionTransparencyLevel)
             };
         }
 
@@ -205,14 +205,14 @@ namespace Softfire.MonoGame.UI.Themes
         /// </summary>
         /// <param name="transparencyId">The id of the transparency to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the transparency with the specified id, if present, otherwise null.</returns>
-        public Transparency GetTransparency(int transparencyId) => GetObject<Transparency, Transparency>(Transparencies, transparencyId);
+        public UITransparency GetTransparency(int transparencyId) => GetObject<UITransparency, UITransparency>(Transparencies, transparencyId);
 
         /// <summary>
         /// Gets a transparency, by name.
         /// </summary>
         /// <param name="transparencyName">The name of the transparency to retrieve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns the transparency with the specified name, if present, otherwise null.</returns>
-        public Transparency GetTransparency(string transparencyName) => GetObject<Transparency, Transparency>(Transparencies, transparencyName);
+        public UITransparency GetTransparency(string transparencyName) => GetObject<UITransparency, UITransparency>(Transparencies, transparencyName);
 
 
         /// <summary>

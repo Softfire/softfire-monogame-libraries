@@ -1,11 +1,9 @@
-﻿using Softfire.MonoGame.CORE.Graphics.Drawing;
-
-namespace Softfire.MonoGame.UI.Items
+﻿namespace Softfire.MonoGame.UI.Items
 {
     /// <summary>
     /// A class for defining paddings for a ui element.
     /// </summary>
-    public class UIPadding : IMonoGameDrawingPaddingComponent
+    public class UIPadding
     {
         /// <summary>
         /// The top padding.
@@ -38,7 +36,7 @@ namespace Softfire.MonoGame.UI.Items
         /// <summary>
         /// Controls padding offsets for UI elements.
         /// </summary>
-        /// <param name="sides">The top, bottom, left and right padding offset. Intaken as an <see cref="int"/>.</param>
+        /// <param name="sides">The amount of space to add to all sides, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
         public UIPadding(int sides) : this(sides, sides, sides, sides)
         {
             
@@ -47,8 +45,8 @@ namespace Softfire.MonoGame.UI.Items
         /// <summary>
         /// Controls padding offsets for UI elements.
         /// </summary>
-        /// <param name="topBottom">The top and bottom padding offset. Intaken as an <see cref="int"/>.</param>
-        /// <param name="leftRight">The left and right padding offset. Intaken as an <see cref="int"/>.</param>
+        /// <param name="topBottom">The amount of space to add on the top and bottom, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="leftRight">The amount of space to add on the left and right, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
         public UIPadding(int topBottom, int leftRight) : this(topBottom, leftRight, topBottom, leftRight)
         {
             
@@ -57,9 +55,9 @@ namespace Softfire.MonoGame.UI.Items
         /// <summary>
         /// Controls padding offsets for UI elements.
         /// </summary>
-        /// <param name="top">The top padding offset. Intaken as an <see cref="int"/>.</param>
-        /// <param name="leftRight">The left and right padding offset. Intaken as an <see cref="int"/>.</param>
-        /// <param name="bottom">The bottom padding offset. Intaken as an <see cref="int"/>.</param>
+        /// <param name="top">The amount of space to add on the top, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="leftRight">The amount of space to add on the left and right, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="bottom">The amount of space to add on the bottom, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
         public UIPadding(int top, int leftRight, int bottom) : this(top, leftRight, bottom, leftRight)
         {
 
@@ -68,10 +66,10 @@ namespace Softfire.MonoGame.UI.Items
         /// <summary>
         /// Controls padding offsets for UI elements.
         /// </summary>
-        /// <param name="top">The top padding offset. Intaken as an <see cref="int"/>.</param>
-        /// <param name="right">The right padding offset. Intaken as an <see cref="int"/>.</param>
-        /// <param name="bottom">The bottom padding offset. Intaken as an <see cref="int"/>.</param>
-        /// <param name="left">The left padding offset. Intaken as an <see cref="int"/>.</param>
+        /// <param name="top">The amount of space to add on the top, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="right">The amount of space to add on the right, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="bottom">The amount of space to add on the bottom, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="left">The amount of space to add on the left, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
         public UIPadding(int top, int right, int bottom, int left)
         {
             Top = top >= 0 ? top : 0;
@@ -83,7 +81,7 @@ namespace Softfire.MonoGame.UI.Items
         /// <summary>
         /// Sets the element's top, bottom, left and right paddings.
         /// </summary>
-        /// <param name="sides">The padding, in pixels, to add to the top, right, bottom and left sides.</param>
+        /// <param name="sides">The amount of space to add to all sides, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
         public void SetPadding(int sides)
         {
             SetPadding(sides, sides, sides, sides);
@@ -92,8 +90,8 @@ namespace Softfire.MonoGame.UI.Items
         /// <summary>
         /// Sets the element's top, bottom, left and right paddings.
         /// </summary>
-        /// <param name="topBottom">The padding, in pixels, to add to the top and bottom sides.</param>
-        /// <param name="leftRight">The padding, in pixels, to add to the left and right sides.</param>
+        /// <param name="topBottom">The amount of space to add on the top and bottom, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="leftRight">The amount of space to add on the left and right, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
         public void SetPadding(int topBottom, int leftRight)
         {
             SetPadding(topBottom, leftRight, topBottom, leftRight);
@@ -102,10 +100,10 @@ namespace Softfire.MonoGame.UI.Items
         /// <summary>
         /// Sets the element's top, bottom, left and right paddings.
         /// </summary>
-        /// <param name="top">The padding, in pixels, to add to the top side.</param>
-        /// <param name="bottom">The padding, in pixels, to add to the bottom side.</param>
-        /// <param name="left">The padding, in pixels, to add to the left side.</param>
-        /// <param name="right">The padding, in pixels, to add to the right side.</param>
+        /// <param name="top">The amount of space to add on the top, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="right">The amount of space to add on the right, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="bottom">The amount of space to add on the bottom, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
+        /// <param name="left">The amount of space to add on the left, inside the bounds of the object. Intaken as an <see cref="int"/>.</param>
         public void SetPadding(int top, int right, int bottom, int left)
         {
             Top = top >= 0 ? top : 0;

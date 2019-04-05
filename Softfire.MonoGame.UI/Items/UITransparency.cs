@@ -1,11 +1,11 @@
 ﻿using Softfire.MonoGame.CORE.Common;
 
-namespace Softfire.MonoGame.CORE.Graphics.Drawing
+namespace Softfire.MonoGame.UI.Items
 {
     /// <summary>
     /// A transparency class for adding transparency to objects.
     /// </summary>
-    public class Transparency : IMonoGameIdentifierComponent, IMonoGameDrawingTransparencyComponent
+    public class UITransparency : IMonoGameIdentifierComponent
     {
         /// <summary>
         /// The internal transparency level value.
@@ -38,7 +38,7 @@ namespace Softfire.MonoGame.CORE.Graphics.Drawing
         /// <param name="id">A unique id. Intaken as an <see cref="int"/>.</param>
         /// <param name="name">A unique name. Intaken as a <see cref="string"/>.</param>
         /// <param name="level">The transparency level. Intaken as a <see cref="float"/>.</param>
-        public Transparency(int id, string name, float level)
+        public UITransparency(int id, string name, float level)
         {
             Id = id;
             Name = name;

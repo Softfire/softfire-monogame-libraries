@@ -112,6 +112,7 @@
     <Compile Include="Items\UIPadding.cs" />
     <Compile Include="Items\UITextBox.cs" />
     <Compile Include="Items\UIText.Effects.cs" />
+    <Compile Include="Items\UITransparency.cs" />
     <Compile Include="Shaders\UIShader.cs" />
     <Compile Include="Themes\UITheme.cs" />
     <Compile Include="Themes\UIThemeManager.cs" />

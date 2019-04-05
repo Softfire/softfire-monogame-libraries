@@ -770,7 +770,7 @@ namespace Softfire.MonoGame.UI.Items
         {
             if (IsVisible)
             {
-                #region Draw Borders
+                #region Draw Base and Borders
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
