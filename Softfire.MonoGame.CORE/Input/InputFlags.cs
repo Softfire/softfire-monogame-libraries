@@ -888,7 +888,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the keyboard flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputActionStateFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputActionStateFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputActionStateFlags flag, bool result)
@@ -904,7 +904,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputActionStateFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputActionStateFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputActionStateFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputActionStateFlags flag)
         {
@@ -914,7 +914,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputActionStateFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputActionStateFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputActionStateFlags"/> property.</param>
         public void RemoveFlag(InputActionStateFlags flag)
         {
             if (IsFlagSet(flag))
@@ -939,7 +939,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the keyboard flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardFunctionFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardFunctionFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputKeyboardFunctionFlags flag, bool result)
@@ -955,7 +955,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputKeyboardFunctionFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardFunctionFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardFunctionFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputKeyboardFunctionFlags flag)
         {
@@ -965,7 +965,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputKeyboardFunctionFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputKeyboardFunctionFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputKeyboardFunctionFlags"/> property.</param>
         public void RemoveFlag(InputKeyboardFunctionFlags flag)
         {
             if (IsFlagSet(flag))
@@ -990,7 +990,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the keyboard flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardNumPadFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardNumPadFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputKeyboardNumPadFlags flag, bool result)
@@ -1006,7 +1006,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputKeyboardNumPadFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardNumPadFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardNumPadFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputKeyboardNumPadFlags flag)
         {
@@ -1016,7 +1016,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputKeyboardNumPadFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputKeyboardNumPadFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputKeyboardNumPadFlags"/> property.</param>
         public void RemoveFlag(InputKeyboardNumPadFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1041,7 +1041,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the keyboard flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardNumberFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardNumberFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputKeyboardNumberFlags flag, bool result)
@@ -1057,7 +1057,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputKeyboardNumberFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardNumberFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardNumberFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputKeyboardNumberFlags flag)
         {
@@ -1067,7 +1067,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputKeyboardNumberFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputKeyboardNumberFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputKeyboardNumberFlags"/> property.</param>
         public void RemoveFlag(InputKeyboardNumberFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1092,7 +1092,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the keyboard flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardCommandFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputKeyboardCommandFlags flag, bool result)
@@ -1108,7 +1108,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputKeyboardCommandFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardCommandFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputKeyboardCommandFlags flag)
         {
@@ -1118,7 +1118,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputKeyboardCommandFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputKeyboardCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputKeyboardCommandFlags"/> property.</param>
         public void RemoveFlag(InputKeyboardCommandFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1143,7 +1143,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the keyboard flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardSpecialFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardSpecialFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputKeyboardSpecialFlags flag, bool result)
@@ -1159,7 +1159,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputKeyboardSpecialFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardSpecialFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardSpecialFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputKeyboardSpecialFlags flag)
         {
@@ -1169,7 +1169,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputKeyboardSpecialFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputKeyboardSpecialFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputKeyboardSpecialFlags"/> property.</param>
         public void RemoveFlag(InputKeyboardSpecialFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1194,7 +1194,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the keyboard flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardArrowFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardArrowFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputKeyboardArrowFlags flag, bool result)
@@ -1210,7 +1210,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputKeyboardArrowFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardArrowFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardArrowFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputKeyboardArrowFlags flag)
         {
@@ -1220,7 +1220,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputKeyboardArrowFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputKeyboardArrowFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputKeyboardArrowFlags"/> property.</param>
         public void RemoveFlag(InputKeyboardArrowFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1245,7 +1245,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the keyboard flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardLetterFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardLetterFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputKeyboardLetterFlags flag, bool result)
@@ -1261,7 +1261,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputKeyboardLetterFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputKeyboardLetterFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputKeyboardLetterFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputKeyboardLetterFlags flag)
         {
@@ -1271,7 +1271,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputKeyboardLetterFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputKeyboardLetterFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputKeyboardLetterFlags"/> property.</param>
         public void RemoveFlag(InputKeyboardLetterFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1296,7 +1296,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the gamepad action flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputGamepadActionFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputGamepadActionFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputGamepadActionFlags flag, bool result)
@@ -1312,7 +1312,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputGamepadActionFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputGamepadActionFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputGamepadActionFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputGamepadActionFlags flag)
         {
@@ -1322,7 +1322,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputGamepadActionFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputGamepadActionFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputGamepadActionFlags"/> property.</param>
         public void RemoveFlag(InputGamepadActionFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1347,7 +1347,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the mouse action flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputMouseActionFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputMouseActionFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputMouseActionFlags flag, bool result)
@@ -1363,7 +1363,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputMouseActionFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputMouseActionFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputMouseActionFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputMouseActionFlags flag)
         {
@@ -1373,7 +1373,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputMouseActionFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputMouseActionFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputMouseActionFlags"/> property.</param>
         public void RemoveFlag(InputMouseActionFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1398,7 +1398,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the mapped confirmation command flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputMappableConfirmationCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputMappableConfirmationCommandFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputMappableConfirmationCommandFlags flag, bool result)
@@ -1414,7 +1414,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputMappableConfirmationCommandFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputMappableConfirmationCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputMappableConfirmationCommandFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputMappableConfirmationCommandFlags flag)
         {
@@ -1424,7 +1424,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputMappableConfirmationCommandFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputMappableConfirmationCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputMappableConfirmationCommandFlags"/> property.</param>
         public void RemoveFlag(InputMappableConfirmationCommandFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1449,7 +1449,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the mapped movement command flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputMappableMovementCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputMappableMovementCommandFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputMappableMovementCommandFlags flag, bool result)
@@ -1465,7 +1465,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputMappableMovementCommandFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputMappableMovementCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputMappableMovementCommandFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputMappableMovementCommandFlags flag)
         {
@@ -1475,7 +1475,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputMappableMovementCommandFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputMappableMovementCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputMappableMovementCommandFlags"/> property.</param>
         public void RemoveFlag(InputMappableMovementCommandFlags flag)
         {
             if (IsFlagSet(flag))
@@ -1500,7 +1500,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Sets the mapped camera command flag.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputMappableCameraCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputMappableCameraCommandFlags"/> property.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>Returns the result of operation as a <see cref="bool"/>.</returns>
         public bool SetFlag(InputMappableCameraCommandFlags flag, bool result)
@@ -1516,7 +1516,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Determines whether the <see cref="InputMappableCameraCommandFlags"/> flag is set.
         /// </summary>
-        /// <param name="flag">The flag to check if it is set in the <see cref="InputMappableCameraCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to check, if set in the <see cref="InputMappableCameraCommandFlags"/> property.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the flag is set.</returns>
         public bool IsFlagSet(InputMappableCameraCommandFlags flag)
         {
@@ -1526,7 +1526,7 @@ namespace Softfire.MonoGame.CORE.Input
         /// <summary>
         /// Removes the <see cref="InputMappableCameraCommandFlags"/> flag, if set.
         /// </summary>
-        /// <param name="flag">The flag to remove if it is set in the <see cref="InputMappableCameraCommandFlags"/> property.</param>
+        /// <param name="flag">The flag to remove, if set in the <see cref="InputMappableCameraCommandFlags"/> property.</param>
         public void RemoveFlag(InputMappableCameraCommandFlags flag)
         {
             if (IsFlagSet(flag))
