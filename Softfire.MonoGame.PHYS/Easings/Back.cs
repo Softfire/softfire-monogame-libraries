@@ -14,42 +14,50 @@
 
 namespace Softfire.MonoGame.PHYS.Easings
 {
+    /// <summary>
+    /// An easing curve for a back function with an overshoot, accelerating to and from zero velocity.
+    /// </summary>
     public static class Back
     {
         /// <summary>
+        /// The In function pulls back in one direction before switching directions and accelerating.
+        /// Used to accelerate the interpolation from zero velocity.
         /// </summary>
-        /// <param name="t">Current time</param>
-        /// <param name="b">Beginning value</param>
-        /// <param name="c">Change in value</param>
-        /// <param name="d">Duration</param>
-        /// <param name="s">Overshoot</param>
-        /// <returns></returns>
+        /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
+        /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="c">The change in value to occur over the duration of the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="d">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="s">The amount to overshoot (arc) the movement during the easing. The higher the overshoot, the greater the arc. Intaken as a <see cref="double"/>.</param>
+        /// <returns>Returns the eased value as a <see cref="double"/>.</returns>
         public static double In(double t, double b, double c, double d, double s = 1.70158d)
         {
             return c * (t /= d) * t * ((s + 1) * t - s) + b;
         }
 
-        /// <summary>
+        /// <summary> 
+        /// The Out function accelerates in one direction before switching directions and decelerating.
+        /// Used to decelerate the interpolation to zero velocity.
         /// </summary>
-        /// <param name="t">Current time</param>
-        /// <param name="b">Beginning value</param>
-        /// <param name="c">Change in value</param>
-        /// <param name="d">Duration</param>
-        /// <param name="s">Overshoot</param>
-        /// <returns></returns>
+        /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
+        /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="c">The change in value to occur over the duration of the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="d">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="s">The amount to overshoot (arc) the movement during the easing. The higher the overshoot, the greater the arc. Intaken as a <see cref="double"/>.</param>
+        /// <returns>Returns the eased value as a <see cref="double"/>.</returns>
         public static double Out(double t, double b, double c, double d, double s = 1.70158d)
         {
             return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
         }
 
         /// <summary>
+        /// The InOut function performs an <see cref="In"/> then an <see cref="Out"/>.
         /// </summary>
-        /// <param name="t">Current time</param>
-        /// <param name="b">Beginning value</param>
-        /// <param name="c">Change in value</param>
-        /// <param name="d">Duration</param>
-        /// <param name="s">Overshoot</param>
-        /// <returns></returns>
+        /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
+        /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="c">The change in value to occur over the duration of the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="d">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="s">The amount to overshoot (arc) the movement during the easing. The higher the overshoot, the greater the arc. Intaken as a <see cref="double"/>.</param>
+        /// <returns>Returns the eased value as a <see cref="double"/>.</returns>
         public static double InOut(double t, double b, double c, double d, double s = 1.70158d)
         {
             if ((t /= d / 2) < 1)

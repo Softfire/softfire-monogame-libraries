@@ -91,6 +91,7 @@
     <Compile Include="Easings\Bounce.cs" />
     <Compile Include="Easings\Circ.cs" />
     <Compile Include="Easings\Cubic.cs" />
+    <Compile Include="Easings\Easing.cs" />
     <Compile Include="Easings\Elastic.cs" />
     <Compile Include="Easings\Expo.cs" />
     <Compile Include="Easings\Linear.cs" />
@@ -101,6 +102,12 @@
     <Compile Include="Particles\Particle.cs" />
     <Compile Include="Particles\ParticleEmitter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Softfire.MonoGame.CORE\Softfire.MonoGame.CORE.csproj">
+      <Project>{7513E8BC-F38E-454A-9899-22025E1C172A}</Project>
+      <Name>Softfire.MonoGame.CORE</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -17,39 +17,47 @@ using Microsoft.Xna.Framework;
 
 namespace Softfire.MonoGame.PHYS.Easings
 {
+    /// <summary>
+    /// An easing curve for a sine function, accelerating to and from zero velocity.
+    /// </summary>
     public static class Sine
     {
         /// <summary>
+        /// The In function performs a sine easing over time.
+        /// Used to accelerate the interpolation from zero velocity.
         /// </summary>
-        /// <param name="t">Current time</param>
-        /// <param name="b">Beginning value</param>
-        /// <param name="c">Change in value</param>
-        /// <param name="d">Duration</param>
-        /// <returns></returns>
+        /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
+        /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="c">The change in value to occur over the duration of the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="d">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="double"/>.</param>
+        /// <returns>Returns the eased value as a <see cref="double"/>.</returns>
         public static double In(double t, double b, double c, double d)
         {
             return -c * Math.Cos(t / d * MathHelper.PiOver2) + c + b;
         }
 
         /// <summary>
+        /// The Out function performs a sine easing over time.
+        /// Used to decelerate the interpolation to zero velocity.
         /// </summary>
-        /// <param name="t">Current time</param>
-        /// <param name="b">Beginning value</param>
-        /// <param name="c">Change in value</param>
-        /// <param name="d">Duration</param>
-        /// <returns></returns>
+        /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
+        /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="c">The change in value to occur over the duration of the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="d">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="double"/>.</param>
+        /// <returns>Returns the eased value as a <see cref="double"/>.</returns>
         public static double Out(double t, double b, double c, double d)
         {
             return c * Math.Sin(t / d * MathHelper.PiOver2) + b;
         }
 
         /// <summary>
+        /// The InOut function performs an <see cref="In"/> then an <see cref="Out"/>.
         /// </summary>
-        /// <param name="t">Current time</param>
-        /// <param name="b">Beginning value</param>
-        /// <param name="c">Change in value</param>
-        /// <param name="d">Duration</param>
-        /// <returns></returns>
+        /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
+        /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="c">The change in value to occur over the duration of the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="d">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="double"/>.</param>
+        /// <returns>Returns the eased value as a <see cref="double"/>.</returns>
         public static double InOut(double t, double b, double c, double d)
         {
             return -c / 2 * (Math.Cos(Math.PI * t / d) - 1) + b;
