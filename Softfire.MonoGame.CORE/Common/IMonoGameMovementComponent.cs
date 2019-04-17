@@ -71,6 +71,19 @@ namespace Softfire.MonoGame.CORE.Common
         void CalculateVelocity(double rotationAngleInDegrees);
 
         /// <summary>
+        /// Stabilizes <see cref="Acceleration"/> by returning <see cref="Acceleration"/> to a defined limit.
+        /// </summary>
+        /// <param name="increment">The amount to accelerate by. Intaken as a <see cref="double"/>.</param>
+        /// <param name="decrement">The amount to decelerate by. Intaken as a <see cref="double"/>.</param>
+        /// <param name="limit">The stabilization limit. Intaken as a <see cref="double"/>.</param>
+        void Stabilize(double increment, double decrement, double limit);
+
+        /// <summary>
+        /// Applies <see cref="Velocity"/> to the <see cref="MonoGameObject"/>'s position.
+        /// </summary>
+        void ApplyVelocity();
+
+        /// <summary>
         /// Moves the object by the provided deltas.
         /// </summary>
         /// <param name="deltas">Input deltas. Intaken as a <see cref="Vector2"/>.</param>

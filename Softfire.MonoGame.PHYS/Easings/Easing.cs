@@ -9,7 +9,7 @@ namespace Softfire.MonoGame.PHYS.Easings
     /// A <see cref="MonoGameObject"/> for use with demonstrating easing functions.
     /// Easing functions specify the rate of change of a parameter over time.
     /// </summary>
-    public class Easing : MonoGameObject
+    public class Easing : MonoGameObject, IMonoGameEasingComponent
     {
         /// <summary>
         /// A delegate for usage with easing's that do not have an <see cref="Overshoot"/>.
@@ -57,12 +57,7 @@ namespace Softfire.MonoGame.PHYS.Easings
         /// <summary>
         /// The easing's start position.
         /// </summary>
-        private Vector2 StartPosition { get; set; }
-
-        /// <summary>
-        /// The easing's reverse starting position.
-        /// </summary>
-        private Vector2 ReverseStartPosition { get; set; }
+        public Vector2 StartPosition { get; set; }
 
         /// <summary>
         /// The initial value of the easing.
@@ -72,17 +67,17 @@ namespace Softfire.MonoGame.PHYS.Easings
         /// <summary>
         /// The change in value of the easing.
         /// </summary>
-        public float ChangeInValue { get; set; }
+        public float ChangeInValue { get; set; } = 100f;
 
         /// <summary>
         /// The duration, in seconds, for the easing.
         /// </summary>
-        public float Duration { get; set; }
+        public float Duration { get; set; } = 2f;
 
         /// <summary>
         /// The amount to overshoot the easing.
         /// </summary>
-        public double Overshoot { get; set; }
+        public double Overshoot { get; set; } = 1.70158d;
 
         /// <summary>
         /// The amplitude changes the height of the curve for <see cref="Easings.Elastic"/>.
@@ -95,12 +90,12 @@ namespace Softfire.MonoGame.PHYS.Easings
         public double Period { get; set; }
 
         /// <summary>
-        /// Determines whether the easing is looping.
+        /// Determines whether the easing will be performed in a loop.
         /// </summary>
         public bool IsLooping { get; set; }
 
         /// <summary>
-        /// Determines whether the easing returns to it's starting position following it's easing path in reverse.
+        /// Determines whether the easing will perform a reverse easing upon completing it's loop. This is dependent on <see cref="IsLooping"/> being true.
         /// </summary>
         public bool IsReturningInReverse { get; set; }
 
@@ -114,35 +109,40 @@ namespace Softfire.MonoGame.PHYS.Easings
         /// </summary>
         private bool RecordReverseStartPosition { get; set; }
 
+        /// <summary>
+        /// The easing's reverse starting position.
+        /// </summary>
+        private Vector2 ReverseStartPosition { get; set; }
+
         /// <summary> 
         /// The current easing in use on the <see cref="MonoGameObject"/>'s X axis.
         /// </summary>
-        public Easings CurrentXAxisEasing { get; set; }
+        public Easings CurrentXAxisEasing { get; set; } = Easings.Linear;
 
         /// <summary> 
         /// The current easing option in use on the <see cref="MonoGameObject"/>'s X axis.
         /// </summary>
-        public EasingOptions CurrentXAxisEasingOption { get; set; }
+        public EasingOptions CurrentXAxisEasingOption { get; set; } = EasingOptions.In;
 
         /// <summary>
         /// The direction in which the <see cref="MonoGameObject"/>'s Y axis will be affected.
         /// </summary>
-        public EasingXAxisDirections CurrentXAxisDirection { get; set; }
-        
+        public EasingXAxisDirections CurrentXAxisDirection { get; set; } = EasingXAxisDirections.Right;
+
         /// <summary> 
         /// The current easing in use on the <see cref="MonoGameObject"/>'s Y axis.
         /// </summary>
-        public Easings CurrentYAxisEasing { get; set; }
+        public Easings CurrentYAxisEasing { get; set; } = Easings.Sine;
 
         /// <summary> 
         /// The current easing option in use on the <see cref="MonoGameObject"/>'s Y axis.
         /// </summary>
-        public EasingOptions CurrentYAxisEasingOption { get; set; }
+        public EasingOptions CurrentYAxisEasingOption { get; set; } = EasingOptions.In;
 
         /// <summary>
         /// The direction in which the <see cref="MonoGameObject"/>'s X axis will be affected.
         /// </summary>
-        public EasingYAxisDirections CurrentYAxisDirection { get; set; }
+        public EasingYAxisDirections CurrentYAxisDirection { get; set; } = EasingYAxisDirections.Up;
         
         /// <summary>
         /// The available easings to perform.
@@ -281,78 +281,12 @@ namespace Softfire.MonoGame.PHYS.Easings
         /// <param name="parent">The easing's parent object. Intaken as a <see cref="MonoGameObject"/>.</param>
         /// <param name="id">The easing's id. Intaken as a <see cref="int"/>.</param>
         /// <param name="name">The easing's name. Intaken as a <see cref="string"/>.</param>
-        /// <param name="initialValue">The initial starting value for the easing. Intaken as a <see cref="float"/>.</param>
-        /// <param name="changeInValue">The change in value to occur over the duration of the easing. Intaken as a <see cref="float"/>.</param>
-        /// <param name="easingXAxis">The <see cref="Easings"/> to use on the parent <see cref="MonoGameObject"/>'s X axis. Intaken as a <see cref="Easings"/>.</param>
-        /// <param name="easingXAxisOption">The <see cref="EasingOptions"/> to use with the <see cref="CurrentXAxisEasing"/>. Intaken as a <see cref="EasingOptions"/>.</param>
-        /// <param name="easingXAxisDirection">The <see cref="EasingXAxisDirections"/> to define the direction the easing will travel along the X axis. Intaken as a <see cref="EasingXAxisDirections"/>.</param>
-        /// <param name="easingYAxis">The <see cref="Easings"/> to use on the parent <see cref="MonoGameObject"/>'s Y axis. Intaken as a <see cref="Easings"/>.</param>
-        /// <param name="easingYAxisOption">The <see cref="EasingOptions"/> to use with the <see cref="CurrentYAxisEasing"/>. Intaken as a <see cref="EasingOptions"/>.</param>
-        /// <param name="easingYAxisDirection">The <see cref="EasingYAxisDirections"/> to define the direction the easing will travel along the Y axis. Intaken as a <see cref="EasingYAxisDirections"/>.</param>
-        /// <param name="overshoot">The amount to overshoot (arc) the movement during the <see cref="Easings.Back"/> easing. The higher the overshoot, the greater the arc. Intaken as a <see cref="double"/>.</param>
-        /// <param name="amplitude">The amplitude changes the height of the curve for <see cref="Easings.Elastic"/>. Intaken as a <see cref="double"/>.</param>
-        /// <param name="period">The period slows the rate of elastic bounce for <see cref="Easings.Elastic"/>. Intaken as a <see cref="double"/>.</param>
-        /// <param name="duration">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="float"/>.</param>
-        /// <param name="isLooping">Determines whether the easing will be performed in a loop. Intaken as a <see cref="bool"/>.</param>
-        /// <param name="isReturningInReverse">Determines whether the easing will perform a reverse easing upon completing it's loop. This is dependent on <see cref="IsLooping"/> being true. Intaken as a <see cref="bool"/>.</param>
-        /// <remarks>For use with <see cref="MonoGameObject"/>'s with their own textures and positions.</remarks>
-        public Easing(MonoGameObject parent, int id, string name, float initialValue = 0f, float changeInValue = 100f,
-                      Easings easingXAxis = Easings.Linear, EasingOptions easingXAxisOption = EasingOptions.In, EasingXAxisDirections easingXAxisDirection = EasingXAxisDirections.Right,
-                      Easings easingYAxis = Easings.Sine, EasingOptions easingYAxisOption = EasingOptions.In, EasingYAxisDirections easingYAxisDirection = EasingYAxisDirections.Up,
-                      double overshoot = 1.70158d, double amplitude = 0d, double period = 0d, float duration = 2.0f,
-                      bool isLooping = true, bool isReturningInReverse = true) : this(parent, id, name, null, parent.Transform.WorldPosition(), initialValue, changeInValue,
-                                                                                      easingXAxis, easingXAxisOption, easingXAxisDirection,
-                                                                                      easingYAxis, easingYAxisOption, easingYAxisDirection,
-                                                                                      overshoot, amplitude, period, duration,
-                                                                                      isLooping, isReturningInReverse)
-        {
-        }
-
-        /// <summary>
-        /// An easing demonstrating movement over time.
-        /// </summary>
-        /// <param name="parent">The easing's parent object. Intaken as a <see cref="MonoGameObject"/>.</param>
-        /// <param name="id">The easing's id. Intaken as a <see cref="int"/>.</param>
-        /// <param name="name">The easing's name. Intaken as a <see cref="string"/>.</param>
         /// <param name="texturePath">The easing's texture file path. Intaken as a <see cref="string"/>.</param>
         /// <param name="startPosition">The easing's starting position. Intaken as a <see cref="Vector2"/>.</param>
-        /// <param name="initialValue">The initial starting value for the easing. Intaken as a <see cref="float"/>.</param>
-        /// <param name="changeInValue">The change in value to occur over the duration of the easing. Intaken as a <see cref="float"/>.</param>
-        /// <param name="easingXAxis">The <see cref="Easings"/> to use on the parent <see cref="MonoGameObject"/>'s X axis. Intaken as a <see cref="Easings"/>.</param>
-        /// <param name="easingXAxisOption">The <see cref="EasingOptions"/> to use with the <see cref="CurrentXAxisEasing"/>. Intaken as a <see cref="EasingOptions"/>.</param>
-        /// <param name="easingXAxisDirection">The <see cref="EasingXAxisDirections"/> to define the direction the easing will travel along the X axis. Intaken as a <see cref="EasingXAxisDirections"/>.</param>
-        /// <param name="easingYAxis">The <see cref="Easings"/> to use on the parent <see cref="MonoGameObject"/>'s Y axis. Intaken as a <see cref="Easings"/>.</param>
-        /// <param name="easingYAxisOption">The <see cref="EasingOptions"/> to use with the <see cref="CurrentYAxisEasing"/>. Intaken as a <see cref="EasingOptions"/>.</param>
-        /// <param name="easingYAxisDirection">The <see cref="EasingYAxisDirections"/> to define the direction the easing will travel along the Y axis. Intaken as a <see cref="EasingYAxisDirections"/>.</param>
-        /// <param name="overshoot">The amount to overshoot (arc) the movement during the <see cref="Easings.Back"/> easing. The higher the overshoot, the greater the arc. Intaken as a <see cref="double"/>.</param>
-        /// <param name="amplitude">The amplitude changes the height of the curve for <see cref="Easings.Elastic"/>. Intaken as a <see cref="double"/>.</param>
-        /// <param name="period">The period slows the rate of elastic bounce for <see cref="Easings.Elastic"/>. Intaken as a <see cref="double"/>.</param>
-        /// <param name="duration">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="float"/>.</param>
-        /// <param name="isLooping">Determines whether the easing will be performed in a loop. Intaken as a <see cref="bool"/>.</param>
-        /// <param name="isReturningInReverse">Determines whether the easing will perform a reverse easing upon completing it's loop. This is dependent on <see cref="IsLooping"/> being true. Intaken as a <see cref="bool"/>.</param>
-        /// <remarks>For demonstration purposes only. Call <see cref="LoadContent(ContentManager)"/> to load <see cref="Texture"/> and then <see cref="Draw(SpriteBatch, Matrix)"/> to draw a demonstration of the easing.</remarks>
-        public Easing(MonoGameObject parent, int id, string name, string texturePath, Vector2 startPosition, float initialValue = 0f, float changeInValue = 100f,
-                      Easings easingXAxis = Easings.Linear, EasingOptions easingXAxisOption = EasingOptions.In, EasingXAxisDirections easingXAxisDirection = EasingXAxisDirections.Right,
-                      Easings easingYAxis = Easings.Sine, EasingOptions easingYAxisOption = EasingOptions.In, EasingYAxisDirections easingYAxisDirection = EasingYAxisDirections.Up,
-                      double overshoot = 1.70158d, double amplitude = 0d, double period = 0d, float duration = 2.0f,
-                      bool isLooping = true, bool isReturningInReverse = true) : base(parent, id, name, startPosition)
+        public Easing(MonoGameObject parent, int id, string name, Vector2 startPosition, string texturePath = null) : base(parent, id, name, startPosition)
         {
             TexturePath = texturePath;
             StartPosition = startPosition;
-            InitialValue = initialValue;
-            ChangeInValue = changeInValue;
-            CurrentXAxisEasing = easingXAxis;
-            CurrentXAxisEasingOption = easingXAxisOption;
-            CurrentXAxisDirection = easingXAxisDirection;
-            CurrentYAxisEasing = easingYAxis;
-            CurrentYAxisEasingOption = easingYAxisOption;
-            CurrentYAxisDirection = easingYAxisDirection;
-            Duration = duration;
-            Overshoot = overshoot;
-            Amplitude = amplitude;
-            Period = period;
-            IsLooping = isLooping;
-            IsReturningInReverse = isReturningInReverse;
         }
 
         #region Easing Actions
@@ -371,7 +305,6 @@ namespace Softfire.MonoGame.PHYS.Easings
             }
 
             var position = IsLooping && IsReturningInReverse && IsInReverse ? ReverseStartPosition : StartPosition;
-
 
             if (axis == Axis.X)
             {
