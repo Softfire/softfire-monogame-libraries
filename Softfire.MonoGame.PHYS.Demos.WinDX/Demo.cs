@@ -120,15 +120,39 @@ namespace Softfire.MonoGame.PHYS.Demos.WinDX
             window.AddText("OutTitle", font, "Out", new Vector2(-104, 10));
             window.AddText("InOutTitle", font, "In/Out", new Vector2(-95, 44));
 
-            window.AddContent(new Easing(window, 1, "In", "Point", new Vector2(-60, -28),
-                                         easingXAxis: easingXAxis, easingXAxisOption: Easing.EasingOptions.In, easingXAxisDirection: easingXAxisDirection,
-                                         easingYAxis: easingYAxis, easingYAxisOption: easingYAxisOption, easingYAxisDirection: easingYAxisDirection), Content);
-            window.AddContent(new Easing(window, 2, "Out", "Point", new Vector2(-60, 0),
-                                         easingXAxis: easingXAxis, easingXAxisOption: Easing.EasingOptions.Out, easingXAxisDirection: easingXAxisDirection,
-                                         easingYAxis: easingYAxis, easingYAxisOption: easingYAxisOption, easingYAxisDirection: easingYAxisDirection), Content);
-            window.AddContent(new Easing(window, 3, "InOut", "Point", new Vector2(-50, 40),
-                                         easingXAxis: easingXAxis, easingXAxisOption: Easing.EasingOptions.InOut, easingXAxisDirection: easingXAxisDirection,
-                                         easingYAxis: easingYAxis, easingYAxisOption: easingYAxisOption, easingYAxisDirection: easingYAxisDirection), Content);
+            window.AddContent(new Easing(window, 1, "In", new Vector2(-60, -28), "Point")
+            {
+                CurrentXAxisEasing = easingXAxis,
+                CurrentXAxisEasingOption = Easing.EasingOptions.In,
+                CurrentXAxisDirection = easingXAxisDirection,
+                CurrentYAxisEasing = easingYAxis,
+                CurrentYAxisEasingOption = easingYAxisOption,
+                CurrentYAxisDirection = easingYAxisDirection,
+                IsLooping = true,
+                IsReturningInReverse = true
+            }, Content);
+            window.AddContent(new Easing(window, 2, "Out", new Vector2(-60, 0), "Point")
+            {
+                CurrentXAxisEasing = easingXAxis,
+                CurrentXAxisEasingOption = Easing.EasingOptions.Out,
+                CurrentXAxisDirection = easingXAxisDirection,
+                CurrentYAxisEasing = easingYAxis,
+                CurrentYAxisEasingOption = easingYAxisOption,
+                CurrentYAxisDirection = easingYAxisDirection,
+                IsLooping = true,
+                IsReturningInReverse = true
+            }, Content);
+            window.AddContent(new Easing(window, 3, "InOut", new Vector2(-50, 40), "Point")
+            {
+                CurrentXAxisEasing = easingXAxis,
+                CurrentXAxisEasingOption = Easing.EasingOptions.InOut,
+                CurrentXAxisDirection = easingXAxisDirection,
+                CurrentYAxisEasing = easingYAxis,
+                CurrentYAxisEasingOption = easingYAxisOption,
+                CurrentYAxisDirection = easingYAxisDirection,
+                IsLooping = true,
+                IsReturningInReverse = true
+            }, Content);
         }
 
         /// <summary>
