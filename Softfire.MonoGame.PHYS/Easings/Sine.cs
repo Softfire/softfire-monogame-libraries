@@ -62,5 +62,23 @@ namespace Softfire.MonoGame.PHYS.Easings
         {
             return -c / 2 * (Math.Cos(Math.PI * t / d) - 1) + b;
         }
+
+        /// <summary>
+        /// The OutIn function performs an <see cref="Out"/> then an <see cref="In"/>.
+        /// </summary>
+        /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
+        /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="c">The change in value to occur over the duration of the easing. Intaken as a <see cref="double"/>.</param>
+        /// <param name="d">The amount of time, in seconds, to perform the easing. Intaken as a <see cref="double"/>.</param>
+        /// <returns>Returns the eased value as a <see cref="double"/>.</returns>
+        public static double OutIn(double t, double b, double c, double d)
+        {
+            if (t < d / 2)
+            {
+                return Out(t * 2, b, c / 2, d);
+            }
+
+            return In((t * 2) - d, b + c / 2, c / 2, d);
+        }
     }
 }
