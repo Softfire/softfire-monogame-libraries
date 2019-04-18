@@ -242,7 +242,7 @@ namespace Softfire.MonoGame.CORE
         /// <summary>
         /// Determines whether the rectangle is entirely contained within.
         /// </summary>
-        /// <param name="rectangle">The see <cref="RectangleF"/> to check if contained within.</param>
+        /// <param name="rectangle">The see <see cref="RectangleF"/> to check if contained within.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the rectangle is contained within.</returns>
         public bool Contains(RectangleF rectangle) => X <= rectangle.X &&
                                                       rectangle.X + rectangle.Width <= X + Width &&
