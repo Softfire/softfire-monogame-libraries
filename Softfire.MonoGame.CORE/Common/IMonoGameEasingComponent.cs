@@ -5,7 +5,7 @@ namespace Softfire.MonoGame.CORE.Common
     /// <summary>
     /// An interface for defining an easing.
     /// </summary>
-    public interface IMonoGameEasingComponent
+    public interface IMonoGameEasingComponent : IMonoGame2DComponent
     {
         /// <summary>
         /// The easing's start position.
