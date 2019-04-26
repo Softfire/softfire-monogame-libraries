@@ -123,6 +123,7 @@
     <Compile Include="Input\InputFlags.cs" />
     <Compile Include="Input\InputStates.cs" />
     <Compile Include="Common\Movement.cs" />
+    <Compile Include="Physics\EasingEnums.cs" />
     <Compile Include="RectangleF.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Size.cs" />
