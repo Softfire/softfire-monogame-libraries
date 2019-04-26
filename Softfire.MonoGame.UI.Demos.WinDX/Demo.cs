@@ -100,8 +100,8 @@ namespace Softfire.MonoGame.UI.Demos.WinDX
 
             // TODO: Step 5.2: Windows.
             // A window contains many types of items.
-            UIManager.GetGroup("Demo").AddWindow("WindowOne", new Vector2(-180, 50));
-            UIManager.GetGroup("Demo").AddWindow("WindowTwo", new Vector2(180, 50));
+            UIManager.GetGroup("Demo").AddWindow("WindowOne", new Vector2(-180, 50), 300, 300);
+            UIManager.GetGroup("Demo").AddWindow("WindowTwo", new Vector2(180, 50), 300, 300);
 
             // TODO: Step 5.2.1: Enabling Windows to move.
             UIManager.GetGroup("Demo").GetWindow("WindowOne").IsMovable = true;

@@ -65,13 +65,13 @@ namespace Softfire.MonoGame.UI
             IOManager.InputMovementHandler += OnFocus;
 
             // Register scrolling event.
-            IOManager.InputScrollHandler += OnScroll;
+            IOManager.InputScrollHandler += OnScrollHovered;
 
             // Register input events.
             IOManager.InputPressHandler += OnTab;
-            IOManager.InputPressHandler += OnPress;
-            IOManager.InputReleaseHandler += OnRelease;
-            IOManager.InputHeldHandler += OnHeld;
+            IOManager.InputPressHandler += OnPressHovered;
+            IOManager.InputReleaseHandler += OnReleaseHovered;
+            IOManager.InputHeldHandler += OnHeldHovered;
         }
 
         #region Windows
@@ -83,13 +83,13 @@ namespace Softfire.MonoGame.UI
         /// <param name="position">The window's position offset from the center of the screen. Intaken as a <see cref="Vector2"/>.</param>
         /// <param name="viewWidth">The window's view width. Intaken as an <see cref="int"/>.</param>
         /// <param name="viewHeight">The window's view height. Intaken as an <see cref="int"/>.</param>
-        /// <param name="worldWidth">the window's world width. Intaken as an <see cref="int"/>.</param>
-        /// <param name="worldHeight">the window's world height. Intaken as an <see cref="int"/>.</param>
+        /// <param name="worldWidth">the window's world width that is to be extended beyond the viewWidth of the window. Intaken as an <see cref="int"/>.</param>
+        /// <param name="worldHeight">the window's world height that is to be extended beyond the viewHeight of the window. Intaken as an <see cref="int"/>.</param>
         /// <param name="borderThickness">The window's border thickness. Intaken as an <see cref="int"/>. Set to 0 to disable borders.</param>
         /// <param name="isVisible">The window's visibility. Intaken as a <see cref="bool"/>.</param>
         /// <returns>Returns the window id of the newly added window as an int.</returns>
-        public int AddWindow(string name, Vector2 position = default, int viewWidth = 300, int viewHeight = 300,
-                             int worldWidth = 0, int worldHeight = 150, int borderThickness = 10, bool isVisible = true)
+        public int AddWindow(string name, Vector2 position = default, int viewWidth = 200, int viewHeight = 100,
+                             int worldWidth = 0, int worldHeight = 0, int borderThickness = 10, bool isVisible = true)
         {
             var nextWindowId = 0;
 
@@ -179,11 +179,11 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// The subscription method to action when the object is scrolled.
+        /// The subscription method to action when the object is scrolled, by an input device with a pointer such as a mouse or gamepad.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
-        private void OnScroll(object sender, InputEventArgs args)
+        private void OnScrollHovered(object sender, InputEventArgs args)
         {
             foreach (var window in Children)
             {
@@ -198,7 +198,23 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// The subscription method to action when the object gains focus.
+        /// The subscription method to action when the object is scrolled.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnScroll(object sender, InputEventArgs args)
+        {
+            foreach (var window in Children)
+            {
+                window.CheckForFocus(Children, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
+                                                     args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
+                                                     args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                window.OnScroll(sender, args);
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object gains focus, by an input device with a pointer such as a mouse or gamepad.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
@@ -206,7 +222,7 @@ namespace Softfire.MonoGame.UI
         {
             foreach (var window in Children)
             {
-                window.OnFocus(sender, args);
+                window.OnFocusHovered(sender, args);
             }
         }
 
@@ -224,11 +240,11 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// The subscription method to action when the object detects a press action.
+        /// The subscription method to action when the object detects an input has been pressed, by an input device with a pointer such as a mouse or gamepad.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
-        private void OnPress(object sender, InputEventArgs args)
+        private void OnPressHovered(object sender, InputEventArgs args)
         {
             foreach (var window in Children)
             {
@@ -249,11 +265,33 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// The subscription method to action when the object detects a click has been released.
+        /// The subscription method to action when the object detects an input has been pressed.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
-        private void OnRelease(object sender, InputEventArgs args)
+        private void OnPress(object sender, InputEventArgs args)
+        {
+            foreach (var window in Children)
+            {
+                window.CheckForFocus(Children, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
+                                                     args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
+                                                     args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                window.OnPress(sender, args);
+
+                if (window.IsStateSet(FocusStates.IsFocused))
+                {
+                    // Set tab order to currently focused window.
+                    CurrentTabOrderId = window.TabOrder;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been released, by an input device with a pointer such as a mouse or gamepad.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnReleaseHovered(object sender, InputEventArgs args)
         {
             foreach (var window in Children)
             {
@@ -268,7 +306,39 @@ namespace Softfire.MonoGame.UI
         }
 
         /// <summary>
-        /// The subscription method to action when the object detects a click has been held.
+        /// The subscription method to action when the object detects an input has been released.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnRelease(object sender, InputEventArgs args)
+        {
+            foreach (var window in Children)
+            {
+                window.CheckForFocus(Children, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
+                                                     args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
+                                                     args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                window.OnRelease(sender, args);
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been held, by an input device with a pointer such as a mouse or gamepad.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnHeldHovered(object sender, InputEventArgs args)
+        {
+            foreach (var window in Children)
+            {
+                if (window.IsStateSet(FocusStates.IsHovered))
+                {
+                    window.OnHeldHovered(sender, args);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been held.
         /// </summary>
         /// <param name="sender">The subscribed object.</param>
         /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
@@ -276,7 +346,7 @@ namespace Softfire.MonoGame.UI
         {
             foreach (var window in Children)
             {
-                window.OnHeldHovered(sender, args);
+                window.OnHeld(sender, args);
             }
         }
 
