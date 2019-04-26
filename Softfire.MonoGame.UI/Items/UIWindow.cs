@@ -508,17 +508,13 @@ namespace Softfire.MonoGame.UI.Items
         /// </summary>
         /// <typeparam name="T">An object derivative of a <see cref="MonoGameObject"/>.</typeparam>
         /// <param name="content">The content to add. A derivative of <see cref="MonoGameObject"/>.</param>
-        /// <param name="contentManager">The <see cref="ContentManager"/> for the content.</param>
         /// <returns>Returns the content's id, if the content has been added, otherwise zero.</returns>
-        public int AddContent<T>(T content, ContentManager contentManager) where T : MonoGameObject
+        public int AddContent<T>(T content) where T : MonoGameObject
         {
             if (!ContentExists<T>(content.Name) &&
-                !ContentExists<T>(content.Id) &&
-                contentManager != null)
+                !ContentExists<T>(content.Id))
             {
                 content.Transform.Parent = Transform;
-                content.LoadContent(contentManager);
-
                 Children.Add(content);
 
                 return content.Id;
