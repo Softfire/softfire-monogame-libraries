@@ -116,7 +116,7 @@ namespace Softfire.MonoGame.ANIM
         public AnimationAction GetAction(int id) => Identities.GetObject<AnimationAction, AnimationAction>(StoredActions, id);
 
         /// <summary>
-        /// Retrieves an <see cref="AnimationAction"/>, by id.
+        /// Retrieves an <see cref="AnimationAction"/>, by name.
         /// </summary>
         /// <param name="name">The name of the <see cref="AnimationAction"/> to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the requested <see cref="AnimationAction"/>, by id, if found, otherwise null.</returns>
@@ -183,6 +183,21 @@ namespace Softfire.MonoGame.ANIM
         public bool RemoveAction(string name) => Identities.RemoveObject<AnimationAction, AnimationAction>(StoredActions, name);
 
         #endregion
+
+        /// <summary>
+        /// Pushes the animation on to the <see cref="MonoGameObject.HoverStack"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of <see cref="MonoGameObject"/>.</typeparam>
+        /// <param name="animation">The animation to push on to the <see cref="MonoGameObject.HoverStack"/>.</param>
+        public override void RiseUp<T>(T animation)
+        {
+            if (!animation.IsStateSet(FocusStates.IsHovered))
+            {
+                animation.AddState(FocusStates.IsHovered);
+            }
+
+            HoverStack.Push(animation);
+        }
 
         /// <summary>
         /// Loads the <see cref="Animation"/>'s texture and color data.
