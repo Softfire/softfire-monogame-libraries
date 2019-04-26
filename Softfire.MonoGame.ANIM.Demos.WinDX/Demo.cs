@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Softfire.MonoGame.ANIM.Demos.WinDX.Animations.Ships;
+using Softfire.MonoGame.CORE;
+using Softfire.MonoGame.CORE.Common;
+using Softfire.MonoGame.CORE.Input;
+using Softfire.MonoGame.IO;
 
 namespace Softfire.MonoGame.ANIM.Demos.WinDX
 {
@@ -14,6 +17,8 @@ namespace Softfire.MonoGame.ANIM.Demos.WinDX
         private SpriteBatch spriteBatch;
 
         private AnimationManager AnimationManager { get; set; }
+
+        private IOManager Input { get; set; }
 
         public Demo()
         {
@@ -30,6 +35,8 @@ namespace Softfire.MonoGame.ANIM.Demos.WinDX
         protected override void Initialize()
         {
             AnimationManager = new AnimationManager(graphics.GraphicsDevice, Content);
+            Input = new IOManager();
+            Input.SetInputInUse(InputsInUse.KeyboardAndMouse);
 
             base.Initialize();
         }
@@ -40,9 +47,11 @@ namespace Softfire.MonoGame.ANIM.Demos.WinDX
         /// </summary>
         protected override void LoadContent()
         {
-            AnimationManager.LoadAnimation(new Ship(null, 1, "Cutler", @"Sprites\Ships\SS_Cutler", new Vector2(32), 64, 64));
-            AnimationManager.GetAnimation<Ship>(1).AddAction("Idle", new Vector2(0, 0), 64, 64,8, .06f);
-            AnimationManager.GetAnimation<Ship>(1).AddAction("Up", new Vector2(0, 64), 64, 64, 8, .06f);
+            var ship = new Ship(null, 1, "Cutler", @"Sprites\Ships\SS_Cutler", new Vector2(128), 64, 64);
+            AnimationManager.LoadAnimation(ship);
+            ship.AddAction("Idle", new Vector2(0, 0), 64, 64,8, .06f);
+            ship.AddAction("Up", new Vector2(0, 64), 64, 64, 8, .06f);
+            ship.Movement.SetBounds(new RectangleF(0, 0, 640, 700));
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -66,26 +75,83 @@ namespace Softfire.MonoGame.ANIM.Demos.WinDX
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            Input.Update(gameTime);
+
+            var ship = AnimationManager.GetAnimation<Ship>(1);
+
+            if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.WKey) == InputActionStateFlags.Idle &&
+                ship.Events.InputStates.GetState(InputKeyboardLetterFlags.AKey) == InputActionStateFlags.Idle &&
+                ship.Events.InputStates.GetState(InputKeyboardLetterFlags.SKey) == InputActionStateFlags.Idle &&
+                ship.Events.InputStates.GetState(InputKeyboardLetterFlags.DKey) == InputActionStateFlags.Idle)
+            {
+                if (!ship.GetAction("Idle").IsActive)
+                {
+                    ship.StopAllActions();
+                    ship.StartAction("Idle");
+                }
+
+                if (ship.Movement.MovementType == Movement.MovementTypes.Velocity)
+                {
+                    ship.Movement.Stabilize(1d, 1d, 0d);
+                }
+            }
+
+            if (ship.Movement.MovementType == Movement.MovementTypes.Fixed)
+            {
+                ship.StopAllActions();
+                ship.StartAction("Up");
+
+                if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.WKey) == InputActionStateFlags.Press)
+                {
+                    ship.Movement.Move(new Vector2(0, -64));
+                }
+
+                if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.AKey) == InputActionStateFlags.Press)
+                {
+                    ship.Movement.Move(new Vector2(-64, 0));
+                }
+
+                if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.SKey) == InputActionStateFlags.Press)
+                {
+                    ship.Movement.Move(new Vector2(0, 64));
+                }
+
+                if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.DKey) == InputActionStateFlags.Press)
+                {
+                    ship.Movement.Move(new Vector2(64, 0));
+                }
+            }
+
+            if (ship.Movement.MovementType == Movement.MovementTypes.Velocity)
+            {
+                if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.WKey) == InputActionStateFlags.Held)
+                {
+                    ship.StopAllActions();
+                    ship.StartAction("Up");
+                    ship.Movement.Accelerate(1d);
+                }
+
+                if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.AKey) == InputActionStateFlags.Held)
+                {
+                    ship.Movement.RotateCounterClockwise(1d);
+                }
+
+                if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.SKey) == InputActionStateFlags.Held)
+                {
+                    ship.Movement.Decelerate(2d);
+                }
+
+                if (ship.Events.InputStates.GetState(InputKeyboardLetterFlags.DKey) == InputActionStateFlags.Held)
+                {
+                    ship.Movement.RotateClockwise(1d);
+                }
+
+                ship.Movement.CalculateVelocity();
+                ship.Movement.ApplyVelocity();
+            }
+
             AnimationManager.Update(gameTime);
 
-            if (Keyboard.GetState().IsKeyUp(Keys.Up))
-            {
-                if (!AnimationManager.GetAnimation<Ship>(1).GetAction("Idle").IsActive)
-                {
-                    AnimationManager.GetAnimation<Ship>(1).StopAllActions();
-                    AnimationManager.GetAnimation<Ship>(1).StartAction("Idle");
-                }
-            }
-            else
-            {
-                if (AnimationManager.GetAnimation<Ship>(1).GetAction("Idle").IsActive)
-                {
-                    AnimationManager.GetAnimation<Ship>(1).StopAction("Idle");
-                }
-
-                AnimationManager.GetAnimation<Ship>(1).StartAction("Up");
-            }
-            
             base.Update(gameTime);
         }
 
