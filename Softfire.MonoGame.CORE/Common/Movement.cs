@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Softfire.MonoGame.CORE.Common
@@ -39,10 +40,40 @@ namespace Softfire.MonoGame.CORE.Common
         /// </summary>
         public RectangleF Bounds { get; private set; } = RectangleF.Empty;
 
+        /// <summary>
+        /// The <see cref="MonoGameObject"/>'s movement easings.
+        /// </summary>
+        private List<IMonoGameEasingComponent> Easings { get; set; } = new List<IMonoGameEasingComponent>();
+
+        /// <summary>
+        /// The <see cref="MovementType"/> in effect for the parent <see cref="MonoGameObject"/>.
+        /// </summary>
+        public MovementTypes MovementType { get; set; }
+
+        /// <summary>
+        /// The possible types of movement available to the <see cref="MonoGameObject"/>.
+        /// <see cref="Fixed"/> 
+        /// </summary>
+        public enum MovementTypes
+        {
+            /// <summary>
+            /// For moving the <see cref="MonoGameObject"/> by accelerating and decelerating over time.
+            /// </summary>
+            Velocity,
+            /// <summary>
+            /// For moving the <see cref="MonoGameObject"/>'s position by a set amount along the X and Y axis.
+            /// </summary>
+            Fixed,
+            /// <summary>
+            /// For moving the <see cref="MonoGameObject"/> by physics along the X and Y axis.
+            /// </summary>
+            Physics
+        }
+
         #endregion
 
         /// <summary>
-        /// A class for applying movement to a <see cref="MonoGameObject"/> by calculating and applying <see cref="Velocity"/>.
+        /// A class for applying movement to a <see cref="MonoGameObject"/>.
         /// </summary>
         /// <param name="parent">The <see cref="MonoGameObject"/> to apply movement.</param>
         public Movement(MonoGameObject parent)
@@ -71,7 +102,7 @@ namespace Softfire.MonoGame.CORE.Common
 
         #endregion
 
-        #region Acceleration & Velocity
+        #region Acceleration
 
         /// <summary>
         /// Increases the rate at which the <see cref="MonoGameObject"/> changes it's <see cref="Velocity"/>.
@@ -127,6 +158,10 @@ namespace Softfire.MonoGame.CORE.Common
             }
         }
 
+        #endregion
+
+        #region Velocity
+
         /// <summary>
         /// Calculates <see cref="Velocity"/> based on rotation angle of the object and <see cref="Acceleration"/>.
         /// </summary>
@@ -164,10 +199,18 @@ namespace Softfire.MonoGame.CORE.Common
                 Accelerate(increment, limit);
             }
         }
-        
+
+        /// <summary>
+        /// Applies <see cref="Velocity"/> to the <see cref="MonoGameObject"/>'s position.
+        /// </summary>
+        public void ApplyVelocity()
+        {
+            Move(Velocity);
+        }
+
         #endregion
 
-        #region Movement
+        #region Fixed
 
         /// <summary>
         /// Moves the <see cref="MonoGameObject"/>, by the provided deltas, within the set <see cref="Bounds"/>.
@@ -176,47 +219,50 @@ namespace Softfire.MonoGame.CORE.Common
         /// <param name="useExtendedRectangle">Determines whether to use the <see cref="MonoGameObject"/>'s extended or standard rectangle.</param>
         public void Move(Vector2 deltas, bool useExtendedRectangle = true)
         {
-            var position = Parent.Transform.Position;
-            var rectangle = useExtendedRectangle ? Parent.ExtendedRectangle : Parent.Rectangle;
-
-            if (!Bounds.Equals(RectangleF.Empty))
+            if (Parent != null)
             {
-                // Top & Bottom
-                if (rectangle.Top + deltas.Y <= Bounds.Y)
+                var position = Parent.Transform.Position;
+                var rectangle = useExtendedRectangle ? Parent.ExtendedRectangle : Parent.Rectangle;
+
+                if (!Bounds.Equals(RectangleF.Empty))
                 {
-                    position.Y -= rectangle.Top;
+                    // Top & Bottom
+                    if (rectangle.Top + deltas.Y <= Bounds.Y)
+                    {
+                        position.Y -= rectangle.Top;
+                    }
+                    else if (rectangle.Top + deltas.Y > Bounds.Y &&
+                             rectangle.Bottom + deltas.Y < Bounds.Height)
+                    {
+                        position.Y += deltas.Y;
+                    }
+                    else if (rectangle.Bottom + deltas.Y >= Bounds.Height)
+                    {
+                        position.Y += Bounds.Height - rectangle.Bottom;
+                    }
+
+                    // Right & Left
+                    if (rectangle.Left + deltas.X <= Bounds.X)
+                    {
+                        position.X -= rectangle.Left;
+                    }
+                    else if (rectangle.Left + deltas.X > Bounds.X &&
+                             rectangle.Right + deltas.X < Bounds.Width)
+                    {
+                        position.X += deltas.X;
+                    }
+                    else if (rectangle.Right + deltas.X >= Bounds.Width)
+                    {
+                        position.X += Bounds.Width - rectangle.Right;
+                    }
                 }
-                else if (rectangle.Top + deltas.Y > Bounds.Y &&
-                         rectangle.Bottom + deltas.Y < Bounds.Height)
+                else
                 {
-                    position.Y += deltas.Y;
-                }
-                else if (rectangle.Bottom + deltas.Y >= Bounds.Height)
-                {
-                    position.Y += Bounds.Height - rectangle.Bottom;
+                    position += deltas;
                 }
 
-                // Right & Left
-                if (rectangle.Left + deltas.X <= Bounds.X)
-                {
-                    position.X -= rectangle.Left;
-                }
-                else if (rectangle.Left + deltas.X > Bounds.X &&
-                         rectangle.Right + deltas.X < Bounds.Width)
-                {
-                    position.X += deltas.X;
-                }
-                else if (rectangle.Right + deltas.X >= Bounds.Width)
-                {
-                    position.X += Bounds.Width - rectangle.Right;
-                }
+                Parent.Transform.Position = position;
             }
-            else
-            {
-                position += deltas;
-            }
-
-            Parent.Transform.Position = position;
         }
 
         /// <summary>
@@ -227,15 +273,56 @@ namespace Softfire.MonoGame.CORE.Common
         /// <param name="useExtendedRectangle">Determines whether to use the <see cref="IMonoGame2DComponent"/>'s extended or standard rectangle.</param>
         public static void Move(IMonoGame2DComponent objectToMove, Vector2 deltas, bool useExtendedRectangle = true) => objectToMove?.Movement.Move(deltas, useExtendedRectangle);
 
+        #endregion
+
+        #region Easings
+
         /// <summary>
-        /// Applies <see cref="Velocity"/> to the <see cref="MonoGameObject"/>'s position.
+        /// Adds an easing to the <see cref="MonoGameObject"/>.
+        /// The easing can be used to move the <see cref="MonoGameObject"/> a number of ways along the X and Y axis.
         /// </summary>
-        public void ApplyVelocity()
+        /// <param name="easing">The easing to add. Use {Softfire.MonoGame.PHYS.Easings.Easing} for the easing.</param>
+        /// <returns>Returns a <see cref="bool"/> defining whether the easing was added.</returns>
+        public bool AddEasing<T>(T easing) where T : class, IMonoGameEasingComponent
         {
-            if (Parent != null)
+            if (!Identities.ObjectExists<IMonoGameEasingComponent, T>(Easings, easing.Name))
             {
-                Parent.Transform.Position += Velocity;
+                Easings.Add(easing);
+                return true;
             }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Retrieves an easing, by name.
+        /// </summary>
+        /// <typeparam name="T">The easing type to retrieve.</typeparam>
+        /// <param name="name">The name used to retrieve the easing. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns the requested easing by name, otherwise null.</returns>
+        public T GetEasing<T>(string name) where T : class, IMonoGameEasingComponent
+        {
+            if (Identities.ObjectExists<IMonoGameEasingComponent, T>(Easings, name))
+            {
+                return Identities.GetObject<IMonoGameEasingComponent, T>(Easings, name);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Removes an easing, by name.
+        /// </summary>
+        /// <param name="name">The name used to remove the easing. Intaken as a <see cref="string"/>.</param>
+        /// <returns>Returns a <see cref="bool"/> defining whether the easing was removed.</returns>
+        public bool RemoveEasing<T>(string name) where T : class, IMonoGameEasingComponent
+        {
+            if (Identities.ObjectExists<IMonoGameEasingComponent, T>(Easings, name))
+            {
+                return Identities.RemoveObject<IMonoGameEasingComponent, T>(Easings, name);
+            }
+
+            return false;
         }
 
         #endregion
@@ -321,6 +408,11 @@ namespace Softfire.MonoGame.CORE.Common
         public void Update(GameTime gameTime)
         {
             DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
+
+            foreach (var easing in Easings)
+            {
+                easing.Update(gameTime);
+            }
         }
     }
 }
