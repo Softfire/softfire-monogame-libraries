@@ -1,18 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Softfire.MonoGame.CORE.Common;
+using Softfire.MonoGame.CORE.Physics;
 
 namespace Softfire.MonoGame.PHYS.Easings
 {
     /// <summary>
-    /// A <see cref="MonoGameObject"/> for use with demonstrating easing functions.
+    /// For applying easing functions onto a <see cref="MonoGameObject"/>.
     /// Easing functions specify the rate of change of a parameter over time.
     /// </summary>
-    public class Easing : MonoGameObject, IMonoGameEasingComponent
+    public class Easing : IMonoGameEasingComponent
     {
         /// <summary>
-        /// A delegate for usage with easing's that do not have an <see cref="Overshoot"/>.
+        /// A delegate for usage with <see cref="Easing"/>'s that do not have an <see cref="Overshoot"/>.
         /// </summary>
         /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
         /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
@@ -22,7 +21,7 @@ namespace Softfire.MonoGame.PHYS.Easings
         private delegate double EasingDelegateWithoutOvershoot(double t, double b, double c, double d);
 
         /// <summary>
-        /// A delegate for usage with easing's that have an <see cref="Overshoot"/>.
+        /// A delegate for usage with <see cref="Easing"/>'s that have an <see cref="Overshoot"/>.
         /// </summary>
         /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
         /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
@@ -33,7 +32,7 @@ namespace Softfire.MonoGame.PHYS.Easings
         private delegate double EasingDelegateWithOvershoot(double t, double b, double c, double d, double s = 1.70158d);
 
         /// <summary>
-        /// A delegate for usage with easing's that use <see cref="Amplitude"/> and <see cref="Period"/>.
+        /// A delegate for usage with <see cref="Easing"/>'s that use <see cref="Amplitude"/> and <see cref="Period"/>.
         /// </summary>
         /// <param name="t">The current time or position. Intaken as a <see cref="double"/>.</param>
         /// <param name="b">The initial starting value for the easing. Intaken as a <see cref="double"/>.</param>
@@ -45,20 +44,35 @@ namespace Softfire.MonoGame.PHYS.Easings
         private delegate double EasingDelegateWithAmplitudeAndPeriod(double t, double b, double c, double d, double a = 0d, double p = 0d);
 
         /// <summary>
-        /// The easing's texture path. For use in demonstrations only.
+        /// Determines whether the <see cref="Easing"/>'s updates can occur.
         /// </summary>
-        private string TexturePath { get; }
+        public bool IsActive { get; set; } = true;
 
         /// <summary>
-        /// The easing's texture to display. For use in demonstrations only.
+        /// The time between updates.
         /// </summary>
-        private Texture2D Texture { get; set; }
+        private double DeltaTime { get; set; }
 
         /// <summary>
-        /// The easing's start position.
+        /// An elapsed time counter.
         /// </summary>
-        public Vector2 StartPosition { get; set; }
+        private double ElapsedTime { get; set; }
 
+        /// <summary>
+        /// The <see cref="Easing"/>'s unique id.
+        /// </summary>
+        public int Id { get; }
+
+        /// <summary>
+        /// The <see cref="Easing"/>'s unique name.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// The parent <see cref="MonoGameObject"/>.
+        /// </summary>
+        private MonoGameObject Parent { get; }
+        
         /// <summary>
         /// The initial value of the easing.
         /// </summary>
@@ -80,12 +94,12 @@ namespace Softfire.MonoGame.PHYS.Easings
         public double Overshoot { get; set; } = 1.70158d;
 
         /// <summary>
-        /// The amplitude changes the height of the curve for <see cref="Easings.Elastic"/>.
+        /// The amplitude changes the height of the curve for <see cref="EasingEnums.Easings.Elastic"/>.
         /// </summary>
         public double Amplitude { get; set; }
 
         /// <summary>
-        /// The period slows the rate of elastic bounce for <see cref="Easings.Elastic"/>.
+        /// The period slows the rate of elastic bounce for <see cref="EasingEnums.Easings.Elastic"/>.
         /// </summary>
         public double Period { get; set; }
 
@@ -97,7 +111,7 @@ namespace Softfire.MonoGame.PHYS.Easings
         /// <summary>
         /// Determines whether the easing will perform a reverse easing upon completing it's loop. This is dependent on <see cref="IsLooping"/> being true.
         /// </summary>
-        public bool IsReturningInReverse { get; set; }
+        public bool WillReturnInReverse { get; set; }
 
         /// <summary>
         /// Determines whether the easing is performing in reverse.
@@ -105,192 +119,58 @@ namespace Softfire.MonoGame.PHYS.Easings
         public bool IsInReverse { get; private set; }
 
         /// <summary>
-        /// Determines whether the easing is in reverse.
+        /// The forward position to start applying the <see cref="Easing"/>.
         /// </summary>
-        private bool RecordReverseStartPosition { get; set; }
+        private Vector2 StartingPosition { get; set; }
 
         /// <summary>
-        /// The easing's reverse starting position.
+        /// The reverse position to start applying the <see cref="Easing"/>.
         /// </summary>
-        private Vector2 ReverseStartPosition { get; set; }
+        private Vector2 ReverseStartingPosition { get; set; }
 
         /// <summary> 
         /// The current easing in use on the <see cref="MonoGameObject"/>'s X axis.
         /// </summary>
-        public Easings CurrentXAxisEasing { get; set; } = Easings.Linear;
+        public EasingEnums.Easings CurrentXAxisEasing { get; set; } = EasingEnums.Easings.Linear;
 
         /// <summary> 
         /// The current easing option in use on the <see cref="MonoGameObject"/>'s X axis.
         /// </summary>
-        public EasingOptions CurrentXAxisEasingOption { get; set; } = EasingOptions.In;
+        public EasingEnums.EasingOptions CurrentXAxisEasingOption { get; set; } = EasingEnums.EasingOptions.In;
 
         /// <summary>
         /// The direction in which the <see cref="MonoGameObject"/>'s Y axis will be affected.
         /// </summary>
-        public EasingXAxisDirections CurrentXAxisDirection { get; set; } = EasingXAxisDirections.Right;
+        public EasingEnums.EasingXAxisDirections CurrentXAxisDirection { get; set; } = EasingEnums.EasingXAxisDirections.Right;
 
         /// <summary> 
         /// The current easing in use on the <see cref="MonoGameObject"/>'s Y axis.
         /// </summary>
-        public Easings CurrentYAxisEasing { get; set; } = Easings.Sine;
+        public EasingEnums.Easings CurrentYAxisEasing { get; set; } = EasingEnums.Easings.Sine;
 
         /// <summary> 
         /// The current easing option in use on the <see cref="MonoGameObject"/>'s Y axis.
         /// </summary>
-        public EasingOptions CurrentYAxisEasingOption { get; set; } = EasingOptions.In;
+        public EasingEnums.EasingOptions CurrentYAxisEasingOption { get; set; } = EasingEnums.EasingOptions.In;
 
         /// <summary>
         /// The direction in which the <see cref="MonoGameObject"/>'s X axis will be affected.
         /// </summary>
-        public EasingYAxisDirections CurrentYAxisDirection { get; set; } = EasingYAxisDirections.Up;
+        public EasingEnums.EasingYAxisDirections CurrentYAxisDirection { get; set; } = EasingEnums.EasingYAxisDirections.Up;
         
-        /// <summary>
-        /// The available easings to perform.
-        /// </summary>
-        public enum Easings
-        {
-            /// <summary>
-            /// No easing is performed.
-            /// </summary>
-            None,
-            /// <summary>
-            /// A back easing is performed.
-            /// </summary>
-            Back,
-            /// <summary>
-            /// A bounce easing is performed.
-            /// </summary>
-            Bounce,
-            /// <summary>
-            /// A circular easing is performed.
-            /// </summary>
-            Circular,
-            /// <summary>
-            /// A cubic easing is performed.
-            /// </summary>
-            Cubic,
-            /// <summary>
-            /// An elastic easing is performed.
-            /// </summary>
-            Elastic,
-            /// <summary>
-            /// An exponential easing is performed.
-            /// </summary>
-            Exponential,
-            /// <summary>
-            /// A linear easing is performed.
-            /// </summary>
-            Linear,
-            /// <summary>
-            /// A quadratic easing is performed.
-            /// </summary>
-            Quadratic,
-            /// <summary>
-            /// A quartic easing is performed.
-            /// </summary>
-            Quartic,
-            /// <summary>
-            /// A quintic easing is performed.
-            /// </summary>
-            Quintic,
-            /// <summary>
-            /// A sine easing is performed.
-            /// </summary>
-            Sine
-        }
-
-        /// <summary>
-        /// The available options for each <see cref="Easings"/> to perform.
-        /// </summary>
-        public enum EasingOptions
-        {
-            /// <summary>
-            /// No easing option is performed.
-            /// </summary>
-            None,
-            /// <summary>
-            /// An inward easing option is performed.
-            /// </summary>
-            In,
-            /// <summary>
-            /// An outward easing option is performed.
-            /// </summary>
-            Out,
-            /// <summary>
-            /// An inward then an outward easing option is performed.
-            /// </summary>
-            InOut,
-            /// <summary>
-            /// An outward then an inward easing option is performed.
-            /// </summary>
-            OutIn
-        }
-
-        /// <summary>
-        /// The available directions on the X axis to perform the <see cref="Easings"/> and it's <see cref="EasingOptions"/>.
-        /// </summary>
-        public enum EasingXAxisDirections
-        {
-            /// <summary>
-            /// No direction selected along the X axis.
-            /// </summary>
-            None,
-            /// <summary>
-            /// The easing will be performed to the left along the X axis.
-            /// </summary>
-            Left,
-            /// <summary>
-            /// The easing will be performed to the right along the X axis.
-            /// </summary>
-            Right
-        }
-
-        /// <summary>
-        /// The available directions on the Y axis to perform the <see cref="Easings"/> and it's <see cref="EasingOptions"/>.
-        /// </summary>
-        public enum EasingYAxisDirections
-        {
-            /// <summary>
-            /// No direction selected along the Y axis.
-            /// </summary>
-            None,
-            /// <summary>
-            /// The easing will be performed upward along the Y axis.
-            /// </summary>
-            Up,
-            /// <summary>
-            /// The easing will be performed downward along the Y axis.
-            /// </summary>
-            Down
-        }
-
-        /// <summary>
-        /// The available axis' to perform the <see cref="Easings"/> and it's <see cref="EasingOptions"/>.
-        /// </summary>
-        private enum Axis
-        {
-            /// <summary>
-            /// The X axis.
-            /// </summary>
-            X,
-            /// <summary>
-            /// The Y axis.
-            /// </summary>
-            Y
-        }
-
         /// <summary>
         /// An easing for moving a <see cref="MonoGameObject"/> over time.
         /// </summary>
-        /// <param name="parent">The easing's parent object. Intaken as a <see cref="MonoGameObject"/>.</param>
-        /// <param name="id">The easing's id. Intaken as a <see cref="int"/>.</param>
-        /// <param name="name">The easing's name. Intaken as a <see cref="string"/>.</param>
-        /// <param name="texturePath">The easing's texture file path. Intaken as a <see cref="string"/>.</param>
-        /// <param name="startPosition">The easing's starting position. Intaken as a <see cref="Vector2"/>.</param>
-        public Easing(MonoGameObject parent, int id, string name, Vector2 startPosition, string texturePath = null) : base(parent, id, name, startPosition)
+        /// <param name="parent">The <see cref="Easing"/>'s parent object. This object will be affected by the easing. Intaken as a <see cref="MonoGameObject"/>.</param>
+        /// <param name="id">The <see cref="Easing"/>'s id. Intaken as a <see cref="int"/>.</param>
+        /// <param name="name">The <see cref="Easing"/>'s name. Intaken as a <see cref="string"/>.</param>
+        public Easing(MonoGameObject parent, int id, string name)
         {
-            TexturePath = texturePath;
-            StartPosition = startPosition;
+            Parent = parent;
+            Id = id;
+            Name = name;
+
+            StartingPosition = Parent.Transform.Position;
         }
 
         #region Easing Actions
@@ -300,50 +180,44 @@ namespace Softfire.MonoGame.PHYS.Easings
         /// </summary>
         /// <param name="easing"></param>
         /// <param name="axis"></param>
-        private void EasingActions(EasingDelegateWithOvershoot easing, Axis axis)
+        private void EasingActions(EasingDelegateWithOvershoot easing, EasingEnums.Axis axis)
         {
-            if (RecordReverseStartPosition)
-            {
-                ReverseStartPosition = Transform.Position;
-                RecordReverseStartPosition = !RecordReverseStartPosition;
-            }
+            var position = IsLooping && WillReturnInReverse && IsInReverse ? ReverseStartingPosition : StartingPosition;
 
-            var position = IsLooping && IsReturningInReverse && IsInReverse ? ReverseStartPosition : StartPosition;
-
-            if (axis == Axis.X)
+            if (axis == EasingEnums.Axis.X)
             {
                 switch (CurrentXAxisDirection)
                 {
-                    case EasingXAxisDirections.None:
+                    case EasingEnums.EasingXAxisDirections.None:
                         return;
-                    case EasingXAxisDirections.Left:
+                    case EasingEnums.EasingXAxisDirections.Left:
                         position += new Vector2(-(float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration, Overshoot), 0);
                         break;
-                    case EasingXAxisDirections.Right:
+                    case EasingEnums.EasingXAxisDirections.Right:
                         position += new Vector2((float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration, Overshoot), 0);
                         break;
                 }
-
-                position.Y = Transform.Position.Y;
-                Transform.Position = position;
+                
+                position.Y = Parent.Transform.Position.Y;
+                Parent.Transform.Position = position;
             }
 
-            if (axis == Axis.Y)
+            if (axis == EasingEnums.Axis.Y)
             {
                 switch (CurrentYAxisDirection)
                 {
-                    case EasingYAxisDirections.None:
+                    case EasingEnums.EasingYAxisDirections.None:
                         return;
-                    case EasingYAxisDirections.Up:
+                    case EasingEnums.EasingYAxisDirections.Up:
                         position += new Vector2(0, -(float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration, Overshoot));
                         break;
-                    case EasingYAxisDirections.Down:
+                    case EasingEnums.EasingYAxisDirections.Down:
                         position += new Vector2(0, (float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration, Overshoot));
                         break;
                 }
 
-                position.X = Transform.Position.X;
-                Transform.Position = position;
+                position.X = Parent.Transform.Position.X;
+                Parent.Transform.Position = position;
             }
         }
 
@@ -352,50 +226,44 @@ namespace Softfire.MonoGame.PHYS.Easings
         /// </summary>
         /// <param name="easing"></param>
         /// <param name="axis"></param>
-        private void EasingActions(EasingDelegateWithoutOvershoot easing, Axis axis)
+        private void EasingActions(EasingDelegateWithoutOvershoot easing, EasingEnums.Axis axis)
         {
-            if (RecordReverseStartPosition)
-            {
-                ReverseStartPosition = Transform.Position;
-                RecordReverseStartPosition = !RecordReverseStartPosition;
-            }
+            var position = IsLooping && WillReturnInReverse && IsInReverse ? ReverseStartingPosition : StartingPosition;
 
-            var position = IsLooping && IsReturningInReverse && IsInReverse ? ReverseStartPosition : StartPosition;
-
-            if (axis == Axis.X)
+            if (axis == EasingEnums.Axis.X)
             {
                 switch (CurrentXAxisDirection)
                 {
-                    case EasingXAxisDirections.None:
+                    case EasingEnums.EasingXAxisDirections.None:
                         return;
-                    case EasingXAxisDirections.Left:
+                    case EasingEnums.EasingXAxisDirections.Left:
                         position += new Vector2(-(float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration), 0);
                         break;
-                    case EasingXAxisDirections.Right:
+                    case EasingEnums.EasingXAxisDirections.Right:
                         position += new Vector2((float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration), 0);
                         break;
                 }
 
-                position.Y = Transform.Position.Y;
-                Transform.Position = position;
+                position.Y = Parent.Transform.Position.Y;
+                Parent.Transform.Position = position;
             }
 
-            if (axis == Axis.Y)
+            if (axis == EasingEnums.Axis.Y)
             {
                 switch (CurrentYAxisDirection)
                 {
-                    case EasingYAxisDirections.None:
+                    case EasingEnums.EasingYAxisDirections.None:
                         return;
-                    case EasingYAxisDirections.Up:
+                    case EasingEnums.EasingYAxisDirections.Up:
                         position += new Vector2(0, -(float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration));
                         break;
-                    case EasingYAxisDirections.Down:
+                    case EasingEnums.EasingYAxisDirections.Down:
                         position += new Vector2(0, (float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration));
                         break;
                 }
 
-                position.X = Transform.Position.X;
-                Transform.Position = position;
+                position.X = Parent.Transform.Position.X;
+                Parent.Transform.Position = position;
             }
         }
 
@@ -404,293 +272,273 @@ namespace Softfire.MonoGame.PHYS.Easings
         /// </summary>
         /// <param name="easing"></param>
         /// <param name="axis"></param>
-        private void EasingActions(EasingDelegateWithAmplitudeAndPeriod easing, Axis axis)
+        private void EasingActions(EasingDelegateWithAmplitudeAndPeriod easing, EasingEnums.Axis axis)
         {
-            if (RecordReverseStartPosition)
-            {
-                ReverseStartPosition = Transform.Position;
-                RecordReverseStartPosition = !RecordReverseStartPosition;
-            }
+            var position = IsLooping && WillReturnInReverse && IsInReverse ? ReverseStartingPosition : StartingPosition;
 
-            var position = IsLooping && IsReturningInReverse && IsInReverse ? ReverseStartPosition : StartPosition;
-
-            if (axis == Axis.X)
+            if (axis == EasingEnums.Axis.X)
             {
                 switch (CurrentXAxisDirection)
                 {
-                    case EasingXAxisDirections.None:
+                    case EasingEnums.EasingXAxisDirections.None:
                         return;
-                    case EasingXAxisDirections.Left:
+                    case EasingEnums.EasingXAxisDirections.Left:
                         position += new Vector2(-(float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration, Amplitude, Period), 0);
                         break;
-                    case EasingXAxisDirections.Right:
+                    case EasingEnums.EasingXAxisDirections.Right:
                         position += new Vector2((float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration, Amplitude, Period), 0);
                         break;
                 }
 
-                position.Y = Transform.Position.Y;
-                Transform.Position = position;
+                position.Y = Parent.Transform.Position.Y;
+                Parent.Transform.Position = position;
             }
 
-            if (axis == Axis.Y)
+            if (axis == EasingEnums.Axis.Y)
             {
                 switch (CurrentYAxisDirection)
                 {
-                    case EasingYAxisDirections.None:
+                    case EasingEnums.EasingYAxisDirections.None:
                         return;
-                    case EasingYAxisDirections.Up:
+                    case EasingEnums.EasingYAxisDirections.Up:
                         position += new Vector2(0, -(float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration, Amplitude, Period));
                         break;
-                    case EasingYAxisDirections.Down:
+                    case EasingEnums.EasingYAxisDirections.Down:
                         position += new Vector2(0, (float)easing(ElapsedTime, InitialValue, ChangeInValue, Duration, Amplitude, Period));
                         break;
                 }
 
-                position.X = Transform.Position.X;
-                Transform.Position = position;
+                position.X = Parent.Transform.Position.X;
+                Parent.Transform.Position = position;
             }
         }
 
         #endregion
 
         /// <summary>
-        /// The <see cref="Easing"/>'s content loader.
-        /// </summary>
-        public override void LoadContent(ContentManager content = null)
-        {
-            if (content != null &&
-                !string.IsNullOrWhiteSpace(TexturePath))
-            {
-                Texture = content.Load<Texture2D>(TexturePath);
-                Size.Width = Texture.Width;
-                Size.Height = Texture.Height;
-            }
-
-            base.LoadContent(content);
-        }
-
-        /// <summary>
-        /// The easing's update method.
+        /// The <see cref="Easing"/>'s update method.
         /// </summary>
         /// <param name="gameTime">Intakes <see cref="GameTime"/>.</param>
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
+            DeltaTime = gameTime.ElapsedGameTime.TotalSeconds;
+
             if (IsActive)
             {
                 ElapsedTime += DeltaTime;
 
-                if (ElapsedTime <= Duration)
+                if (ElapsedTime < Duration)
                 {
                     switch (CurrentXAxisEasing)
                     {
-                        case Easings.None:
+                        case EasingEnums.Easings.None:
                             break;
-                        case Easings.Back:
+                        case EasingEnums.Easings.Back:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Back.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Back.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Back.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Back.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Back.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Back.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Back.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Back.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Bounce:
+                        case EasingEnums.Easings.Bounce:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Bounce.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Bounce.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Bounce.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Bounce.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Bounce.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Bounce.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Bounce.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Bounce.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Circular:
+                        case EasingEnums.Easings.Circular:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Circ.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Circ.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Circ.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Circ.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Circ.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Circ.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Circ.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Circ.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Cubic:
+                        case EasingEnums.Easings.Cubic:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Cubic.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Cubic.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Cubic.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Cubic.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Cubic.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Cubic.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Cubic.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Cubic.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Elastic:
+                        case EasingEnums.Easings.Elastic:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Elastic.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Elastic.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Elastic.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Elastic.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Elastic.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Elastic.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Elastic.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Elastic.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Exponential:
+                        case EasingEnums.Easings.Exponential:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Expo.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Expo.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Expo.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Expo.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Expo.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Expo.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Expo.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Expo.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Linear:
+                        case EasingEnums.Easings.Linear:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Linear.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Linear.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Linear.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Linear.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Linear.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Linear.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Linear.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Linear.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Quadratic:
+                        case EasingEnums.Easings.Quadratic:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Quad.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Quad.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Quad.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Quad.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Quad.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Quad.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Quad.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Quad.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Quartic:
+                        case EasingEnums.Easings.Quartic:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Quart.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Quart.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Quart.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Quart.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Quart.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Quart.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Quart.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Quart.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Quintic:
+                        case EasingEnums.Easings.Quintic:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Quint.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Quint.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Quint.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Quint.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Quint.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Quint.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Quint.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Quint.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
-                        case Easings.Sine:
+                        case EasingEnums.Easings.Sine:
                             switch (CurrentXAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Sine.In, Axis.X);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Sine.In, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Sine.Out, Axis.X);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Sine.Out, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Sine.InOut, Axis.X);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Sine.InOut, EasingEnums.Axis.X);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Sine.OutIn, Axis.X);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Sine.OutIn, EasingEnums.Axis.X);
                                     break;
                             }
                             break;
@@ -698,214 +546,214 @@ namespace Softfire.MonoGame.PHYS.Easings
 
                     switch (CurrentYAxisEasing)
                     {
-                        case Easings.None:
+                        case EasingEnums.Easings.None:
                             break;
-                        case Easings.Back:
+                        case EasingEnums.Easings.Back:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Back.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Back.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Back.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Back.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Back.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Back.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Back.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Back.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Bounce:
+                        case EasingEnums.Easings.Bounce:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Bounce.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Bounce.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Bounce.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Bounce.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Bounce.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Bounce.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Bounce.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Bounce.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Circular:
+                        case EasingEnums.Easings.Circular:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Circ.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Circ.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Circ.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Circ.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Circ.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Circ.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Circ.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Circ.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Cubic:
+                        case EasingEnums.Easings.Cubic:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Cubic.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Cubic.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Cubic.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Cubic.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Cubic.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Cubic.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Cubic.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Cubic.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Elastic:
+                        case EasingEnums.Easings.Elastic:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Elastic.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Elastic.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Elastic.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Elastic.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Elastic.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Elastic.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Elastic.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Elastic.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Exponential:
+                        case EasingEnums.Easings.Exponential:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Expo.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Expo.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Expo.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Expo.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Expo.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Expo.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Expo.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Expo.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Linear:
+                        case EasingEnums.Easings.Linear:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Linear.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Linear.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Linear.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Linear.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Linear.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Linear.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Linear.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Linear.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Quadratic:
+                        case EasingEnums.Easings.Quadratic:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Quad.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Quad.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Quad.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Quad.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Quad.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Quad.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Quad.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Quad.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Quartic:
+                        case EasingEnums.Easings.Quartic:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Quart.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Quart.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Quart.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Quart.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Quart.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Quart.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Quart.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Quart.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Quintic:
+                        case EasingEnums.Easings.Quintic:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Quint.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Quint.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Quint.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Quint.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Quint.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Quint.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Quint.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Quint.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
-                        case Easings.Sine:
+                        case EasingEnums.Easings.Sine:
                             switch (CurrentYAxisEasingOption)
                             {
-                                case EasingOptions.None:
+                                case EasingEnums.EasingOptions.None:
                                     break;
-                                case EasingOptions.In:
-                                    EasingActions(Sine.In, Axis.Y);
+                                case EasingEnums.EasingOptions.In:
+                                    EasingActions(Sine.In, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.Out:
-                                    EasingActions(Sine.Out, Axis.Y);
+                                case EasingEnums.EasingOptions.Out:
+                                    EasingActions(Sine.Out, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.InOut:
-                                    EasingActions(Sine.InOut, Axis.Y);
+                                case EasingEnums.EasingOptions.InOut:
+                                    EasingActions(Sine.InOut, EasingEnums.Axis.Y);
                                     break;
-                                case EasingOptions.OutIn:
-                                    EasingActions(Sine.OutIn, Axis.Y);
+                                case EasingEnums.EasingOptions.OutIn:
+                                    EasingActions(Sine.OutIn, EasingEnums.Axis.Y);
                                     break;
                             }
                             break;
@@ -913,36 +761,29 @@ namespace Softfire.MonoGame.PHYS.Easings
                 }
                 else if (IsLooping)
                 {
-                    if (IsReturningInReverse)
+                    if (WillReturnInReverse)
                     {
                         IsInReverse = !IsInReverse;
-                        RecordReverseStartPosition = !RecordReverseStartPosition;
-                        CurrentXAxisDirection = CurrentXAxisDirection == EasingXAxisDirections.Left ? EasingXAxisDirections.Right : EasingXAxisDirections.Left;
-                        CurrentYAxisDirection = CurrentYAxisDirection == EasingYAxisDirections.Up ? EasingYAxisDirections.Down : EasingYAxisDirections.Up;
+                        CurrentXAxisDirection = CurrentXAxisDirection == EasingEnums.EasingXAxisDirections.Left ? EasingEnums.EasingXAxisDirections.Right : EasingEnums.EasingXAxisDirections.Left;
+                        CurrentYAxisDirection = CurrentYAxisDirection == EasingEnums.EasingYAxisDirections.Up ? EasingEnums.EasingYAxisDirections.Down : EasingEnums.EasingYAxisDirections.Up;
+
+                        if (IsInReverse)
+                        {
+                            ReverseStartingPosition = Parent.Transform.Position;
+                        }
+                        else
+                        {
+                            StartingPosition = Parent.Transform.Position;
+                        }
                     }
 
-                    ResetElapsedTime();
+                    ElapsedTime = 0;
                 }
                 else
                 {
                     IsActive = false;
-                    ResetElapsedTime();
+                    ElapsedTime = 0;
                 }
-
-                base.Update(gameTime);
-            }
-        }
-
-        /// <summary>
-        /// The easing's draw method for demonstrating the easing.
-        /// </summary>
-        /// <param name="spriteBatch">Intakes a <see cref="SpriteBatch"/>.</param>
-        /// <param name="transform">Intakes a <see cref="Matrix"/>.</param>
-        public override void Draw(SpriteBatch spriteBatch, Matrix transform = default)
-        {
-            if (Texture != null)
-            {
-                spriteBatch.Draw(Texture, Transform.WorldPosition(), Color.White);
             }
         }
     }

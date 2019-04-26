@@ -1,17 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Softfire.MonoGame.CORE.Physics;
 
 namespace Softfire.MonoGame.CORE.Common
 {
     /// <summary>
     /// An interface for defining an easing.
     /// </summary>
-    public interface IMonoGameEasingComponent : IMonoGame2DComponent
+    public interface IMonoGameEasingComponent : IMonoGameIdentifierComponent, IMonoGameActiveComponent, IMonoGameUpdateComponent
     {
-        /// <summary>
-        /// The easing's start position.
-        /// </summary>
-        Vector2 StartPosition { get; set; }
-
         /// <summary>
         /// The initial value of the easing.
         /// </summary>
@@ -50,11 +45,47 @@ namespace Softfire.MonoGame.CORE.Common
         /// <summary>
         /// Determines whether the easing returns to it's starting position following it's easing path in reverse.
         /// </summary>
-        bool IsReturningInReverse { get; set; }
+        bool WillReturnInReverse { get; set; }
 
         /// <summary>
         /// Determines whether the easing is performing in reverse.
         /// </summary>
         bool IsInReverse { get; }
+
+        /// <summary> 
+        /// The current easing in use on a <see cref="MonoGameObject"/>'s X axis.
+        /// See <see cref="EasingEnums.Easings"/> for available easings.
+        /// </summary>
+        EasingEnums.Easings CurrentXAxisEasing { get; set; }
+
+        /// <summary> 
+        /// The current easing option in use on a <see cref="MonoGameObject"/>'s X axis.
+        /// See <see cref="EasingEnums.EasingOptions"/> for available options.
+        /// </summary>
+        EasingEnums.EasingOptions CurrentXAxisEasingOption { get; set; }
+
+        /// <summary>
+        /// The direction in which a <see cref="MonoGameObject"/>'s X axis will be affected.
+        /// See <see cref="EasingEnums.EasingXAxisDirections"/> for available directions.
+        /// </summary>
+        EasingEnums.EasingXAxisDirections CurrentXAxisDirection { get; set; }
+
+        /// <summary> 
+        /// The current easing in use on a <see cref="MonoGameObject"/>'s Y axis.
+        /// See <see cref="EasingEnums.Easings"/> for available easings.
+        /// </summary>
+        EasingEnums.Easings CurrentYAxisEasing { get; set; }
+
+        /// <summary> 
+        /// The current easing option in use on a <see cref="MonoGameObject"/>'s Y axis.
+        /// See <see cref="EasingEnums.EasingOptions"/> for available options.
+        /// </summary>
+        EasingEnums.EasingOptions CurrentYAxisEasingOption { get; set; }
+
+        /// <summary>
+        /// The direction in which a <see cref="MonoGameObject"/>'s Y axis will be affected.
+        /// See <see cref="EasingEnums.EasingYAxisDirections"/> for available directions.
+        /// </summary>
+        EasingEnums.EasingYAxisDirections CurrentYAxisDirection { get; set; }
     }
 }

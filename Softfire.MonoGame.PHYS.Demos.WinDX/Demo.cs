@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Softfire.MonoGame.CORE.Physics;
 using Softfire.MonoGame.PHYS.Easings;
 using Softfire.MonoGame.UI;
 using Softfire.MonoGame.UI.Items;
@@ -46,45 +47,45 @@ namespace Softfire.MonoGame.PHYS.Demos.WinDX
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             UIManager = new UIManager(graphics.GraphicsDevice, Content);
+            UIManager.Fonts.LoadFont("Demo14", @"Fonts\Size14");
             var fontDemo10 = UIManager.Fonts.LoadFont("Demo10", @"Fonts\Size10");
-            var fontDemo14 = UIManager.Fonts.LoadFont("Demo14", @"Fonts\Size14");
 
             UIManager.AddGroup("Easings");
             var easingsGroup = UIManager.GetGroup("Easings");
 
             CreateEasing(easingsGroup, "Back", fontDemo10, new Vector2(-400, -150),
-                         Easing.Easings.Back, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Back, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Bounce", fontDemo10, new Vector2(-400, 0),
-                         Easing.Easings.Bounce, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Bounce, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Circ", fontDemo10, new Vector2(-400, 150),
-                         Easing.Easings.Circular, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Circular, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Cubic", fontDemo10, new Vector2(-120, -150),
-                         Easing.Easings.Cubic, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Cubic, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Elastic", fontDemo10, new Vector2(-120, 0),
-                         Easing.Easings.Elastic, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Elastic, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Expo", fontDemo10, new Vector2(-120, 150),
-                         Easing.Easings.Exponential, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Exponential, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Linear", fontDemo10, new Vector2(160, -150),
-                         Easing.Easings.Linear, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Linear, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Quad", fontDemo10, new Vector2(160, 0),
-                         Easing.Easings.Quadratic, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Quadratic, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Quart", fontDemo10, new Vector2(160, 150),
-                         Easing.Easings.Quartic, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Quartic, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Quint", fontDemo10, new Vector2(440, -150),
-                         Easing.Easings.Quintic, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Quintic, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
             CreateEasing(easingsGroup, "Sine", fontDemo10, new Vector2(440, 0),
-                         Easing.Easings.Sine, Easing.EasingOptions.In, Easing.EasingXAxisDirections.Right,
-                         Easing.Easings.None, Easing.EasingOptions.None, Easing.EasingYAxisDirections.None);
+                         EasingEnums.Easings.Sine, EasingEnums.EasingOptions.In, EasingEnums.EasingXAxisDirections.Right,
+                         EasingEnums.Easings.None, EasingEnums.EasingOptions.None, EasingEnums.EasingYAxisDirections.None);
         }
 
         /// <summary>
@@ -103,15 +104,15 @@ namespace Softfire.MonoGame.PHYS.Demos.WinDX
         /// <param name="windowName">The unique name for the <see cref="UIWindow"/> that will house the easing demonstrations. Intaken as a <see cref="UIWindow"/>.</param>
         /// <param name="font">The <see cref="SpriteFont"/> used to display the easing titles. Intaken as a <see cref="SpriteFont"/>.</param>
         /// <param name="position">The position for where the <see cref="UIWindow"/> will display the easings. Intaken as a <see cref="Vector2"/>.</param>
-        /// <param name="easingXAxis">The easing to demonstrate on the object's X axis. Intaken as an <see cref="Easing.Easings"/>.</param>
-        /// <param name="easingXAxisOption">The easing option to demonstrate on teh object's X axis. Intaken as a <see cref="Easing.EasingOptions"/>.</param>
-        /// <param name="easingXAxisDirection">The <see cref="Easing.EasingXAxisDirections"/> to define the direction the easing will travel along the X axis. Intaken as a <see cref="Easing.EasingXAxisDirections"/>.</param>
-        /// <param name="easingYAxis">The easing to demonstrate on the object's Y axis. Intaken as an <see cref="Easing.Easings"/>.</param>
-        /// <param name="easingYAxisOption">The easing option to demonstrate on teh object's Y axis. Intaken as a <see cref="Easing.EasingOptions"/>.</param>
-        /// <param name="easingYAxisDirection">The <see cref="Easing.EasingXAxisDirections"/> to define the direction the easing will travel along the Y axis. Intaken as a <see cref="Easing.EasingXAxisDirections"/>.</param>
+        /// <param name="easingXAxis">The easing to demonstrate on the object's X axis. Intaken as an <see cref="EasingEnums.Easings"/>.</param>
+        /// <param name="easingXAxisOption">The easing option to demonstrate on teh object's X axis. Intaken as a <see cref="EasingEnums.EasingOptions"/>.</param>
+        /// <param name="easingXAxisDirection">The <see cref="EasingEnums.EasingXAxisDirections"/> to define the direction the easing will travel along the X axis. Intaken as a <see cref="EasingEnums.EasingXAxisDirections"/>.</param>
+        /// <param name="easingYAxis">The easing to demonstrate on the object's Y axis. Intaken as an <see cref="EasingEnums.Easings"/>.</param>
+        /// <param name="easingYAxisOption">The easing option to demonstrate on teh object's Y axis. Intaken as a <see cref="EasingEnums.EasingOptions"/>.</param>
+        /// <param name="easingYAxisDirection">The <see cref="EasingEnums.EasingXAxisDirections"/> to define the direction the easing will travel along the Y axis. Intaken as a <see cref="EasingEnums.EasingXAxisDirections"/>.</param>
         private void CreateEasing(UIGroup group, string windowName, SpriteFont font, Vector2 position,
-                                  Easing.Easings easingXAxis, Easing.EasingOptions easingXAxisOption, Easing.EasingXAxisDirections easingXAxisDirection,
-                                  Easing.Easings easingYAxis, Easing.EasingOptions easingYAxisOption, Easing.EasingYAxisDirections easingYAxisDirection)
+                                  EasingEnums.Easings easingXAxis, EasingEnums.EasingOptions easingXAxisOption, EasingEnums.EasingXAxisDirections easingXAxisDirection,
+                                  EasingEnums.Easings easingYAxis, EasingEnums.EasingOptions easingYAxisOption, EasingEnums.EasingYAxisDirections easingYAxisDirection)
         {
             group.AddWindow(windowName, position, 250, 120, 0, 0, 0);
 
@@ -121,50 +122,69 @@ namespace Softfire.MonoGame.PHYS.Demos.WinDX
             window.AddText("InOutTitle", font, "In/Out", new Vector2(-95, 14));
             window.AddText("OutInTitle", font, "Out/In", new Vector2(-95, 40));
 
-            window.AddContent(new Easing(window, 1, "In", new Vector2(-60, -42), "Point")
+            var demoObject1 = new DemoObject(null, 1, "In", "Point", new Vector2(-60, -42));
+            demoObject1.Movement.AddEasing(new Easing(demoObject1, 1, "In")
             {
                 CurrentXAxisEasing = easingXAxis,
-                CurrentXAxisEasingOption = Easing.EasingOptions.In,
+                CurrentXAxisEasingOption = EasingEnums.EasingOptions.In,
                 CurrentXAxisDirection = easingXAxisDirection,
                 CurrentYAxisEasing = easingYAxis,
                 CurrentYAxisEasingOption = easingYAxisOption,
                 CurrentYAxisDirection = easingYAxisDirection,
                 IsLooping = true,
-                IsReturningInReverse = true
-            }, Content);
-            window.AddContent(new Easing(window, 2, "Out", new Vector2(-60, -14), "Point")
+                WillReturnInReverse = true
+            });
+            demoObject1.LoadContent(Content);
+
+            window.AddContent(demoObject1);
+
+            var demoObject2 = new DemoObject(null, 2, "Out", "Point", new Vector2(-60, -14));
+            demoObject2.Movement.AddEasing(new Easing(demoObject2, 1, "Out")
             {
                 CurrentXAxisEasing = easingXAxis,
-                CurrentXAxisEasingOption = Easing.EasingOptions.Out,
+                CurrentXAxisEasingOption = EasingEnums.EasingOptions.Out,
                 CurrentXAxisDirection = easingXAxisDirection,
                 CurrentYAxisEasing = easingYAxis,
                 CurrentYAxisEasingOption = easingYAxisOption,
                 CurrentYAxisDirection = easingYAxisDirection,
                 IsLooping = true,
-                IsReturningInReverse = true
-            }, Content);
-            window.AddContent(new Easing(window, 3, "InOut", new Vector2(-50, 12), "Point")
+                WillReturnInReverse = true
+            });
+            demoObject2.LoadContent(Content);
+
+            window.AddContent(demoObject2);
+
+            var demoObject3 = new DemoObject(null, 3, "InOut", "Point", new Vector2(-50, 12));
+            demoObject3.Movement.AddEasing(new Easing(demoObject3, 1, "InOut")
             {
                 CurrentXAxisEasing = easingXAxis,
-                CurrentXAxisEasingOption = Easing.EasingOptions.InOut,
+                CurrentXAxisEasingOption = EasingEnums.EasingOptions.InOut,
                 CurrentXAxisDirection = easingXAxisDirection,
                 CurrentYAxisEasing = easingYAxis,
                 CurrentYAxisEasingOption = easingYAxisOption,
                 CurrentYAxisDirection = easingYAxisDirection,
                 IsLooping = true,
-                IsReturningInReverse = true
-            }, Content);
-            window.AddContent(new Easing(window, 4, "OutIn", new Vector2(-50, 38), "Point")
+                WillReturnInReverse = true
+            });
+            demoObject3.LoadContent(Content);
+
+            window.AddContent(demoObject3);
+
+            var demoObject4 = new DemoObject(null, 4, "OutIn", "Point", new Vector2(-50, 38));
+            demoObject4.Movement.AddEasing(new Easing(demoObject4, 1, "OutIn")
             {
                 CurrentXAxisEasing = easingXAxis,
-                CurrentXAxisEasingOption = Easing.EasingOptions.OutIn,
+                CurrentXAxisEasingOption = EasingEnums.EasingOptions.OutIn,
                 CurrentXAxisDirection = easingXAxisDirection,
                 CurrentYAxisEasing = easingYAxis,
                 CurrentYAxisEasingOption = easingYAxisOption,
                 CurrentYAxisDirection = easingYAxisDirection,
                 IsLooping = true,
-                IsReturningInReverse = true
-            }, Content);
+                WillReturnInReverse = true
+            });
+            demoObject4.LoadContent(Content);
+
+            window.AddContent(demoObject4);
         }
 
         /// <summary>
@@ -193,7 +213,7 @@ namespace Softfire.MonoGame.PHYS.Demos.WinDX
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(UIManager.Fonts.GetFont("Demo14"), "Easing Demonstrations", new Vector2(500, 10), Color.White);
+            spriteBatch.DrawString(UIManager.Fonts.GetFont("Demo14"), "Easing Demonstrations", new Vector2(550, 10), Color.White);
             spriteBatch.DrawString(UIManager.Fonts.GetFont("Demo14"), "Back", new Vector2(220, 40), Color.White);
             spriteBatch.DrawString(UIManager.Fonts.GetFont("Demo14"), "Bounce", new Vector2(220, 190), Color.White);
             spriteBatch.DrawString(UIManager.Fonts.GetFont("Demo14"), "Circ", new Vector2(220, 340), Color.White);
