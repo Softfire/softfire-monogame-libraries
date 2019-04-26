@@ -4,6 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Softfire.MonoGame.CORE;
+using Softfire.MonoGame.CORE.Common;
+using Softfire.MonoGame.CORE.Input;
+using Softfire.MonoGame.IO;
 
 namespace Softfire.MonoGame.ANIM
 {
@@ -26,6 +29,11 @@ namespace Softfire.MonoGame.ANIM
         /// The currently loaded animations.
         /// </summary>
         private IList<Animation> Animations { get; }
+        
+        /// <summary>
+        /// The current tab order id.
+        /// </summary>
+        private int CurrentTabOrderId { get; set; } = 1;
 
         /// <summary>
         /// The animation manager for animations.
@@ -38,7 +46,259 @@ namespace Softfire.MonoGame.ANIM
             Content = new ContentManager(contentManager.ServiceProvider, "Content");
 
             Animations = new List<Animation>();
+
+            // Register movement event.
+            // Registration order matters for call order.
+            IOManager.InputMovementHandler += OnMove;
+            IOManager.InputMovementHandler += OnBlur;
+            IOManager.InputMovementHandler += OnFocusHovered;
+
+            // Register scrolling event.
+            IOManager.InputScrollHandler += OnScrollHovered;
+
+            // Register input events.
+            IOManager.InputPressHandler += OnTab;
+            IOManager.InputPressHandler += OnPress;
+            IOManager.InputReleaseHandler += OnRelease;
+            IOManager.InputHeldHandler += OnHeld;
         }
+
+        #region Events
+
+        /// <summary>
+        /// The subscription method to action when input changes.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnMove(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                if (animation.IsStateSet(FocusStates.IsHovered))
+                {
+                    animation.CheckForFocus(Animations, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                    animation.OnMove(sender, args);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object is scrolled while being hovered by an input device with a pointer, such as a mouse or gamepad.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnScrollHovered(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                if (animation.IsStateSet(FocusStates.IsHovered))
+                {
+                    animation.CheckForFocus(Animations, args, args.InputStates.GetState(InputMouseActionFlags.ScrollUp) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMouseActionFlags.ScrollDown) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMouseActionFlags.ScrollLeft) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMouseActionFlags.ScrollRight) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                    animation.OnScrollHovered(sender, args);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object is scrolled.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnScroll(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                animation.CheckForFocus(Animations, args, args.InputStates.GetState(InputMouseActionFlags.ScrollUp) == InputActionStateFlags.Press ||
+                                                          args.InputStates.GetState(InputMouseActionFlags.ScrollDown) == InputActionStateFlags.Press ||
+                                                          args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                animation.OnScroll(sender, args);
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object gains focus while being hovered by an input device with a pointer, such as a mouse or gamepad.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnFocusHovered(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                animation.OnFocusHovered(sender, args);
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object loses focus or blurs.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnBlur(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                animation.OnBlur(sender, args);
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been pressed while being hovered by an input device with a pointer, such as a mouse or gamepad.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnPressHovered(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                if (animation.IsStateSet(FocusStates.IsHovered))
+                {
+                    animation.CheckForFocus(Animations, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                    animation.OnPressHovered(sender, args);
+                }
+
+                //if (animation.IsStateSet(FocusStates.IsFocused))
+                //{
+                //    // Set tab order to currently focused animation.
+                //    CurrentTabOrderId = animation.TabOrder;
+                //}
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been pressed.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnPress(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                animation.CheckForFocus(Animations, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
+                                                          args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
+                                                          args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                animation.OnPress(sender, args);
+
+                //if (animation.IsStateSet(FocusStates.IsFocused))
+                //{
+                //    // Set tab order to currently focused animation.
+                //    CurrentTabOrderId = animation.TabOrder;
+                //}
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been released while being hovered by an input device with a pointer, such as a mouse or gamepad.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnReleaseHovered(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                if (animation.IsStateSet(FocusStates.IsHovered))
+                {
+                    animation.CheckForFocus(Animations, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
+                                                              args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                    animation.OnReleaseHovered(sender, args);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been released.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnRelease(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                animation.CheckForFocus(Animations, args, args.InputStates.GetState(InputMouseActionFlags.LeftClick) == InputActionStateFlags.Press ||
+                                                          args.InputStates.GetState(InputMouseActionFlags.RightClick) == InputActionStateFlags.Press ||
+                                                          args.InputStates.GetState(InputMappableConfirmationCommandFlags.Confirm) == InputActionStateFlags.Press);
+                animation.OnRelease(sender, args);
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been held while being hovered by an input device with a pointer, such as a mouse or gamepad.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnHeldHovered(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                if (animation.IsStateSet(FocusStates.IsHovered))
+                {
+                    animation.OnHeldHovered(sender, args);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the object detects an input has been held.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnHeld(object sender, InputEventArgs args)
+        {
+            foreach (var animation in Animations)
+            {
+                animation.OnHeld(sender, args);
+            }
+        }
+
+        /// <summary>
+        /// The subscription method to action when the mapped tabbing button has been pressed.
+        /// </summary>
+        /// <param name="sender">The subscribed object.</param>
+        /// <param name="args">The <see cref="InputEventArgs"/> sent with the call.</param>
+        private void OnTab(object sender, InputEventArgs args)
+        {
+            // If Tab is pressed.
+            //if (args.InputStates.GetState(InputMappableMovementCommandFlags.Tab) == InputActionStateFlags.Press ||
+            //    args.InputStates.GetState(InputKeyboardCommandFlags.TabKey) == InputActionStateFlags.Press)
+            //{
+            //    if (CurrentTabOrderId + 1 > Children.Count)
+            //    {
+            //        CurrentTabOrderId = 1;
+            //    }
+            //    else
+            //    {
+            //        CurrentTabOrderId++;
+            //    }
+
+            //    foreach (var animation in Children)
+            //    {
+            //        if (animation.TabOrder == CurrentTabOrderId)
+            //        {
+            //            // Add focus.
+            //            animation.AddState(FocusStates.IsFocused);
+
+            //            // Remove focus from other animations, if focused.
+            //            foreach (var child in Children)
+            //            {
+            //                if (!animation.Equals(child))
+            //                {
+            //                    child.RemoveState(FocusStates.IsFocused);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+        }
+
+        #endregion
 
         /// <summary>
         /// Retrieves the next valid id from the list of animations.
