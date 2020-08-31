@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using Microsoft.Xna.Framework;
+using Softfire.MonoGame.DB.V2;
+using Softfire.MonoGame.LOG.V2;
 
 namespace Softfire.MonoGame.NTWK.V2.Lobby
 {
-    public class Lobby<T> where T : LobbyUser
+    public class Lobby<TUser> where TUser : LobbyUser
     {
         /// <summary>
         /// Elapsed Time.
@@ -53,12 +55,12 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// <summary>
         ///  Lobby Rooms.
         /// </summary>
-        public Dictionary<Guid, LobbyRoom<T>> Rooms { get; }
+        public Dictionary<Guid, LobbyRoom<TUser>> Rooms { get; }
 
         /// <summary>
         /// Lobby Users.
         /// </summary>
-        public Dictionary<Guid, T> Users { get; }
+        public Dictionary<Guid, TUser> Users { get; }
 
         /// <summary>
         ///  Lobby Banned Text List.
@@ -162,14 +164,14 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         #endregion
         
         /// <summary>
-        /// MySQL Database Connection.
+        /// SQL Database Connection.
         /// </summary>
-        private MySqlDBConnect MySqlDBConnect { get; }
+        private MsSqlDbConnection SqlDbConnect { get; }
 
         /// <summary>
         /// Lobby Constructor.
         /// </summary>
-        /// <param name="isHeadless">Indicates wether the lobby requires a graphics device and MonoGame. Intaken as a <see cref="bool"/>. Use Update() if true otherwise use Update(GameTime gametime).</param>
+        /// <param name="isHeadless">Indicates whether the lobby requires a graphics device and MonoGame. Intaken as a <see cref="bool"/>. Use <see cref="Update"/> if true otherwise use <see cref="Update(GameTime)"/>.</param>
         /// <param name="name">The lobby name. Intaken as a <see cref="string"/>.</param>
         /// <param name="logFilePath">Intakes a file path for logs relative to the calling application.</param>
         public Lobby(bool isHeadless, string name, string logFilePath = @"Config\Logs\Lobby")
@@ -183,12 +185,12 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
             }
 
             //TODO: Inject DB info another way.
-            MySqlDBConnect = new MySqlDBConnect("host", "username", "password", "database");
+            SqlDbConnect = new MsSqlDbConnection("server", "userid", "password", "database");
 
             Name = name;
 
-            Users = new Dictionary<Guid, T>();
-            Rooms = new Dictionary<Guid, LobbyRoom<T>>();
+            Users = new Dictionary<Guid, TUser>();
+            Rooms = new Dictionary<Guid, LobbyRoom<TUser>>();
             BannedText = new Dictionary<string, LobbyBanText>();
             Logger = new Logger(logFilePath);
         }
@@ -219,7 +221,7 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// <param name="password">New user's password.  Intaken as a <see cref="string"/>.</param>
         /// <param name="ipEndPoint">IPEndpoint of registering user.</param>
         /// <returns>Returns an enum of LobbyUserRegistrationResults indicating the result.</returns>
-        public LobbyUserRegistrationResults LobbyUserRegistration(T user, string password, IPEndPoint ipEndPoint)
+        public LobbyUserRegistrationResults LobbyUserRegistration(TUser user, string password, IPEndPoint ipEndPoint)
         {
             try
             {
@@ -606,7 +608,7 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// </summary>
         /// <param name="user">A new user of Type T1.</param>
         /// <returns>Returns a bool indicating whether the user was created.</returns>
-        private LobbyUserAddToLobbyResults LobbyUserAddToLobby(T user)
+        private LobbyUserAddToLobbyResults LobbyUserAddToLobby(TUser user)
         {
             try
             {
@@ -799,7 +801,7 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
             return id;
         }
 
-        public LobbyRoomRegistrationResults LobbyRoomRegistration(T user, string roomName, string adminPassword, string accessPassword = null)
+        public LobbyRoomRegistrationResults LobbyRoomRegistration(TUser user, string roomName, string adminPassword, string accessPassword = null)
         {
             try
             {
@@ -832,12 +834,12 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// <summary>
         /// Create Room.
         /// </summary>
-        /// <param name="user">The requesting user. intaken as a LobbyUser.</param>
+        /// <param name="user">The requesting user. Intaken as a <see cref="LobbyUser"/>.</param>
         /// <param name="roomName">the room name. Displayed in the Lobby. Checked against the Banned Text List. Intaken as a <see cref="string"/>.</param>
         /// <param name="adminPassword">The admin password. Used to modify the room settings. Checked against the Banned Text List. Intaken as a <see cref="string"/>.</param>
         /// <param name="accessPassword">The access password. Used to access to room from the Lobby. Checked against the Banned Text List. Intaken as a <see cref="string"/>.</param>
         /// <returns></returns>
-        public LobbyRoomCreationResults CreateRoom(T user, string roomName, string adminPassword, string accessPassword = null)
+        public LobbyRoomCreationResults CreateRoom(TUser user, string roomName, string adminPassword, string accessPassword = null)
         {
             try
             {
@@ -909,7 +911,7 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
                 var id = GenerateUniqueLobbyRoomId();
                 
                 // Add new Room.
-                Rooms.Add(id, new LobbyRoom<T>(id, roomName, user, adminPassword, accessPassword));
+                Rooms.Add(id, new LobbyRoom<TUser>(id, roomName, user, adminPassword, accessPassword));
 
                 // Write to log.
                 Logger.Write(LogTypes.Info, $"Lobby room creation success.{Environment.NewLine}" +
@@ -957,7 +959,7 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// </summary>
         /// <param name="user">The requesting user. intaken as a LobbyUser.</param>
         /// <param name="room">The room to remove. Intaken as a LobbyRoom.</param>
-        public LobbyRoomRemovalResults RemoveRoom(T user, LobbyRoom<T> room)
+        public LobbyRoomRemovalResults RemoveRoom(TUser user, LobbyRoom<TUser> room)
         {
             try
             {
@@ -1004,7 +1006,7 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
                                                           $"Source: {nameof(RemoveRoom)}{Environment.NewLine}" +
                                                           $"Id: ({user.Id}){Environment.NewLine}" +
                                                           $"User: ({user.UserName}){Environment.NewLine}" +
-                                                          $"Message: Membership Status is {user.MembershipStatus}. Status or Room Owner, {LobbyUser.Memberships.Staff.ToString()} or higher required.{Environment.NewLine}",
+                                                          $"Message: Membership Status is {user.MembershipStatus}. Status or Room Owner, {LobbyUser.Memberships.Staff} or higher required.{Environment.NewLine}",
                                                           useInlineLayout: false);
 
                     // Return failure code.
@@ -1277,17 +1279,17 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// Determines whether the lobby user exists, by id.
         /// </summary>
         /// <param name="id">Guid to check for in the database.</param>
-        /// <returns>Returns a bool indicating whether the Guid exists in an account already.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the <see cref="Guid"/> exists in an account already.</returns>
         public bool LobbyUserExists(Guid id)
         {
-            using (MySqlDBConnect.Connection)
+            using (SqlDbConnect.Connection)
             {
-                using (var command = MySqlDBConnect.Connection.CreateCommand())
+                using (var command = SqlDbConnect.Connection.CreateCommand())
                 {
                     command.CommandText = "SELECT Count(*) FROM Users WHERE id=?id";
                     command.Parameters.AddWithValue("?id", id);
 
-                    MySqlDBConnect.OpenConnection();
+                    SqlDbConnect.Connect();
 
                     return Convert.ToInt32(command.ExecuteScalar()) > 0;
                 }
@@ -1298,17 +1300,17 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// Determines whether the lobby user exists, by user name.
         /// </summary>
         /// <param name="userName">User name to check for in the database. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns a bool indicating whether the user name exists in an account already.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the user name exists in an account already.</returns>
         public bool LobbyUserExistsByUserName(string userName)
         {
-            using (MySqlDBConnect.Connection)
+            using (SqlDbConnect.Connection)
             {
-                using (var command = MySqlDBConnect.Connection.CreateCommand())
+                using (var command = SqlDbConnect.Connection.CreateCommand())
                 {
                     command.CommandText = "SELECT Count(*) FROM Users WHERE user_name=?user_name";
                     command.Parameters.AddWithValue("?user_name", userName);
 
-                    MySqlDBConnect.OpenConnection();
+                    SqlDbConnect.Connect();
 
                     return Convert.ToInt32(command.ExecuteScalar()) > 0;
                 }
@@ -1319,17 +1321,17 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// Determines whether the lobby user exists, by email.
         /// </summary>
         /// <param name="emailAddress">Email address to check for in the database. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns a bool indicating whether the email address exists in an account already.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the email address exists in an account already.</returns>
         public bool LobbyUserExistsByEmail(string emailAddress)
         {
-            using (MySqlDBConnect.Connection)
+            using (SqlDbConnect.Connection)
             {
-                using (var checkForDuplicateEmail = MySqlDBConnect.Connection.CreateCommand())
+                using (var checkForDuplicateEmail = SqlDbConnect.Connection.CreateCommand())
                 {
                     checkForDuplicateEmail.CommandText = "SELECT Count(*) FROM Users WHERE email_address=?email_address";
                     checkForDuplicateEmail.Parameters.AddWithValue("?email_address", emailAddress);
 
-                    MySqlDBConnect.OpenConnection();
+                    SqlDbConnect.Connect();
 
                     return Convert.ToInt32(checkForDuplicateEmail.ExecuteScalar()) > 0;
                 }
@@ -1348,11 +1350,11 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// <returns>Returns the number of rows affected by the insert.</returns>
         public int InsertNewLobbyUser(Guid id, string firstName, string lastName, string emailAddress, string userName, string passwordHash)
         {
-            using (MySqlDBConnect.Connection)
+            using (SqlDbConnect.Connection)
             {
                 if (!LobbyUserExists(id))
                 {
-                    using (var command = MySqlDBConnect.Connection.CreateCommand())
+                    using (var command = SqlDbConnect.Connection.CreateCommand())
                     {
                         command.CommandText = "INSERT INTO Users (id, first_name, last_name, user_name, user_pass_hash, screen_name, email_address)" +
                                               "VALUES (?id, ?first_name, ?last_name, ?user_name, ?user_pass_hash, ?screen_name, ?email_address)";
@@ -1364,7 +1366,7 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
                         command.Parameters.AddWithValue("?screen_name", userName);
                         command.Parameters.AddWithValue("?email_address", emailAddress);
 
-                        MySqlDBConnect.OpenConnection();
+                        SqlDbConnect.Connect();
 
                         return command.ExecuteNonQuery();
                     }
@@ -1383,11 +1385,11 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// <returns>Returns the number of rows affected by the insert.</returns>
         public int InsertNewLobbyRoom(Guid id, string roomName, Guid ownerId)
         {
-            using (MySqlDBConnect.Connection)
+            using (SqlDbConnect.Connection)
             {
                 if (!LobbyUserExists(id))
                 {
-                    using (var command = MySqlDBConnect.Connection.CreateCommand())
+                    using (var command = SqlDbConnect.Connection.CreateCommand())
                     {
                         command.CommandText = "INSERT INTO Rooms (id, room_name, owner_id)" +
                                               "VALUES (?id, ?room_name, ?owner_id)";
@@ -1395,7 +1397,7 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
                         command.Parameters.AddWithValue("?room_name", roomName);
                         command.Parameters.AddWithValue("?owner_id", ownerId);
 
-                        MySqlDBConnect.OpenConnection();
+                        SqlDbConnect.Connect();
 
                         return command.ExecuteNonQuery();
                     }
@@ -1410,32 +1412,36 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// </summary>
         /// <param name="id">Unique Guid id.</param>
         /// <returns>Returns the requested LobbyUser otherwise null.</returns>
-        public T SelectLobbyUserById(Guid id)
+        public TUser SelectLobbyUserById(Guid id)
         {
-            using (MySqlDBConnect.Connection)
+            using (SqlDbConnect.Connection)
             {
-                using (var command = MySqlDBConnect.Connection.CreateCommand())
+                using (var command = SqlDbConnect.Connection.CreateCommand())
                 {
                     command.CommandText = "SELECT id, first_name, last_name, user_name, screen_name, membership_status, email_address, karma, coins, strikes, last_logon_datetime, ban_datetime, ban_end_datetime, ban_reason" +
                                           "FROM Users WHERE id=?id";
                     command.Parameters.AddWithValue("?id", id);
 
-                    MySqlDBConnect.OpenConnection();
+                    SqlDbConnect.Connect();
 
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return (T)new LobbyUser(reader.GetGuid("id"), reader.GetString("first_name"), reader.GetString("last_name"), reader.GetString("email_address"), reader.GetString("user_name"))
+                            return (TUser)new LobbyUser(reader.GetGuid(0),
+                                                        reader.GetString(1),
+                                                        reader.GetString(2),
+                                                        reader.GetString(6),
+                                                        reader.GetString(3))
                             {
-                                ScreenName = reader.GetString("screen_name"),
-                                Karma = reader.GetDouble("karma"),
-                                Coins = reader.GetDouble("coins"),
-                                Strikes = reader.GetInt32("strikes"),
-                                LastLogonDateTime = reader.GetDateTime("last_logon_datetime"),
-                                BanDateTime = reader.GetDateTime("ban_datetime"),
-                                BanEndDateTime = reader.GetDateTime("ban_end_datetime"),
-                                BanReason = reader.GetString("ban_reason")
+                                ScreenName = reader.GetString(4),
+                                Karma = reader.GetDouble(7),
+                                Coins = reader.GetDouble(8),
+                                Strikes = reader.GetInt32(9),
+                                LastLogonDateTime = reader.GetDateTime(10),
+                                BanDateTime = reader.GetDateTime(11),
+                                BanEndDateTime = reader.GetDateTime(12),
+                                BanReason = reader.GetString(13)
                             };
                         }
 
@@ -1450,32 +1456,36 @@ namespace Softfire.MonoGame.NTWK.V2.Lobby
         /// </summary>
         /// <param name="emailAddress">Email address to search for in the database.</param>
         /// <returns>Returns the requested LobbyUser otherwise null.</returns>
-        public T SelectLobbyUserByEmail(string emailAddress)
+        public TUser SelectLobbyUserByEmail(string emailAddress)
         {
-            using (MySqlDBConnect.Connection)
+            using (SqlDbConnect.Connection)
             {
-                using (var command = MySqlDBConnect.Connection.CreateCommand())
+                using (var command = SqlDbConnect.Connection.CreateCommand())
                 {
                     command.CommandText = "SELECT id, first_name, last_name, user_name, screen_name, membership_status, email_address, karma, coins, strikes, last_logon_datetime, ban_datetime, ban_end_datetime, ban_reason" +
                                           "FROM Users WHERE email_address=?email_address";
                     command.Parameters.AddWithValue("?email_address", emailAddress);
 
-                    MySqlDBConnect.OpenConnection();
+                    SqlDbConnect.Connect();
 
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return (T)new LobbyUser(reader.GetGuid("id"), reader.GetString("first_name"), reader.GetString("last_name"), reader.GetString("email_address"), reader.GetString("user_name"))
+                            return (TUser)new LobbyUser(reader.GetGuid(0),
+                                                        reader.GetString(1),
+                                                        reader.GetString(2),
+                                                        reader.GetString(6),
+                                                        reader.GetString(3))
                             {
-                                ScreenName = reader.GetString("screen_name"),
-                                Karma = reader.GetDouble("karma"),
-                                Coins = reader.GetDouble("coins"),
-                                Strikes = reader.GetInt32("strikes"),
-                                LastLogonDateTime = reader.GetDateTime("last_logon_datetime"),
-                                BanDateTime = reader.GetDateTime("ban_datetime"),
-                                BanEndDateTime = reader.GetDateTime("ban_end_datetime"),
-                                BanReason = reader.GetString("ban_reason")
+                                ScreenName = reader.GetString(4),
+                                Karma = reader.GetDouble(7),
+                                Coins = reader.GetDouble(8),
+                                Strikes = reader.GetInt32(9),
+                                LastLogonDateTime = reader.GetDateTime(10),
+                                BanDateTime = reader.GetDateTime(11),
+                                BanEndDateTime = reader.GetDateTime(12),
+                                BanReason = reader.GetString(13)
                             };
                         }
 

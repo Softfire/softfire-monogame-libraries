@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Softfire.MonoGame.UI.Items
+namespace Softfire.MonoGame.UI.V2.Items
 {
     /// <summary>
     /// A UI border class.

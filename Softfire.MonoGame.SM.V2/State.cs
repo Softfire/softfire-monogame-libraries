@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.IO;
-using Softfire.MonoGame.SM.Transitions;
+using Softfire.MonoGame.IO.V2;
+using Softfire.MonoGame.SM.V2.Transitions;
 
-namespace Softfire.MonoGame.SM
+namespace Softfire.MonoGame.SM.V2
 {
     public abstract partial class State : IState
     {

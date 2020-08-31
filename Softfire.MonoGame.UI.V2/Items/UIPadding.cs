@@ -1,4 +1,4 @@
-﻿namespace Softfire.MonoGame.UI.Items
+﻿namespace Softfire.MonoGame.UI.V2.Items
 {
     /// <summary>
     /// A class for defining paddings for a ui element.

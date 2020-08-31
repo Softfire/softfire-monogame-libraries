@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using static Softfire.MonoGame.CORE.Identities;
+using Softfire.MonoGame.CORE.V2;
 
-namespace Softfire.MonoGame.UI.Effects
+namespace Softfire.MonoGame.UI.V2.Effects
 {
     /// <summary>
     /// A UI effects manager. Used to action effects on UI elements.
@@ -79,14 +79,14 @@ namespace Softfire.MonoGame.UI.Effects
         /// </summary>
         /// <param name="effectId">The id of the effect to search. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a bool indicating whether the effect exists.</returns>
-        public bool LoadedEffectExists(int effectId) => ObjectExists<UIEffectBase, UIEffectBase>(LoadedEffects, effectId);
+        public bool LoadedEffectExists(int effectId) => Identities.ObjectExists<UIEffectBase, UIEffectBase>(LoadedEffects, effectId);
 
         /// <summary>
         /// Determines whether the loaded effect exists, by name.
         /// </summary>
         /// <param name="effectName">The name of the effect to search. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the effect exists.</returns>
-        public bool LoadedEffectExists(string effectName) => ObjectExists<UIEffectBase, UIEffectBase>(LoadedEffects, effectName);
+        public bool LoadedEffectExists(string effectName) => Identities.ObjectExists<UIEffectBase, UIEffectBase>(LoadedEffects, effectName);
         
         /// <summary>
         /// Call to activate a loaded effect, by id.
@@ -133,28 +133,28 @@ namespace Softfire.MonoGame.UI.Effects
         /// </summary>
         /// <param name="effectId">The id of the effect to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the requested effect, if present, otherwise null.</returns>
-        public UIEffectBase GetLoadedEffect(int effectId) => GetObject<UIEffectBase, UIEffectBase>(LoadedEffects, effectId);
+        public UIEffectBase GetLoadedEffect(int effectId) => Identities.GetObject<UIEffectBase, UIEffectBase>(LoadedEffects, effectId);
 
         /// <summary>
         /// Gets the loaded effect, by name.
         /// </summary>
         /// <param name="effectName">The name of the effect to retrieve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns the requested effect, if present, otherwise null.</returns>
-        public UIEffectBase GetLoadedEffect(string effectName) => GetObject<UIEffectBase, UIEffectBase>(LoadedEffects, effectName);
+        public UIEffectBase GetLoadedEffect(string effectName) => Identities.GetObject<UIEffectBase, UIEffectBase>(LoadedEffects, effectName);
         
         /// <summary>
         /// Removes the loaded effect, by id.
         /// </summary>
         /// <param name="effectId">The id of the effect to remove. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a bool indicating whether the effect was removed.</returns>
-        public bool RemoveLoadedEffect(int effectId) => RemoveObject<UIEffectBase, UIEffectBase>(LoadedEffects, effectId);
+        public bool RemoveLoadedEffect(int effectId) => Identities.RemoveObject<UIEffectBase, UIEffectBase>(LoadedEffects, effectId);
 
         /// <summary>
         /// Removes the loaded effect, by name.
         /// </summary>
         /// <param name="effectName">The name of the effect to remove. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the effect was removed.</returns>
-        public bool RemoveLoadedEffect(string effectName) => RemoveObject<UIEffectBase, UIEffectBase>(LoadedEffects, effectName);
+        public bool RemoveLoadedEffect(string effectName) => Identities.RemoveObject<UIEffectBase, UIEffectBase>(LoadedEffects, effectName);
 
         /// <summary>
         /// Clears any loaded effects.
@@ -194,42 +194,42 @@ namespace Softfire.MonoGame.UI.Effects
         /// </summary>
         /// <param name="effectId">The id of the requested effect. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a bool indicating whether the effect is currently active.</returns>
-        public bool ActivatedEffectExists(int effectId) => ObjectExists<UIEffectBase, UIEffectBase>(ActiveEffects, effectId);
+        public bool ActivatedEffectExists(int effectId) => Identities.ObjectExists<UIEffectBase, UIEffectBase>(ActiveEffects, effectId);
 
         /// <summary>
         /// Determines whether an activated effect exists, by name.
         /// </summary>
         /// <param name="effectName">The name of the requested effect. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the effect is currently active.</returns>
-        public bool ActivatedEffectExists(string effectName) => ObjectExists<UIEffectBase, UIEffectBase>(ActiveEffects, effectName);
+        public bool ActivatedEffectExists(string effectName) => Identities.ObjectExists<UIEffectBase, UIEffectBase>(ActiveEffects, effectName);
         
         /// <summary>
         /// Gets the active effect, by id.
         /// </summary>
         /// <param name="effectId">The id of the effect to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the specified effect, if present, otherwise null.</returns>
-        public UIEffectBase GetActivatedEffect(int effectId) => GetObject<UIEffectBase, UIEffectBase>(ActiveEffects, effectId);
+        public UIEffectBase GetActivatedEffect(int effectId) => Identities.GetObject<UIEffectBase, UIEffectBase>(ActiveEffects, effectId);
 
         /// <summary>
         /// Gets the active effect, by name.
         /// </summary>
         /// <param name="effectName">The name of the effect to retrieve. Intaken as a <see cref="string"/></param>
         /// <returns>Returns the specified effect, if present, otherwise null.</returns>
-        public UIEffectBase GetActivatedEffect(string effectName) => GetObject<UIEffectBase, UIEffectBase>(ActiveEffects, effectName);
+        public UIEffectBase GetActivatedEffect(string effectName) => Identities.GetObject<UIEffectBase, UIEffectBase>(ActiveEffects, effectName);
 
         /// <summary>
         /// Removes an activated effect, by id.
         /// </summary>
         /// <param name="effectId">The id of the effect to remove. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a bool indicating whether the effect was removed.</returns>
-        public bool RemoveActivatedEffect(int effectId) => RemoveObject<UIEffectBase, UIEffectBase>(ActiveEffects, effectId);
+        public bool RemoveActivatedEffect(int effectId) => Identities.RemoveObject<UIEffectBase, UIEffectBase>(ActiveEffects, effectId);
 
         /// <summary>
         /// Removes an activated effect, by name.
         /// </summary>
         /// <param name="effectName">The name of the effect to remove. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the effect was removed.</returns>
-        public bool RemoveActivatedEffect(string effectName) => RemoveObject<UIEffectBase, UIEffectBase>(ActiveEffects, effectName);
+        public bool RemoveActivatedEffect(string effectName) => Identities.RemoveObject<UIEffectBase, UIEffectBase>(ActiveEffects, effectName);
 
         /// <summary>
         /// Clears any active effects.

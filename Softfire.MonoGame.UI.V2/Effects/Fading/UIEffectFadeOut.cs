@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Softfire.MonoGame.UI.Effects.Fading
+namespace Softfire.MonoGame.UI.V2.Effects.Fading
 {
     /// <summary>
     /// An effect to fade out the UI.

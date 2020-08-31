@@ -1,15 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.CORE;
-using Softfire.MonoGame.CORE.Common;
-using Softfire.MonoGame.CORE.Graphics.Drawing;
-using Softfire.MonoGame.UI.Effects;
-using Softfire.MonoGame.UI.Items;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Softfire.MonoGame.CORE.V2;
+using Softfire.MonoGame.CORE.V2.Common;
+using Softfire.MonoGame.UI.V2.Effects;
+using Softfire.MonoGame.UI.V2.Items;
 
-namespace Softfire.MonoGame.UI
+namespace Softfire.MonoGame.UI.V2
 {
     /// <summary>
     /// The base UI class.

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.CORE;
-using Softfire.MonoGame.CORE.Common;
+using Softfire.MonoGame.CORE.V2;
+using Softfire.MonoGame.CORE.V2.Common;
 
-namespace Softfire.MonoGame.UI.Items
+namespace Softfire.MonoGame.UI.V2.Items
 {
     public partial class UIText
     {

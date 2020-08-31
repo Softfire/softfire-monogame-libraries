@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.Xna.Framework;
 
-namespace Softfire.MonoGame.UI.Effects.Coloring
+namespace Softfire.MonoGame.UI.V2.Effects.Coloring
 {
     /// <summary>
     /// An effect to transition the UI's outline color to another color.

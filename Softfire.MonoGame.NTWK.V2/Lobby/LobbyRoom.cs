@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
+using Softfire.MonoGame.LOG.V2;
 
 namespace Softfire.MonoGame.NTWK.V2.Lobby
 {

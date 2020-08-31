@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Softfire.MonoGame.UI.Items
+namespace Softfire.MonoGame.UI.V2.Items
 {
     /// <summary>
     /// A dedicated class for displaying text.

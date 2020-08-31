@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Softfire.MonoGame.UI.Effects.Scaling
+namespace Softfire.MonoGame.UI.V2.Effects.Scaling
 {
     /// <summary>
     /// An effect to scale the UI out along the X and Y axis.

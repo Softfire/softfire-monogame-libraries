@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Softfire.MonoGame.CORE.V2;
 using Softfire.MonoGame.CORE.V2.Common;
+using Softfire.MonoGame.CORE.V2.Physics;
 
 namespace Softfire.MonoGame.IO.V2
 {

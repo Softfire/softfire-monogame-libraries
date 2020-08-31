@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Softfire.MonoGame.SM.Transitions
+namespace Softfire.MonoGame.SM.V2.Transitions
 {
     public class MoveRight : Transition
     {

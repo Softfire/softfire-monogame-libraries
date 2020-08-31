@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.CORE.Common;
+using Softfire.MonoGame.CORE.V2.Common;
 
-namespace Softfire.MonoGame.UI.Items
+namespace Softfire.MonoGame.UI.V2.Items
 {
     /// <summary>
     /// The outline class used to draw around UI elements.

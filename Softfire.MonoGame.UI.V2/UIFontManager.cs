@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Softfire.MonoGame.UI
+namespace Softfire.MonoGame.UI.V2
 {
     /// <summary>
     /// A manager for MonoGame fonts.

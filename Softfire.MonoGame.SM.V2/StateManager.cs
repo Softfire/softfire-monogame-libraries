@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Softfire.MonoGame.SM
+namespace Softfire.MonoGame.SM.V2
 {
     /// <summary>
     /// A state manager for using states.

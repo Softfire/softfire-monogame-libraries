@@ -1,6 +1,6 @@
-﻿using Softfire.MonoGame.CORE.Common;
+﻿using Softfire.MonoGame.CORE.V2.Common;
 
-namespace Softfire.MonoGame.UI.Effects
+namespace Softfire.MonoGame.UI.V2.Effects
 {
     /// <summary>
     /// The base UI class for effects.

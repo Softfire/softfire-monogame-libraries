@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Softfire.MonoGame.UI.Effects.Coloring
+namespace Softfire.MonoGame.UI.V2.Effects.Coloring
 {
     /// <summary>
     /// An effect to transition the UI's background color to another color.

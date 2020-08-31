@@ -1,7 +1,7 @@
 ﻿using System;
-using Softfire.MonoGame.LOG;
+using Softfire.MonoGame.LOG.V2;
 
-namespace Softfire.MonoGame.UI
+namespace Softfire.MonoGame.UI.V2
 {
     public sealed class UIException : Exception
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Softfire.MonoGame.UI.Shaders
+namespace Softfire.MonoGame.UI.V2.Shaders
 {
      public abstract class UIShader : BasicEffect
     {

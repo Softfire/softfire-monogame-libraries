@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Softfire.MonoGame.UI.Items
+namespace Softfire.MonoGame.UI.V2.Items
 {
     /// <summary>
     /// A UI button.

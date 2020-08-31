@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.CORE.Common;
-using Softfire.MonoGame.UI.Items;
-using static Softfire.MonoGame.CORE.Identities;
+using Softfire.MonoGame.CORE.V2;
+using Softfire.MonoGame.CORE.V2.Common;
+using Softfire.MonoGame.UI.V2.Items;
 
-namespace Softfire.MonoGame.UI.Themes
+namespace Softfire.MonoGame.UI.V2.Themes
 {
     /// <summary>
     /// A custom theme for easily modifying the UI.
@@ -205,14 +205,14 @@ namespace Softfire.MonoGame.UI.Themes
         /// </summary>
         /// <param name="transparencyId">The id of the transparency to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the transparency with the specified id, if present, otherwise null.</returns>
-        public UITransparency GetTransparency(int transparencyId) => GetObject<UITransparency, UITransparency>(Transparencies, transparencyId);
+        public UITransparency GetTransparency(int transparencyId) => Identities.GetObject<UITransparency, UITransparency>(Transparencies, transparencyId);
 
         /// <summary>
         /// Gets a transparency, by name.
         /// </summary>
         /// <param name="transparencyName">The name of the transparency to retrieve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns the transparency with the specified name, if present, otherwise null.</returns>
-        public UITransparency GetTransparency(string transparencyName) => GetObject<UITransparency, UITransparency>(Transparencies, transparencyName);
+        public UITransparency GetTransparency(string transparencyName) => Identities.GetObject<UITransparency, UITransparency>(Transparencies, transparencyName);
 
 
         /// <summary>

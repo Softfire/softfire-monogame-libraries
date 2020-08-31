@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Softfire.MonoGame.UI.Effects.Moving
+namespace Softfire.MonoGame.UI.V2.Effects.Moving
 {
     /// <summary>
     /// An effect to move the UI upwards along the Y axis from it's current position.

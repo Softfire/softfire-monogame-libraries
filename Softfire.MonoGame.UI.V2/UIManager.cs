@@ -1,13 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.CORE;
-using Softfire.MonoGame.UI.Effects;
-using Softfire.MonoGame.UI.Themes;
-using System;
-using System.Collections.Generic;
+using Softfire.MonoGame.CORE.V2;
+using Softfire.MonoGame.UI.V2.Effects;
+using Softfire.MonoGame.UI.V2.Themes;
 
-namespace Softfire.MonoGame.UI
+namespace Softfire.MonoGame.UI.V2
 {
     /// <summary>
     /// A UI manager class. Provides UI groups, themes and fonts.

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Softfire.MonoGame.LOG.V2;
 
 namespace Softfire.MonoGame.NTWK.V2
 {

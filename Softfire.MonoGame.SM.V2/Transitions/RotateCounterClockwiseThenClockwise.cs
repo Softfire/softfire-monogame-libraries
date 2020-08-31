@@ -1,4 +1,4 @@
-﻿namespace Softfire.MonoGame.SM.Transitions
+﻿namespace Softfire.MonoGame.SM.V2.Transitions
 {
     public class RotateCounterClockwiseThenClockwise : Transition
     {

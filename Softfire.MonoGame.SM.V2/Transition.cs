@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace Softfire.MonoGame.SM
+namespace Softfire.MonoGame.SM.V2
 {
     /// <summary>
     /// A transition class for use between states.

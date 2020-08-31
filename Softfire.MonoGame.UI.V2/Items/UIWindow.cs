@@ -1,13 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.CORE;
-using Softfire.MonoGame.CORE.Common;
-using Softfire.MonoGame.CORE.Input;
-using Softfire.MonoGame.IO;
-using System.Linq;
+using Softfire.MonoGame.CORE.V2;
+using Softfire.MonoGame.CORE.V2.Common;
+using Softfire.MonoGame.CORE.V2.Input;
+using Softfire.MonoGame.IO.V2;
 
-namespace Softfire.MonoGame.UI.Items
+namespace Softfire.MonoGame.UI.V2.Items
 {
     /// <summary>
     /// A UI window for displaying text, buttons, menus and <see cref="MonoGameObject"/>s.

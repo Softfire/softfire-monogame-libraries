@@ -106,12 +106,6 @@
     <Content Include="Content\TestSword.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Softfire.MonoGame.IO\Softfire.MonoGame.IO.csproj">
-      <Project>{63d97004-2425-493c-b65b-d5a590941c6f}</Project>
-      <Name>Softfire.MonoGame.IO</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="NUnit">
       <Version>3.11.0</Version>
     </PackageReference>

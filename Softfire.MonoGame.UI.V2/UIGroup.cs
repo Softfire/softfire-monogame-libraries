@@ -1,14 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Softfire.MonoGame.CORE.Common;
-using Softfire.MonoGame.CORE.Input;
-using Softfire.MonoGame.IO;
-using Softfire.MonoGame.UI.Items;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Softfire.MonoGame.CORE;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Softfire.MonoGame.CORE.V2;
+using Softfire.MonoGame.CORE.V2.Common;
+using Softfire.MonoGame.CORE.V2.Input;
+using Softfire.MonoGame.IO.V2;
+using Softfire.MonoGame.UI.V2.Items;
 
-namespace Softfire.MonoGame.UI
+namespace Softfire.MonoGame.UI.V2
 {
     /// <summary>
     /// A class for grouping UI elements together.

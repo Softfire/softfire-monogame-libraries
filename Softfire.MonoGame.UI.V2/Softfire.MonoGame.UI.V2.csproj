@@ -7,4 +7,8 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Softfire.MonoGame.CORE.V2\Softfire.MonoGame.CORE.V2.csproj" />
+    <ProjectReference Include="..\Softfire.MonoGame.IO.V2\Softfire.MonoGame.IO.V2.csproj" />
+  </ItemGroup>
 </Project>

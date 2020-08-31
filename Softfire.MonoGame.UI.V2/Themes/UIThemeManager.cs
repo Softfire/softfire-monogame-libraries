@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using static Softfire.MonoGame.CORE.Identities;
+using Softfire.MonoGame.CORE.V2;
 
-namespace Softfire.MonoGame.UI.Themes
+namespace Softfire.MonoGame.UI.V2.Themes
 {
     /// <summary>
     /// A UI Theme Manager.
@@ -58,7 +58,7 @@ namespace Softfire.MonoGame.UI.Themes
 
             if (!CheckForTheme(name))
             {
-                nextThemeId = GetNextValidObjectId<UITheme, UITheme>(Themes);
+                nextThemeId = Identities.GetNextValidObjectId<UITheme, UITheme>(Themes);
 
                 if (!CheckForTheme(nextThemeId))
                 {
@@ -114,41 +114,41 @@ namespace Softfire.MonoGame.UI.Themes
         /// </summary>
         /// <param name="themeId">The id of the theme to search. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a bool indicating whether the theme is present.</returns>
-        public bool CheckForTheme(int themeId) => ObjectExists<UITheme, UITheme>(Themes, themeId);
+        public bool CheckForTheme(int themeId) => Identities.ObjectExists<UITheme, UITheme>(Themes, themeId);
 
         /// <summary>
         /// Checks for a theme by name.
         /// </summary>
         /// <param name="themeName">The name of the theme to search. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a bool indicating whether the theme is present.</returns>
-        public bool CheckForTheme(string themeName) => ObjectExists<UITheme, UITheme>(Themes, themeName);
+        public bool CheckForTheme(string themeName) => Identities.ObjectExists<UITheme, UITheme>(Themes, themeName);
 
         /// <summary>
         /// Gets a theme by id.
         /// </summary>
         /// <param name="themeId">The id of the theme to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the theme with the specified id, if present, otherwise null.</returns>
-        public UITheme GetTheme(int themeId) => GetObject<UITheme, UITheme>(Themes, themeId);
+        public UITheme GetTheme(int themeId) => Identities.GetObject<UITheme, UITheme>(Themes, themeId);
 
         /// <summary>
         /// Gets a theme by name.
         /// </summary>
         /// <param name="themeName">The name of the theme to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns the theme with the specified name, if present, otherwise null.</returns>
-        public UITheme GetTheme(string themeName) => GetObject<UITheme, UITheme>(Themes, themeName);
+        public UITheme GetTheme(string themeName) => Identities.GetObject<UITheme, UITheme>(Themes, themeName);
 
         /// <summary>
         /// Removes a theme by id.
         /// </summary>
         /// <param name="themeId">The id of the theme to retrieve. Intaken as an <see cref="int"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the theme was removed.</returns>
-        public bool RemoveTheme(int themeId) => RemoveObject<UITheme, UITheme>(Themes, themeId);
+        public bool RemoveTheme(int themeId) => Identities.RemoveObject<UITheme, UITheme>(Themes, themeId);
 
         /// <summary>
         /// Removes a theme by name.
         /// </summary>
         /// <param name="themeName">The name of the theme to retrieve. Intaken as a <see cref="string"/>.</param>
         /// <returns>Returns a <see cref="bool"/> indicating whether the theme was removed.</returns>
-        public bool RemoveTheme(string themeName) => RemoveObject<UITheme, UITheme>(Themes, themeName);
+        public bool RemoveTheme(string themeName) => Identities.RemoveObject<UITheme, UITheme>(Themes, themeName);
     }
 }

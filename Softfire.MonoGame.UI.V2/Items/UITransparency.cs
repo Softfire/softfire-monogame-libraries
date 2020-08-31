@@ -1,6 +1,6 @@
-﻿using Softfire.MonoGame.CORE.Common;
+﻿using Softfire.MonoGame.CORE.V2.Common;
 
-namespace Softfire.MonoGame.UI.Items
+namespace Softfire.MonoGame.UI.V2.Items
 {
     /// <summary>
     /// A transparency class for adding transparency to objects.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Softfire.MonoGame.LOG.V2;
 
 namespace Softfire.MonoGame.NTWK.V2.Lobby
 {

@@ -11,6 +11,7 @@
     <Folder Include="Services\Steam\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Softfire.MonoGame.DB.V2\Softfire.MonoGame.DB.V2.csproj" />
     <ProjectReference Include="..\Softfire.MonoGame.LOG.V2\Softfire.MonoGame.LOG.V2.csproj" />
   </ItemGroup>
 </Project>

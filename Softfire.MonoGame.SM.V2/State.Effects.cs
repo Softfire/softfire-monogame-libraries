@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Softfire.MonoGame.SM
+namespace Softfire.MonoGame.SM.V2
 {
     public abstract partial class State
     {
@@ -12,7 +12,7 @@ namespace Softfire.MonoGame.SM
         /// </summary>
         /// <param name="identifier">The unique identifier used to select the Transition to run. Intaken as a <see cref="string"/>.</param>
         /// <param name="transition">The Transition to be loaded.</param>
-        /// <returns>Returns a bool indicating whether the Transition was added.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Transition was added.</returns>
         public bool LoadTransition(string identifier, Transition transition)
         {
             var result = false;
@@ -52,7 +52,7 @@ namespace Softfire.MonoGame.SM
         /// Determines whether the loaded transition exists, by name.
         /// </summary>
         /// <param name="identifier">The unique identifier used to search for the Transition. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns a bool indicating whether the Transition has been loaded.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Transition has been loaded.</returns>
         public bool LoadedTransitionExists(string identifier)
         {
             return LoadedTransitions.ContainsKey(identifier);
@@ -63,7 +63,7 @@ namespace Softfire.MonoGame.SM
         /// Removes the Transition from Loaded Transitions using the provided identifier.
         /// </summary>
         /// <param name="identifier">The unique identifier used to select the Transition to remove. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns a bool indicating whether the Transition was removed.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the Transition was removed.</returns>
         private bool RemoveTransition(string identifier)
         {
             var result = false;
@@ -81,7 +81,7 @@ namespace Softfire.MonoGame.SM
         /// Called to activate a loaded Transition.
         /// </summary>
         /// <param name="identifier">The unique identifier used to select the Transition to activate. Intaken as a <see cref="string"/>.</param>
-        /// <returns>Returns a bool indicating whether the transition was activated.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether the transition was activated.</returns>
         public bool ActivateLoadedTransition(string identifier)
         {
             var result = false;
@@ -100,7 +100,7 @@ namespace Softfire.MonoGame.SM
         /// Called to run all loaded Transitions by ascending Order Number.
         /// </summary>
         /// <param name="inSequentialOrder">Indicates whether the Transitions will run sequentially or all at once. Intaken as a <see cref="bool"/>. Default is true.</param>
-        /// <returns>Returns a bool indicating whether all of the loaded transitions completed.</returns>
+        /// <returns>Returns a <see cref="bool"/> indicating whether all of the loaded transitions completed.</returns>
         public async Task<bool> RunActiveTransitions(bool inSequentialOrder = true)
         {
             var result = false;
