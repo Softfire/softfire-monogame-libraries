@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Softfire.MonoGame.CORE.V2\Softfire.MonoGame.CORE.V2.csproj" />
+    <ProjectReference Include="..\Softfire.MonoGame.LOG.V2\Softfire.MonoGame.LOG.V2.csproj" />
+  </ItemGroup>
+</Project>
